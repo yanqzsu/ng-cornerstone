@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: start;
+}
+
+.image-box {
+  width: 500px;
+  height: 500px;
+  border: 1px solid gray;
+}

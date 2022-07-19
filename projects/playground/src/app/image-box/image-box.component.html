@@ -1,0 +1,10 @@
+<div class="operations">
+  <button *ngFor="let tool of toolList" (click)="toolActive(tool.toolName)">
+    {{ tool.toolName }}
+  </button>
+</div>
+<div #container class="container">
+  <div #axial class="image-box"></div>
+  <div #sagittal class="image-box"></div>
+  <div #coronal class="image-box"></div>
+</div>

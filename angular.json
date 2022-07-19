@@ -82,6 +82,13 @@
             },
             "development": {
               "browserTarget": "playground:build:development"
+            },
+          },
+          "options": {
+            "proxyConfig": "projects/playground/proxy.conf.json",
+            "headers": {
+              "Cross-Origin-Embedder-Policy": "require-corp",
+              "Cross-Origin-Opener-Policy": "same-origin"
             }
           },
           "defaultConfiguration": "development"

@@ -27,12 +27,23 @@
     "lib": [
       "es2020",
       "dom"
-    ]
+    ],
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "checkJs": false,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  }
+    "strictTemplates": true,
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "playground/**/init",
+  ]
 }
