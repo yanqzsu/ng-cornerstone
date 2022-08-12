@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "dicom-web": " docker run --name orthanc-nginx-proxy -v C:/Users/YANQZSU/git/dcm-js/ng-corner/nginx:/etc/nginx/conf.d:ro -p 8080:80 -d nginx"
   },
   "private": true,
   "dependencies": {

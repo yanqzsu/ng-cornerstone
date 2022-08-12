@@ -71,13 +71,26 @@ export class ImageBoxComponent implements OnInit {
           //   bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
           // });
         });
+
+        // return createImageIdsAndCacheMetaData({
+        //   StudyInstanceUID:
+        //     '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
+        //   SeriesInstanceUID:
+        //     '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561',
+        //   wadoRsRoot: 'https://d1qmxk7r72ysft.cloudfront.net/dicomweb',
+        // return createImageIdsAndCacheMetaData({
+        //   StudyInstanceUID:
+        //     '1.2.840.113619.2.207.3596.11798570.20933.1191218624.826',
+        //   SeriesInstanceUID:
+        //     '1.2.840.113619.2.207.3596.11798570.20933.1191218624.828',
+        //   wadoRsRoot: 'http://localhost:8080/dicom-web',
         return createImageIdsAndCacheMetaData({
           StudyInstanceUID:
-            '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
+            '1.2.840.113711.7041813.2.3212.182276852.26.2116281012.16720',
           SeriesInstanceUID:
-            '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561',
-          wadoRsRoot: 'https://d1qmxk7r72ysft.cloudfront.net/dicomweb',
-          type: 'VOLUME',
+            '1.3.12.2.1107.5.2.6.14114.30000006101211003631200000970',
+          wadoRsRoot: 'http://localhost:8080/dicom-web',
+          type: '22',
         });
       })
       .then((imageIds) => {
