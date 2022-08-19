@@ -2,11 +2,13 @@
   <button *ngFor="let tool of toolList" (click)="toolActive(tool.toolName)">
     {{ tool.toolName }}
   </button>
-</div>
-<div class="operations">
-  <button *ngFor="let orientation of orientationList" (click)="changeOrientation(orientation)">
-    {{ orientation }}
-  </button>
+  <select (change)="changeOrientation($event)">
+    <option
+      *ngFor="let orientation of orientationList"
+      [value]="orientation"
+      [label]="orientation"
+    ></option>
+  </select>
 </div>
 <div #container class="container">
   <div #axial class="image-box"></div>

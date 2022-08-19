@@ -25,6 +25,7 @@ import {
   createImageIdsAndCacheMetaData,
   setCtTransferFunctionForVolumeActor,
 } from '../core/load';
+import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
 
 @Component({
   selector: 'app-image-box',
@@ -45,7 +46,7 @@ export class ImageBoxComponent implements OnInit {
     LengthTool,
     AngleTool,
   ];
-  orientationList = ['AXIAL', 'SAGITTAL', 'CORONAL'];
+  orientationList = ['AXIAL', 'SAGITTAL', 'CORONAL', 'OBLIQUE'];
   renderingEngine!: RenderingEngine;
 
   @ViewChild('axial')
@@ -170,5 +171,46 @@ export class ImageBoxComponent implements OnInit {
     });
   }
 
-  changeOrientation(orientation: String) {}
+  changeOrientation(event: any) {
+    const selectedValue = event?.target?.value;
+    const viewport = this.renderingEngine.getViewport('CT_AXIAL');
+
+    // TODO -> Maybe we should rename sliceNormal to viewPlaneNormal everywhere?
+    let viewUp;
+    let viewPlaneNormal;
+
+    switch (selectedValue) {
+      case 'AXIAL':
+        viewUp = ORIENTATION['AXIAL'].viewUp;
+        viewPlaneNormal = ORIENTATION['AXIAL'].sliceNormal;
+        break;
+      case 'SAGITTAL':
+        viewUp = ORIENTATION['SAGITTAL'].viewUp;
+        viewPlaneNormal = ORIENTATION['SAGITTAL'].sliceNormal;
+
+        break;
+      case 'CORONAL':
+        viewUp = ORIENTATION['CORONAL'].viewUp;
+        viewPlaneNormal = ORIENTATION['CORONAL'].sliceNormal;
+
+        break;
+      case 'OBLIQUE':
+        // Some random oblique value for this dataset
+        viewUp = [-0.5962687530844388, 0.5453181550345819, -0.5891448751239446];
+        viewPlaneNormal = [
+          -0.5962687530844388, 0.5453181550345819, -0.5891448751239446,
+        ];
+
+        break;
+      default:
+        throw new Error('undefined orientation option');
+    }
+
+    // TODO -> Maybe we should have a helper for this on the viewport
+    // Set the new orientation
+    viewport.setCamera({ viewUp, viewPlaneNormal });
+    // Reset the camera after the normal changes
+    viewport.resetCamera();
+    viewport.render();
+  }
 }
