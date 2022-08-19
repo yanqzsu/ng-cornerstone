@@ -3,6 +3,11 @@
     {{ tool.toolName }}
   </button>
 </div>
+<div class="operations">
+  <button *ngFor="let orientation of orientationList" (click)="changeOrientation(orientation)">
+    {{ orientation }}
+  </button>
+</div>
 <div #container class="container">
   <div #axial class="image-box"></div>
   <div #sagittal class="image-box"></div>

@@ -85,11 +85,11 @@
             },
           },
           "options": {
-            "proxyConfig": "projects/playground/proxy.conf.json",
+            "host": "0.0.0.0",
             "headers": {
               "Cross-Origin-Embedder-Policy": "require-corp",
-              "Cross-Origin-Opener-Policy": "same-origin"
-            }
+              "Cross-Origin-Opener-Policy": "same-origin",
+            },
           },
           "defaultConfiguration": "development"
         },

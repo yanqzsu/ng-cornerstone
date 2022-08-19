@@ -5,8 +5,8 @@ import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import { utilities } from '@cornerstonejs/core';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 
-import WADORSHeaderProvider from './WADORSHeaderProvider';
-import ptScalingMetaDataProvider from './ptScalingMetaDataProvider';
+import WADORSHeaderProvider from '../provider/WADORSHeaderProvider';
+import ptScalingMetaDataProvider from '../provider/ptScalingMetaDataProvider';
 import getPixelSpacingInformation from './getPixelSpacingInformation';
 
 const { DicomMetaDictionary } = dcmjs.data;
@@ -63,7 +63,7 @@ export default async function createImageIdsAndCacheMetaData({
 
     cornerstoneWADOImageLoader.wadors.metaDataManager.add(
       imageId,
-      instanceMetaData
+      instanceMetaData,
     );
 
     WADORSHeaderProvider.addInstance(imageId, instanceMetaData);
@@ -75,7 +75,7 @@ export default async function createImageIdsAndCacheMetaData({
 
     calibratedPixelSpacingMetadataProvider.add(
       imageId,
-      pixelSpacing.map((s) => parseFloat(s))
+      pixelSpacing.map((s) => parseFloat(s)),
     );
 
     return imageId;
@@ -103,12 +103,12 @@ export default async function createImageIdsAndCacheMetaData({
     });
     if (InstanceMetadataArray.length) {
       const suvScalingFactors = calculateSUVScalingFactors(
-        InstanceMetadataArray
+        InstanceMetadataArray,
       );
       InstanceMetadataArray.forEach((instanceMetadata, index) => {
         ptScalingMetaDataProvider.addInstance(
           imageIds[index],
-          suvScalingFactors[index]
+          suvScalingFactors[index],
         );
       });
     }

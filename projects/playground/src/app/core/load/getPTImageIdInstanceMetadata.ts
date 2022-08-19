@@ -54,7 +54,6 @@ export default function getPTImageIdInstanceMetadata(
 
   if (
     radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime &&
-    radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime !== undefined &&
     typeof radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime === 'string'
   ) {
     instanceMetadata.RadiopharmaceuticalStartDateTime =
@@ -63,18 +62,16 @@ export default function getPTImageIdInstanceMetadata(
 
   if (
     radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime &&
-    radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime !== undefined &&
     typeof radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime !== 'string'
   ) {
-    const dateString = convertInterfaceDateToString(
-      radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime,
-    );
-    instanceMetadata.RadiopharmaceuticalStartDateTime = dateString;
+    instanceMetadata.RadiopharmaceuticalStartDateTime =
+      convertInterfaceDateToString(
+        radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime,
+      );
   }
 
   if (
     radiopharmaceuticalInfo.radiopharmaceuticalStartTime &&
-    radiopharmaceuticalInfo.radiopharmaceuticalStartTime !== undefined &&
     typeof radiopharmaceuticalInfo.radiopharmaceuticalStartTime === 'string'
   ) {
     instanceMetadata.RadiopharmaceuticalStartTime =
@@ -83,13 +80,12 @@ export default function getPTImageIdInstanceMetadata(
 
   if (
     radiopharmaceuticalInfo.radiopharmaceuticalStartTime &&
-    radiopharmaceuticalInfo.radiopharmaceuticalStartTime !== undefined &&
     typeof radiopharmaceuticalInfo.radiopharmaceuticalStartTime !== 'string'
   ) {
-    const timeString = convertInterfaceTimeToString(
-      radiopharmaceuticalInfo.radiopharmaceuticalStartTime,
-    );
-    instanceMetadata.RadiopharmaceuticalStartTime = timeString;
+    instanceMetadata.RadiopharmaceuticalStartTime =
+      convertInterfaceTimeToString(
+        radiopharmaceuticalInfo.radiopharmaceuticalStartTime,
+      );
   }
 
   if (

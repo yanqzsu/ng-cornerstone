@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { defer } from 'rxjs';
 import ImageVolume, {
   RenderingEngine,
   Types,
@@ -9,27 +10,21 @@ import ImageVolume, {
 } from '@cornerstonejs/core';
 import {
   addTool,
-  SegmentationDisplayTool,
   ToolGroupManager,
   Enums as ToolsEnums,
-  segmentation,
-  RectangleScissorsTool,
-  SphereScissorsTool,
-  CircleScissorsTool,
-  BrushTool,
   PanTool,
   ZoomTool,
-  StackScrollMouseWheelTool,
   WindowLevelTool,
+  LengthTool,
+  AngleTool,
+  StackScrollTool,
 } from '@cornerstonejs/tools';
+import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 
 import {
-  initDemo,
   createImageIdsAndCacheMetaData,
   setCtTransferFunctionForVolumeActor,
-} from '../init';
-import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
-import StackScrollTool from '@cornerstonejs/tools/dist/esm/tools/StackScrollTool';
+} from '../core/load';
 
 @Component({
   selector: 'app-image-box',
@@ -37,15 +32,20 @@ import StackScrollTool from '@cornerstonejs/tools/dist/esm/tools/StackScrollTool
   styleUrls: ['./image-box.component.scss'],
 })
 export class ImageBoxComponent implements OnInit {
-  title = 'playground';
-
   volumeName = 'CT_VOLUME_ID'; // Id of the volume less loader prefix
   volumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
   volumeId = `${this.volumeLoaderScheme}:${this.volumeName}`; // VolumeId with loader id + volume id
-  segmentationId = 'MY_SEGMENTATION_ID';
   toolGroupId = 'MY_TOOLGROUP_ID';
   toolGroup: IToolGroup;
-  toolList = [StackScrollTool, PanTool, ZoomTool, WindowLevelTool];
+  toolList = [
+    StackScrollTool,
+    PanTool,
+    ZoomTool,
+    WindowLevelTool,
+    LengthTool,
+    AngleTool,
+  ];
+  orientationList = ['AXIAL', 'SAGITTAL', 'CORONAL'];
   renderingEngine!: RenderingEngine;
 
   @ViewChild('axial')
@@ -62,43 +62,37 @@ export class ImageBoxComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    Promise.resolve(initDemo())
-      .then(() => {
-        this.toolList.forEach((value) => {
-          addTool(value);
-          this.toolGroup.addTool(value.toolName);
-          // this.toolGroup.setToolActive(value.toolName, {
-          //   bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
-          // });
-        });
+    this.toolList.forEach((value) => {
+      addTool(value);
+      this.toolGroup.addTool(value.toolName);
+      // this.toolGroup.setToolActive(value.toolName, {
+      //   bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
+      // });
+    });
+    defer(
+      async function () {
+        const imageIds = await createImageIdsAndCacheMetaData({
+          //   StudyInstanceUID:
+          //     '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
+          //   SeriesInstanceUID:
+          //     '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561',
+          //   wadoRsRoot: 'https://d1qmxk7r72ysft.cloudfront.net/dicomweb',
 
-        // return createImageIdsAndCacheMetaData({
-        //   StudyInstanceUID:
-        //     '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
-        //   SeriesInstanceUID:
-        //     '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561',
-        //   wadoRsRoot: 'https://d1qmxk7r72ysft.cloudfront.net/dicomweb',
-        // return createImageIdsAndCacheMetaData({
-        //   StudyInstanceUID:
-        //     '1.2.840.113619.2.207.3596.11798570.20933.1191218624.826',
-        //   SeriesInstanceUID:
-        //     '1.2.840.113619.2.207.3596.11798570.20933.1191218624.828',
-        //   wadoRsRoot: 'http://localhost:8080/dicom-web',
-        return createImageIdsAndCacheMetaData({
+          //   StudyInstanceUID:
+          //     '1.2.840.113619.2.207.3596.11798570.20933.1191218624.826',
+          //   SeriesInstanceUID:
+          //     '1.2.840.113619.2.207.3596.11798570.20933.1191218624.828',
+          //   wadoRsRoot: 'http://localhost:8080/dicom-web',
           StudyInstanceUID:
             '1.2.840.113711.7041813.2.3212.182276852.26.2116281012.16720',
           SeriesInstanceUID:
             '1.3.12.2.1107.5.2.6.14114.30000006101211003631200000970',
-          wadoRsRoot: 'http://localhost:8080/dicom-web',
-          type: '22',
+          wadoRsRoot: 'http://10.81.20.156:8080/dicom-web',
+          type: 'VOLUME',
         });
-      })
-      .then((imageIds) => {
-        return volumeLoader.createAndCacheVolume(this.volumeId, {
+        const volume = await volumeLoader.createAndCacheVolume(this.volumeId, {
           imageIds,
         });
-      })
-      .then((volume) => {
         const renderingEngineId = 'myRenderingEngine';
         this.renderingEngine = new RenderingEngine(renderingEngineId);
 
@@ -142,10 +136,8 @@ export class ImageBoxComponent implements OnInit {
         this.toolGroup.addViewport(viewportId1, renderingEngineId);
         this.toolGroup.addViewport(viewportId2, renderingEngineId);
         this.toolGroup.addViewport(viewportId3, renderingEngineId);
-
-        // Set the volume to load
         volume['load']();
-        return setVolumesForViewports(
+        await setVolumesForViewports(
           this.renderingEngine,
           [
             {
@@ -155,17 +147,17 @@ export class ImageBoxComponent implements OnInit {
           ],
           [viewportId1, viewportId2, viewportId3],
         );
-      })
-      .then(() => {
-        const viewportId1 = 'CT_AXIAL';
-        const viewportId2 = 'CT_SAGITTAL';
-        const viewportId3 = 'CT_CORONAL';
-        this.renderingEngine.renderViewports([
-          viewportId1,
-          viewportId2,
-          viewportId3,
-        ]);
-      });
+      }.bind(this),
+    ).subscribe(() => {
+      const viewportId1 = 'CT_AXIAL';
+      const viewportId2 = 'CT_SAGITTAL';
+      const viewportId3 = 'CT_CORONAL';
+      this.renderingEngine.renderViewports([
+        viewportId1,
+        viewportId2,
+        viewportId3,
+      ]);
+    });
   }
 
   toolActive(toolName: string) {
@@ -177,4 +169,6 @@ export class ImageBoxComponent implements OnInit {
       bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
     });
   }
+
+  changeOrientation(orientation: String) {}
 }
