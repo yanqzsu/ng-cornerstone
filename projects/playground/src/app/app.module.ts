@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ImageBoxComponent } from './image-box/image-box.component';
 import { CoreModule } from './core/core.module';
+import { NiIconModule } from './icon/icon.module';
 
 @NgModule({
   declarations: [AppComponent, ImageBoxComponent],
@@ -14,6 +15,7 @@ import { CoreModule } from './core/core.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     CoreModule.forRoot(),
+    NiIconModule.forRoot(['./assets/font/iconfont.js']),
   ],
   providers: [],
   bootstrap: [AppComponent],

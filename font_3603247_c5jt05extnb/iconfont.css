@@ -1,0 +1,135 @@
+@font-face {
+  font-family: "dmv"; /* Project id 3603247 */
+  src: url('iconfont.woff2?t=1661150743897') format('woff2'),
+       url('iconfont.woff?t=1661150743897') format('woff'),
+       url('iconfont.ttf?t=1661150743897') format('truetype');
+}
+
+.dmv {
+  font-family: "dmv" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dmv-more:before {
+  content: "\e636";
+}
+
+.dmv-about:before {
+  content: "\e637";
+}
+
+.dmv-left:before {
+  content: "\e638";
+}
+
+.dmv-recover:before {
+  content: "\e639";
+}
+
+.dmv-rectangle:before {
+  content: "\e63a";
+}
+
+.dmv-pan:before {
+  content: "\e63b";
+}
+
+.dmv-ellipse:before {
+  content: "\e63c";
+}
+
+.dmv-angle:before {
+  content: "\e63d";
+}
+
+.dmv-shrink:before {
+  content: "\e63e";
+}
+
+.dmv-stop:before {
+  content: "\e63f";
+}
+
+.dmv-download:before {
+  content: "\e640";
+}
+
+.dmv-fliph:before {
+  content: "\e641";
+}
+
+.dmv-flipv:before {
+  content: "\e642";
+}
+
+.dmv-rotate:before {
+  content: "\e643";
+}
+
+.dmv-triangle:before {
+  content: "\e644";
+}
+
+.dmv-measurement:before {
+  content: "\e645";
+}
+
+.dmv-layer:before {
+  content: "\e646";
+}
+
+.dmv-add:before {
+  content: "\e647";
+}
+
+.dmv-ruler:before {
+  content: "\e648";
+}
+
+.dmv-pin:before {
+  content: "\e649";
+}
+
+.dmv-pause:before {
+  content: "\e64a";
+}
+
+.dmv-zoom:before {
+  content: "\e64b";
+}
+
+.dmv-panel:before {
+  content: "\e64c";
+}
+
+.dmv-expand:before {
+  content: "\e64d";
+}
+
+.dmv-down:before {
+  content: "\e64e";
+}
+
+.dmv-menu:before {
+  content: "\e64f";
+}
+
+.dmv-annotation:before {
+  content: "\e650";
+}
+
+.dmv-clear:before {
+  content: "\e651";
+}
+
+.dmv-play:before {
+  content: "\e652";
+}
+
+.dmv-window-level:before {
+  content: "\e653";
+}
+

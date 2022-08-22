@@ -6,6 +6,7 @@ import {
   APP_INITIALIZER,
 } from '@angular/core';
 import initDemo from './init/initDemo';
+import { NiIconModule } from '../icon/icon.module';
 
 export function startupServiceFactory(): () => Promise<void> {
   return initDemo;
