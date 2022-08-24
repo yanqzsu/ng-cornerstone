@@ -36,7 +36,6 @@
               "projects/playground/src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
               "projects/playground/src/styles.scss"
             ],
             "scripts": []
@@ -112,7 +111,6 @@
               "projects/playground/src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
               "projects/playground/src/styles.scss"
             ],
             "scripts": []
