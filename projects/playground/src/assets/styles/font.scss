@@ -1,0 +1,50 @@
+@use 'typography';
+
+/*
+Font light series
+ */
+$font-light-1: rgba(0,0,0,0.85);
+$font-light-2: rgba(0,0,0,0.65);
+$font-light-3: rgba(0,0,0,0.45);
+$font-light-4: rgba(0,0,0,0.25);
+$font-light-5: rgba(0,0,0,0.15);
+$font-light-6: rgba(0,0,0,0.6);
+$font-light-7: rgba(0,0,0,0.2);
+/*
+Font dark series
+ */
+$font-dark-1: rgba(255,255,255,0.85);
+$font-dark-2: rgba(255,255,255,0.65);
+$font-dark-3: rgba(255,255,255,0.45);
+$font-dark-4: rgba(255,255,255,0.30);
+$font-dark-5: rgba(255,255,255,0.20);
+$font-dark-6: rgba(255,255,255,0.12);
+
+
+$font-family: Roboto, 'Noto Sans SC', sans-serif;
+$headline: typography.define-typography-level(24px, 32px, 400, $font-family);
+$title: typography.define-typography-level(20px, 32px, 500, $font-family);
+$subheading: typography.define-typography-level(16px, 28px, 400, $font-family);
+$body: typography.define-typography-level(14px, 24px, 500, $font-family);
+$caption: typography.define-typography-level(12px, 20px, 400, $font-family);
+$button: typography.define-typography-level(14px, 14px, 500, $font-family);
+
+.h1, h1, .headline {
+  @include typography.font($headline);
+}
+
+.h2, h2, .title{
+  @include typography.font($title);
+}
+
+.h3, h3, .subheading {
+  @include typography.font($subheading);
+}
+
+.h4, h4, .body{
+  @include typography.font($body);
+}
+
+.h5, h5, .button {
+  @include typography.font($button);
+}
