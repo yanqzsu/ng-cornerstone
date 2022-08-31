@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { NiIconService } from './icon.service';
+import { IconService } from './icon.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'i[ni-icon]',
+  selector: 'i[app-icon]',
   template: `
-    <svg class="ni-icon" aria-hidden="true">
+    <svg class="app-icon" aria-hidden="true">
       <use attr.xlink:href="#{{ iconfont }}"></use>
     </svg>
   `,
@@ -17,7 +17,7 @@ import { NiIconService } from './icon.service';
         line-height: 0;
       }
 
-      .ni-icon {
+      .app-icon {
         fill: currentColor;
         height: 1em;
         overflow: hidden;
@@ -30,7 +30,7 @@ import { NiIconService } from './icon.service';
 })
 export class IconComponent {
   // tslint:disable-next-line:no-input-rename
-  @Input('ni-icon') iconfont = '';
+  @Input('app-icon') iconfont: string | null = '';
 
-  constructor(service: NiIconService) {}
+  constructor(service: IconService) {}
 }

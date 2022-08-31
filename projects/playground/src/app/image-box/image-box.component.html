@@ -1,7 +1,15 @@
 <div class="operations">
-  <button *ngFor="let tool of toolList" (click)="toolActive(tool.toolName)">
-    {{ tool.toolName }}
-  </button>
+  <button-group>
+    <button
+      app-button
+      *ngFor="let tool of toolList"
+      (click)="toolActive(tool.toolName)"
+      [isToggle]='true'
+    >
+      {{ tool.toolName }}
+    </button>
+  </button-group>
+
   <select (change)="changeOrientation($event)">
     <option
       *ngFor="let orientation of orientationList"
@@ -9,8 +17,35 @@
       [label]="orientation"
     ></option>
   </select>
-  <i ni-icon='dmv-down'></i>
-  <i ni-icon='dmv-play'></i>
+  <button app-button>
+    <i app-icon="dmv-down"></i>
+  </button>
+  <button app-button [type]="'primary'">
+    <i app-icon="dmv-play"></i>
+  </button>
+  <button app-button>
+    <div class="icon-text">
+      <i app-icon="dmv-play"></i>
+      <span>播放</span>
+    </div>
+  </button>
+  <button app-button [content]="'icon-text'" [icon]="'dmv-play'" [text]="'播放'"> </button>
+  <button app-button [content]="'text'" [text]="'测量'"></button>
+  <button app-button [content]="'icon'" [icon]="'dmv-stop'"></button>
+  <button app-button [content]="'icon-text'" [icon]="'dmv-play'" [text]="'播放'" [isToggle]='true'> </button>
+  <button app-button [type]="'primary'" [isToggle]='true'>
+    <i app-icon="dmv-play"></i>
+  </button>
+  <button-group multiple>
+    <button app-button [content]="'icon-text'" [icon]="'dmv-play'" [text]="'播放'" [isToggle]="true"> </button>
+    <button app-button [content]="'text'" [text]="'测量'" [isToggle]="true"></button>
+    <button app-button [content]="'icon'" [icon]="'dmv-stop'" [isToggle]="true"></button>
+  </button-group>
+  <button-group>
+    <button app-button [content]="'icon-text'" [icon]="'dmv-play'" [text]="'播放'" [isToggle]="true"> </button>
+    <button app-button [content]="'text'" [text]="'测量'" [isToggle]="true"></button>
+    <button app-button [content]="'icon'" [icon]="'dmv-stop'" [isToggle]="true"></button>
+  </button-group>
 </div>
 <div #container class="container">
   <div #axial class="image-box"></div>

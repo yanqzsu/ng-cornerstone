@@ -1,16 +1,22 @@
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, InjectionToken, Optional, RendererFactory2 } from '@angular/core';
+import {
+  Inject,
+  Injectable,
+  InjectionToken,
+  Optional,
+  RendererFactory2,
+} from '@angular/core';
 
 export const ICONFONT_URL = new InjectionToken<string>('IconfontUrl');
 
 @Injectable({
   providedIn: 'root',
 })
-export class NiIconService {
+export class IconService {
   constructor(
     @Inject(DOCUMENT) private doc: any,
     private rendererFactory2: RendererFactory2,
-    @Inject(ICONFONT_URL) @Optional() iconfontUrls?: string[]
+    @Inject(ICONFONT_URL) @Optional() iconfontUrls?: string[],
   ) {
     if (iconfontUrls) {
       for (const url of iconfontUrls) {

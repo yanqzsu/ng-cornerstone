@@ -1,5 +1,16 @@
+@forward 'color-palette';
+@use 'color-palette' as palette;
+@use 'sass:color';
 $ni-size: small, medium, large;
-$primary-color: #0e6e6b;
-$text-color: #ababab;
-$white-color: #fff;
+$primary-color: palette.$green-5;
+$text-color: palette.$font-light-1;
 
+$background-color: palette.$white-3;
+
+$border-radius: 2px;
+$border-color: color.change(palette.$green-5,  $alpha: 0.85);
+
+//button
+$normal-color: color.change(palette.$white-9,  $alpha: 0.85);
+$active-color: color.change(palette.$green-5,  $alpha: 0.85);
+$disable-color: color.change(palette.$white-3,  $alpha: 0.85);
