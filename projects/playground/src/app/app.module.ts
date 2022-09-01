@@ -11,6 +11,7 @@ import { CoreModule } from './core/core.module';
 import { NiIconModule } from './icon/icon.module';
 import { ButtonComponent } from './button/button.component';
 import { ButtonGroupComponent } from './button-group/button-group.component';
+import { ToolGroupComponent } from './tool-group/tool-group.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { ButtonGroupComponent } from './button-group/button-group.component';
     CollapsePanelComponent,
     ButtonComponent,
     ButtonGroupComponent,
+    ToolGroupComponent,
   ],
   imports: [
     BrowserModule,

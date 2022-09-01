@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { defer } from 'rxjs';
-import ImageVolume, {
+import {
   RenderingEngine,
   Types,
   Enums,
@@ -8,24 +8,14 @@ import ImageVolume, {
   volumeLoader,
   CONSTANTS,
 } from '@cornerstonejs/core';
-import {
-  addTool,
-  ToolGroupManager,
-  Enums as ToolsEnums,
-  PanTool,
-  ZoomTool,
-  WindowLevelTool,
-  LengthTool,
-  AngleTool,
-  StackScrollTool,
-} from '@cornerstonejs/tools';
-import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 
 import {
   createImageIdsAndCacheMetaData,
   setCtTransferFunctionForVolumeActor,
 } from '../core/load';
 import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
+import { ToolEnum } from '../tool-group/tool.config';
+import { ToolGroupComponent } from '../tool-group/tool-group.component';
 
 @Component({
   selector: 'app-image-box',
@@ -37,14 +27,13 @@ export class ImageBoxComponent implements OnInit {
   volumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
   volumeId = `${this.volumeLoaderScheme}:${this.volumeName}`; // VolumeId with loader id + volume id
   toolGroupId = 'MY_TOOLGROUP_ID';
-  toolGroup: IToolGroup;
   toolList = [
-    StackScrollTool,
-    PanTool,
-    ZoomTool,
-    WindowLevelTool,
-    LengthTool,
-    AngleTool,
+    ToolEnum.StackScrollTool,
+    ToolEnum.PanTool,
+    ToolEnum.ZoomTool,
+    ToolEnum.WindowLevelTool,
+    ToolEnum.LengthTool,
+    ToolEnum.AngleTool,
   ];
   orientationList = ['AXIAL', 'SAGITTAL', 'CORONAL', 'OBLIQUE'];
   renderingEngine!: RenderingEngine;
@@ -56,20 +45,12 @@ export class ImageBoxComponent implements OnInit {
   @ViewChild('coronal')
   coronalRef!: ElementRef<HTMLDivElement>;
 
-  activeToolName?: string;
+  @ViewChild(ToolGroupComponent)
+  toolGroupComponent?: ToolGroupComponent;
 
-  constructor() {
-    this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;
-  }
+  constructor() {}
 
   ngOnInit(): void {
-    this.toolList.forEach((value) => {
-      addTool(value);
-      this.toolGroup.addTool(value.toolName);
-      // this.toolGroup.setToolActive(value.toolName, {
-      //   bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
-      // });
-    });
     defer(
       async function () {
         const imageIds = await createImageIdsAndCacheMetaData({
@@ -134,9 +115,12 @@ export class ImageBoxComponent implements OnInit {
 
         this.renderingEngine.setViewports(viewportInputArray);
 
-        this.toolGroup.addViewport(viewportId1, renderingEngineId);
-        this.toolGroup.addViewport(viewportId2, renderingEngineId);
-        this.toolGroup.addViewport(viewportId3, renderingEngineId);
+        const toolGroup = this.toolGroupComponent?.toolGroup;
+        if (toolGroup) {
+          toolGroup.addViewport(viewportId1, renderingEngineId);
+          toolGroup.addViewport(viewportId2, renderingEngineId);
+          toolGroup.addViewport(viewportId3, renderingEngineId);
+        }
         volume['load']();
         await setVolumesForViewports(
           this.renderingEngine,
@@ -158,16 +142,6 @@ export class ImageBoxComponent implements OnInit {
         viewportId2,
         viewportId3,
       ]);
-    });
-  }
-
-  toolActive(toolName: string) {
-    if (this.activeToolName) {
-      this.toolGroup.setToolPassive(this.activeToolName);
-    }
-    this.activeToolName = toolName;
-    this.toolGroup.setToolActive(toolName, {
-      bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
     });
   }
 

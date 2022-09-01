@@ -1,0 +1,14 @@
+<div>
+  <button-group>
+    <button
+      app-button
+      *ngFor="let config of toolConfigList"
+      (click)="toolActive(config.name)"
+      [isToggle]="true"
+      [content]="'icon-text'"
+      [icon]="config.icon"
+      [text]="config.label"
+    >
+    </button>
+  </button-group>
+</div>
