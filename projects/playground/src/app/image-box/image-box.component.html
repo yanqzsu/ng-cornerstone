@@ -1,5 +1,5 @@
 <div class="operations">
-  <tool-group [toolList]="toolList" [toolGroupId]="toolGroupId"></tool-group>
+  <tool-group [toolList]="toolList" [toolGroupId]="toolGroupId" [viewportId]='viewportId' [renderEngineId]='renderingEngineId'></tool-group>
   <select (change)="changeOrientation($event)">
     <option
       *ngFor="let value of orientationList"

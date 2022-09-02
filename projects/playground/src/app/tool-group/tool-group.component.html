@@ -2,11 +2,10 @@
   <button
     app-button
     *ngFor="let config of toolConfigList"
-    (click)="toolActive(config.name)"
-    [isToggle]="true"
+    (click)="toolActive(config)"
+    [isToggle]="!!config.tool"
     [content]="'icon-text'"
     [icon]="config.icon"
     [text]="config.label"
-  >
-  </button>
+  ></button>
 </button-group>

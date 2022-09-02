@@ -30,10 +30,19 @@ export class ImageBoxComponent implements OnInit, AfterViewInit {
     ToolEnum.PanTool,
     ToolEnum.ZoomTool,
     ToolEnum.WindowLevelTool,
+    ToolEnum.ArrowAnnotateTool,
     ToolEnum.LengthTool,
     ToolEnum.AngleTool,
+    ToolEnum.RectangleROITool,
+    ToolEnum.EllipticalROITool,
+    ToolEnum.TrackballRotateTool,
+    ToolEnum.Rotate,
+    ToolEnum.FlipV,
+    ToolEnum.FlipH,
+    ToolEnum.Reset,
   ];
   viewportId = 'VIEWPORT_ID';
+  renderingEngineId = 'myRenderingEngine';
   orientation = OrientationEnum.SAGITTAL;
   orientationList = OrientationStringList;
   renderingEngine!: RenderingEngine;
@@ -73,8 +82,7 @@ export class ImageBoxComponent implements OnInit, AfterViewInit {
         const volume = await volumeLoader.createAndCacheVolume(this.volumeId, {
           imageIds,
         });
-        const renderingEngineId = 'myRenderingEngine';
-        this.renderingEngine = new RenderingEngine(renderingEngineId);
+        this.renderingEngine = new RenderingEngine(this.renderingEngineId);
 
         const viewportInputArray = [this.viewportComponent?.viewportInput];
 
@@ -82,7 +90,7 @@ export class ImageBoxComponent implements OnInit, AfterViewInit {
 
         const toolGroup = this.toolGroupComponent?.toolGroup;
         if (toolGroup) {
-          toolGroup.addViewport(this.viewportId, renderingEngineId);
+          toolGroup.addViewport(this.viewportId, this.renderingEngineId);
         }
         volume['load']();
         await setVolumesForViewports(

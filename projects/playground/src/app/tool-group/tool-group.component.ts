@@ -35,10 +35,15 @@ export class ToolGroupComponent implements OnInit {
   @Input()
   toolGroupId: string = 'MY_TOOLGROUP_ID';
 
+  @Input()
+  viewportId: string = '';
+  @Input()
+  renderEngineId: string = '';
+
   public toolGroup!: IToolGroup;
   toolConfigList: ToolConfig[] = [];
 
-  activeToolName?: string;
+  activeTool?: ToolConfig;
 
   constructor(private cd: ChangeDetectorRef) {}
 
@@ -53,20 +58,26 @@ export class ToolGroupComponent implements OnInit {
         return value !== undefined;
       });
     this.toolConfigList.forEach((value) => {
-      addTool(value.tool);
-      this.toolGroup.addTool(value.name);
+      if (value.tool) {
+        addTool(value.tool);
+        this.toolGroup.addTool(value.name);
+      }
     });
   }
 
-  toolActive(toolName: string) {
-    if (this.activeToolName) {
-      this.toolGroup.setToolPassive(this.activeToolName);
+  toolActive(toolConfig: ToolConfig) {
+    if (toolConfig.tool) {
+      if (this.activeTool) {
+        this.toolGroup.setToolPassive(this.activeTool.name);
+      }
+      // @ts-ignore
+      this.activeTool = toolConfig;
+      this.toolGroup.setToolActive(this.activeTool?.name!, {
+        bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
+      });
+    } else if (toolConfig.callback) {
+      toolConfig?.callback(this.renderEngineId, this.viewportId);
     }
-    // @ts-ignore
-    this.activeToolName = toolName;
-    this.toolGroup.setToolActive(this.activeToolName!, {
-      bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
-    });
   }
 
   ngOnDestroy(): void {
