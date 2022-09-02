@@ -3,10 +3,9 @@
   flex-flow: row wrap;
   align-items: center;
   justify-content: start;
+  height: 800px;
 }
 
-.image-box {
-  width: 500px;
-  height: 500px;
-  border: 1px solid gray;
+tool-group {
+  display: inline-flex;
 }

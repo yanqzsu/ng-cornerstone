@@ -55,9 +55,6 @@ export class ToolGroupComponent implements OnInit {
     this.toolConfigList.forEach((value) => {
       addTool(value.tool);
       this.toolGroup.addTool(value.name);
-      // this.toolGroup.setToolActive(value.toolName, {
-      //   bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
-      // });
     });
   }
 

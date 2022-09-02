@@ -1,14 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { defer } from 'rxjs';
 import {
   RenderingEngine,
-  Types,
-  Enums,
   setVolumesForViewports,
   volumeLoader,
-  CONSTANTS,
 } from '@cornerstonejs/core';
-
 import {
   createImageIdsAndCacheMetaData,
   setCtTransferFunctionForVolumeActor,
@@ -16,13 +12,15 @@ import {
 import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
 import { ToolEnum } from '../tool-group/tool.config';
 import { ToolGroupComponent } from '../tool-group/tool-group.component';
+import { OrientationEnum, OrientationStringList } from '../core/constants';
+import { ViewportComponent } from '../viewport/viewport.component';
 
 @Component({
   selector: 'app-image-box',
   templateUrl: './image-box.component.html',
   styleUrls: ['./image-box.component.scss'],
 })
-export class ImageBoxComponent implements OnInit {
+export class ImageBoxComponent implements OnInit, AfterViewInit {
   volumeName = 'CT_VOLUME_ID'; // Id of the volume less loader prefix
   volumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
   volumeId = `${this.volumeLoaderScheme}:${this.volumeName}`; // VolumeId with loader id + volume id
@@ -35,20 +33,20 @@ export class ImageBoxComponent implements OnInit {
     ToolEnum.LengthTool,
     ToolEnum.AngleTool,
   ];
-  orientationList = ['AXIAL', 'SAGITTAL', 'CORONAL', 'OBLIQUE'];
+  viewportId = 'VIEWPORT_ID';
+  orientation = OrientationEnum.SAGITTAL;
+  orientationList = OrientationStringList;
   renderingEngine!: RenderingEngine;
-
-  @ViewChild('axial')
-  axialRef!: ElementRef<HTMLDivElement>;
-  @ViewChild('sagittal')
-  sagittalRef!: ElementRef<HTMLDivElement>;
-  @ViewChild('coronal')
-  coronalRef!: ElementRef<HTMLDivElement>;
 
   @ViewChild(ToolGroupComponent)
   toolGroupComponent?: ToolGroupComponent;
 
+  @ViewChild(ViewportComponent)
+  viewportComponent?: ViewportComponent;
+
   constructor() {}
+
+  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
     defer(
@@ -78,48 +76,13 @@ export class ImageBoxComponent implements OnInit {
         const renderingEngineId = 'myRenderingEngine';
         this.renderingEngine = new RenderingEngine(renderingEngineId);
 
-        // Create the viewports
-        const viewportId1 = 'CT_AXIAL';
-        const viewportId2 = 'CT_SAGITTAL';
-        const viewportId3 = 'CT_CORONAL';
-
-        const viewportInputArray = [
-          {
-            viewportId: viewportId1,
-            type: Enums.ViewportType.ORTHOGRAPHIC,
-            element: this.axialRef.nativeElement,
-            defaultOptions: {
-              orientation: CONSTANTS.ORIENTATION['AXIAL'],
-              background: <Types.Point3>[0, 0, 0],
-            },
-          },
-          {
-            viewportId: viewportId2,
-            type: Enums.ViewportType.ORTHOGRAPHIC,
-            element: this.sagittalRef.nativeElement,
-            defaultOptions: {
-              orientation: CONSTANTS.ORIENTATION['SAGITTAL'],
-              background: <Types.Point3>[0, 0, 0],
-            },
-          },
-          {
-            viewportId: viewportId3,
-            type: Enums.ViewportType.ORTHOGRAPHIC,
-            element: this.coronalRef.nativeElement,
-            defaultOptions: {
-              orientation: CONSTANTS.ORIENTATION['CORONAL'],
-              background: <Types.Point3>[0, 0, 0],
-            },
-          },
-        ];
+        const viewportInputArray = [this.viewportComponent?.viewportInput];
 
         this.renderingEngine.setViewports(viewportInputArray);
 
         const toolGroup = this.toolGroupComponent?.toolGroup;
         if (toolGroup) {
-          toolGroup.addViewport(viewportId1, renderingEngineId);
-          toolGroup.addViewport(viewportId2, renderingEngineId);
-          toolGroup.addViewport(viewportId3, renderingEngineId);
+          toolGroup.addViewport(this.viewportId, renderingEngineId);
         }
         volume['load']();
         await setVolumesForViewports(
@@ -130,24 +93,17 @@ export class ImageBoxComponent implements OnInit {
               callback: setCtTransferFunctionForVolumeActor,
             },
           ],
-          [viewportId1, viewportId2, viewportId3],
+          [this.viewportId],
         );
       }.bind(this),
     ).subscribe(() => {
-      const viewportId1 = 'CT_AXIAL';
-      const viewportId2 = 'CT_SAGITTAL';
-      const viewportId3 = 'CT_CORONAL';
-      this.renderingEngine.renderViewports([
-        viewportId1,
-        viewportId2,
-        viewportId3,
-      ]);
+      this.renderingEngine.renderViewports([this.viewportId]);
     });
   }
 
   changeOrientation(event: any) {
     const selectedValue = event?.target?.value;
-    const viewport = this.renderingEngine.getViewport('CT_AXIAL');
+    const viewport = this.renderingEngine.getViewport(this.viewportId);
 
     // TODO -> Maybe we should rename sliceNormal to viewPlaneNormal everywhere?
     let viewUp;
@@ -155,18 +111,10 @@ export class ImageBoxComponent implements OnInit {
 
     switch (selectedValue) {
       case 'AXIAL':
-        viewUp = ORIENTATION['AXIAL'].viewUp;
-        viewPlaneNormal = ORIENTATION['AXIAL'].sliceNormal;
-        break;
-      case 'SAGITTAL':
-        viewUp = ORIENTATION['SAGITTAL'].viewUp;
-        viewPlaneNormal = ORIENTATION['SAGITTAL'].sliceNormal;
-
-        break;
       case 'CORONAL':
-        viewUp = ORIENTATION['CORONAL'].viewUp;
-        viewPlaneNormal = ORIENTATION['CORONAL'].sliceNormal;
-
+      case 'SAGITTAL':
+        viewUp = ORIENTATION[selectedValue].viewUp;
+        viewPlaneNormal = ORIENTATION[selectedValue].sliceNormal;
         break;
       case 'OBLIQUE':
         // Some random oblique value for this dataset
@@ -174,7 +122,6 @@ export class ImageBoxComponent implements OnInit {
         viewPlaneNormal = [
           -0.5962687530844388, 0.5453181550345819, -0.5891448751239446,
         ];
-
         break;
       default:
         throw new Error('undefined orientation option');

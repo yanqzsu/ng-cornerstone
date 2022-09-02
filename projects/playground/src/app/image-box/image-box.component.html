@@ -1,15 +1,17 @@
 <div class="operations">
-  <tool-group [toolList]="toolList" [toolGroupId]='toolGroupId'></tool-group>
+  <tool-group [toolList]="toolList" [toolGroupId]="toolGroupId"></tool-group>
   <select (change)="changeOrientation($event)">
     <option
-      *ngFor="let orientation of orientationList"
-      [value]="orientation"
-      [label]="orientation"
+      *ngFor="let value of orientationList"
+      [value]="value"
+      [label]="value"
+      [selected]="orientation === value"
     ></option>
   </select>
 </div>
-<div #container class="container">
-  <div #axial class="image-box"></div>
-  <div #sagittal class="image-box"></div>
-  <div #coronal class="image-box"></div>
+<div class="container">
+  <app-viewport
+    [viewportId]="viewportId"
+    [orientation]="orientation"
+  ></app-viewport>
 </div>

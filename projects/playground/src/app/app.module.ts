@@ -12,6 +12,7 @@ import { NiIconModule } from './icon/icon.module';
 import { ButtonComponent } from './button/button.component';
 import { ButtonGroupComponent } from './button-group/button-group.component';
 import { ToolGroupComponent } from './tool-group/tool-group.component';
+import { ViewportComponent } from './viewport/viewport.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { ToolGroupComponent } from './tool-group/tool-group.component';
     ButtonComponent,
     ButtonGroupComponent,
     ToolGroupComponent,
+    ViewportComponent,
   ],
   imports: [
     BrowserModule,
