@@ -9,7 +9,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   RenderingEngine,
   setVolumesForViewports,
@@ -84,7 +84,7 @@ export class ImageBoxComponent implements OnInit, AfterViewInit, OnChanges {
       },
     },
     {
-      viewportId: 'VIEWPORT_ID_3',
+      viewportId: 'VIEWPORT_ID_2',
       type: ViewportType.ORTHOGRAPHIC,
       defaultOptions: {
         orientation: ORIENTATION[OrientationEnum.SAGITTAL],
@@ -130,7 +130,6 @@ export class ImageBoxComponent implements OnInit, AfterViewInit, OnChanges {
     this.renderingEngine.setViewports(viewportInputArray);
 
     this.volumeRefreshSubject.subscribe(async (value) => {
-      console.warn('volume load');
       const imageIds = await createImageIdsAndCacheMetaData(value);
       const volumeID = `${this.volumeLoaderScheme}:${value.volumeId}`;
       const volume = await volumeLoader.createAndCacheVolume(volumeID, {
