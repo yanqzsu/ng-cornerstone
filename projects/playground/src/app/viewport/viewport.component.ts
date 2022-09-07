@@ -1,8 +1,10 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { Types, Enums, CONSTANTS } from '@cornerstonejs/core';
-
-import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types/IViewport';
-import { OrientationEnum } from '../core/constants';
+import {
+  Component,
+  ElementRef,
+  HostBinding,
+  Input,
+  OnInit,
+} from '@angular/core';
 
 @Component({
   selector: 'app-viewport',
@@ -14,19 +16,11 @@ export class ViewportComponent implements OnInit {
   viewportId = 'viewport';
 
   @Input()
-  orientation: OrientationEnum = OrientationEnum.AXIAL;
+  renderingEngineId: string = '';
 
-  get viewportInput(): PublicViewportInput {
-    return {
-      viewportId: this.viewportId,
-      type: Enums.ViewportType.ORTHOGRAPHIC,
-      element: this.element.nativeElement,
-      defaultOptions: {
-        orientation: CONSTANTS.ORIENTATION[this.orientation],
-        background: <Types.Point3>[0, 0, 0],
-      },
-    };
-  }
+  @Input()
+  @HostBinding('class.focus')
+  focus: boolean = false;
 
   constructor(public element: ElementRef) {}
 

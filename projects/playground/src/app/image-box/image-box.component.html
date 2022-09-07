@@ -1,17 +1,17 @@
 <div class="operations">
-  <tool-group [toolList]="toolList" [toolGroupId]="toolGroupId" [viewportId]='viewportId' [renderEngineId]='renderingEngineId'></tool-group>
-  <select (change)="changeOrientation($event)">
-    <option
-      *ngFor="let value of orientationList"
-      [value]="value"
-      [label]="value"
-      [selected]="orientation === value"
-    ></option>
-  </select>
+  <tool-group
+    [toolList]="toolList"
+    [viewportIds]="viewportIds"
+    [renderingEngineId]="renderingEngineId"
+    [focusedViewportId]="focusedViewportId"
+  ></tool-group>
 </div>
 <div class="container">
   <app-viewport
+    *ngFor="let viewportId of viewportIds"
     [viewportId]="viewportId"
-    [orientation]="orientation"
+    [renderingEngineId]="renderingEngineId"
+    [focus]="viewportId === focusedViewportId"
+    (click)="focusViewport(viewportId)"
   ></app-viewport>
 </div>

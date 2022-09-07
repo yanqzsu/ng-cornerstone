@@ -9,3 +9,11 @@
     [text]="config.label"
   ></button>
 </button-group>
+<select (change)="changeOrientation($event)">
+  <option
+    *ngFor="let value of OrientationStringList"
+    [value]="value"
+    [label]="value"
+    [selected]="orientation === value"
+  ></option>
+</select>

@@ -2,5 +2,9 @@
   display: block;
   width: 100%;
   height: 100%;
-  border: 1px solid gray;
+  border: 2px solid gray;
+}
+
+:host:focus, :host:active, :host.focus  {
+  border: 2px solid green;
 }

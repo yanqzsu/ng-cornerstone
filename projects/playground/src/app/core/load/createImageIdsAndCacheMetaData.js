@@ -8,13 +8,10 @@ import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import WADORSHeaderProvider from '../provider/WADORSHeaderProvider';
 import ptScalingMetaDataProvider from '../provider/ptScalingMetaDataProvider';
 import getPixelSpacingInformation from './getPixelSpacingInformation';
+import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 
 const { DicomMetaDictionary } = dcmjs.data;
 const { calibratedPixelSpacingMetadataProvider } = utilities;
-
-const VOLUME = 'volume';
-const STACK = 'stack';
-
 /**
  * Uses dicomweb-client to fetch metadata of a study, cache it in cornerstone,
  * and return a list of imageIds for the frames.
@@ -25,19 +22,16 @@ const STACK = 'stack';
  * @returns {string[]} An array of imageIds for instances in the study.
  */
 
-export default async function createImageIdsAndCacheMetaData({
-  StudyInstanceUID,
-  SeriesInstanceUID,
-  wadoRsRoot,
-  type,
-}) {
+export default async function createImageIdsAndCacheMetaData(value) {
+  const { studyInstanceUID, seriesInstanceUID, wadoRsRoot, viewportType } =
+    value;
   const SOP_INSTANCE_UID = '00080018';
   const SERIES_INSTANCE_UID = '0020000E';
   const MODALITY = '00080060';
 
   const studySearchOptions = {
-    studyInstanceUID: StudyInstanceUID,
-    seriesInstanceUID: SeriesInstanceUID,
+    studyInstanceUID: studyInstanceUID,
+    seriesInstanceUID: seriesInstanceUID,
   };
 
   const client = new api.DICOMwebClient({ url: wadoRsRoot });
@@ -45,20 +39,25 @@ export default async function createImageIdsAndCacheMetaData({
   const modality = instances[0][MODALITY].Value[0];
 
   const imageIds = instances.map((instanceMetaData) => {
-    const SeriesInstanceUID = instanceMetaData[SERIES_INSTANCE_UID].Value[0];
-    const SOPInstanceUID = instanceMetaData[SOP_INSTANCE_UID].Value[0];
+    const seriesInstanceUID = instanceMetaData[SERIES_INSTANCE_UID].Value[0];
+    const sopInstanceUID = instanceMetaData[SOP_INSTANCE_UID].Value[0];
 
-    const prefix = type === VOLUME ? 'streaming-wadors:' : 'wadors:';
+    // const prefix =
+    //   type === ViewportType.ORTHOGRAPHIC ? 'streaming-wadors:' : 'wadors:';
+    const prefix =
+      viewportType === ViewportType.ORTHOGRAPHIC
+        ? 'streaming-wadors:'
+        : 'wadors:';
 
     const imageId =
       prefix +
       wadoRsRoot +
       '/studies/' +
-      StudyInstanceUID +
+      studyInstanceUID +
       '/series/' +
-      SeriesInstanceUID +
+      seriesInstanceUID +
       '/instances/' +
-      SOPInstanceUID +
+      sopInstanceUID +
       '/frames/1';
 
     cornerstoneWADOImageLoader.wadors.metaDataManager.add(

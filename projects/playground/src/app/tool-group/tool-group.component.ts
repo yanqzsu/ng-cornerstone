@@ -19,6 +19,9 @@ import {
   ToolGroupManager,
 } from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
+import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
+import { getRenderingEngine } from '@cornerstonejs/core';
+import { OrientationEnum, OrientationStringList } from '../core/constants';
 
 @Component({
   selector: 'tool-group',
@@ -28,6 +31,7 @@ import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 })
 export class ToolGroupComponent implements OnInit {
   private destroy$ = new Subject<void>();
+  OrientationStringList = OrientationStringList;
 
   @Input()
   toolList: ToolEnum[] = [];
@@ -36,16 +40,19 @@ export class ToolGroupComponent implements OnInit {
   toolGroupId: string = 'MY_TOOLGROUP_ID';
 
   @Input()
-  viewportId: string = '';
+  viewportIds: string[] = [];
   @Input()
-  renderEngineId: string = '';
+  focusedViewportId: string = '';
+
+  @Input()
+  renderingEngineId: string = '';
 
   public toolGroup!: IToolGroup;
   toolConfigList: ToolConfig[] = [];
-
+  orientation = OrientationEnum.SAGITTAL;
   activeTool?: ToolConfig;
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;
@@ -63,6 +70,12 @@ export class ToolGroupComponent implements OnInit {
         this.toolGroup.addTool(value.name);
       }
     });
+    this.viewportIds.forEach((viewportId) => {
+      this.toolGroup.addViewport(viewportId, this.renderingEngineId);
+    });
+    if (!this.focusedViewportId) {
+      this.focusedViewportId = this.viewportIds[0];
+    }
   }
 
   toolActive(toolConfig: ToolConfig) {
@@ -75,9 +88,45 @@ export class ToolGroupComponent implements OnInit {
       this.toolGroup.setToolActive(this.activeTool?.name!, {
         bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
       });
+      this.toolGroup.setViewportsCursorByToolName;
     } else if (toolConfig.callback) {
-      toolConfig?.callback(this.renderEngineId, this.viewportId);
+      toolConfig?.callback(this.renderingEngineId, this.focusedViewportId);
     }
+  }
+
+  changeOrientation(event: any) {
+    const selectedValue = event?.target?.value;
+    const renderingEngine = getRenderingEngine(this.renderingEngineId);
+    const viewport = renderingEngine!.getViewport(this.focusedViewportId);
+
+    // TODO -> Maybe we should rename sliceNormal to viewPlaneNormal everywhere?
+    let viewUp;
+    let viewPlaneNormal;
+
+    switch (selectedValue) {
+      case 'AXIAL':
+      case 'CORONAL':
+      case 'SAGITTAL':
+        viewUp = ORIENTATION[selectedValue].viewUp;
+        viewPlaneNormal = ORIENTATION[selectedValue].sliceNormal;
+        break;
+      case 'OBLIQUE':
+        // Some random oblique value for this dataset
+        viewUp = [-0.5962687530844388, 0.5453181550345819, -0.5891448751239446];
+        viewPlaneNormal = [
+          -0.5962687530844388, 0.5453181550345819, -0.5891448751239446,
+        ];
+        break;
+      default:
+        throw new Error('undefined orientation option');
+    }
+
+    // TODO -> Maybe we should have a helper for this on the viewport
+    // Set the new orientation
+    viewport.setCamera({ viewUp, viewPlaneNormal });
+    // Reset the camera after the normal changes
+    viewport.resetCamera();
+    viewport.render();
   }
 
   ngOnDestroy(): void {
