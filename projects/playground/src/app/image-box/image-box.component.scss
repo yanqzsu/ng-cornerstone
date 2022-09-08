@@ -9,3 +9,8 @@
 tool-group {
   display: inline-flex;
 }
+
+.hidden {
+  //display: none;
+  visibility: hidden;
+}

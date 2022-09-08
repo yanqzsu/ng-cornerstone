@@ -46,7 +46,7 @@ export class AppComponent {
     volumeId: 'imageInfoVolume2',
   };
 
-  imageInfo: ImageInfo = this.imageInfoVolume;
+  imageInfo: ImageInfo = this.imageInfoVolume2;
   switchImage(imageInfo: ImageInfo) {
     this.imageInfo = imageInfo;
   }

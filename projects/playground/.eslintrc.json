@@ -10,8 +10,8 @@
       ],
       "parserOptions": {
         "project": [
-          "projects/playground/tsconfig.app.json",
-          "projects/playground/tsconfig.spec.json"
+          "playground/tsconfig.app.json",
+          "playground/tsconfig.spec.json"
         ],
         "createDefaultProgram": true
       },

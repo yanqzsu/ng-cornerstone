@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { TOOL_CONFIG_MAP, ToolConfig, ToolEnum } from './tool.config';
 import {
@@ -10,28 +17,28 @@ import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
 import { getRenderingEngine } from '@cornerstonejs/core';
 import { OrientationEnum, OrientationStringList } from '../core/constants';
+import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 
 @Component({
-  selector: 'tool-group',
+  selector: 'app-tool-group',
   exportAs: 'appToolGroup',
   templateUrl: './tool-group.component.html',
   styleUrls: ['./tool-group.component.scss'],
 })
-export class ToolGroupComponent implements OnInit {
+export class ToolGroupComponent implements OnInit, OnChanges, OnDestroy {
   private destroy$ = new Subject<void>();
   OrientationStringList = OrientationStringList;
 
   @Input()
   toolList: ToolEnum[] = [];
-
   @Input()
   toolGroupId: string = 'MY_TOOLGROUP_ID';
-
   @Input()
   viewportIds: string[] = [];
   @Input()
+  viewportType: ViewportType = ViewportType.ORTHOGRAPHIC;
+  @Input()
   focusedViewportId: string = '';
-
   @Input()
   renderingEngineId: string = '';
 
@@ -41,6 +48,22 @@ export class ToolGroupComponent implements OnInit {
   activeTool?: ToolConfig;
 
   constructor() {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const { viewportType } = changes;
+    if (viewportType) {
+      // @ts-ignore
+      this.toolConfigList = this.toolList
+        .map((tool) => {
+          return TOOL_CONFIG_MAP[tool];
+        })
+        .filter(
+          (value) =>
+            value !== undefined &&
+            value.types.findIndex((type) => type === this.viewportType) > -1,
+        );
+    }
+  }
 
   ngOnInit(): void {
     this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;

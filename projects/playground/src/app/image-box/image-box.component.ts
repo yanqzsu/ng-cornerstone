@@ -1,9 +1,9 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
-  OnInit,
   QueryList,
   SimpleChanges,
   ViewChild,
@@ -27,6 +27,7 @@ import { OrientationEnum } from '../core/constants';
 import { ViewportComponent } from '../viewport/viewport.component';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types/IViewport';
+import setStacksForViewports from '../core/load/setStackForViewports';
 
 export interface ImageInfo {
   studyInstanceUID: string;
@@ -42,7 +43,7 @@ export type ViewportConfig = Omit<PublicViewportInput, 'element'>;
   templateUrl: './image-box.component.html',
   styleUrls: ['./image-box.component.scss'],
 })
-export class ImageBoxComponent implements OnInit, AfterViewInit, OnChanges {
+export class ImageBoxComponent implements AfterViewInit, OnChanges {
   @Input()
   imageInfo!: ImageInfo;
   volumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
@@ -72,7 +73,8 @@ export class ImageBoxComponent implements OnInit, AfterViewInit, OnChanges {
 
   @ViewChildren(ViewportComponent)
   viewports!: QueryList<ViewportComponent>;
-  viewportIds: string[];
+  viewportType: ViewportType;
+  viewportIds: string[] = [];
   focusedViewportId: string = '';
   viewportConfigs: ViewportConfig[] = [
     {
@@ -99,13 +101,21 @@ export class ImageBoxComponent implements OnInit, AfterViewInit, OnChanges {
         background: <Types.Point3>[0, 0, 0],
       },
     },
+    {
+      viewportId: 'VIEWPORT_ID_5',
+      type: ViewportType.STACK,
+      defaultOptions: {
+        background: <Types.Point3>[0, 0, 0],
+      },
+    },
   ];
 
   private volumeRefreshSubject = new Subject<ImageInfo>();
 
-  constructor() {
+  constructor(private cdr: ChangeDetectorRef) {
     this.renderingEngine = new RenderingEngine(this.renderingEngineId);
-    this.viewportIds = this.viewportConfigs.map((config) => config.viewportId!);
+    this.viewportType = ViewportType.ORTHOGRAPHIC;
+    this.viewportIds = this.viewportConfigs.map((config) => config.viewportId);
     this.focusedViewportId = this.viewportIds[0];
   }
 
@@ -130,28 +140,49 @@ export class ImageBoxComponent implements OnInit, AfterViewInit, OnChanges {
     this.renderingEngine.setViewports(viewportInputArray);
 
     this.volumeRefreshSubject.subscribe(async (value) => {
+      this.viewportType = value.viewportType;
+      this.cdr.detectChanges();
+      const viewportIds = this.viewportConfigs
+        .filter((config) => config.type === value.viewportType)
+        .map((value) => value.viewportId);
       const imageIds = await createImageIdsAndCacheMetaData(value);
-      const volumeID = `${this.volumeLoaderScheme}:${value.volumeId}`;
-      const volume = await volumeLoader.createAndCacheVolume(volumeID, {
-        imageIds,
-      });
-      volume['load']();
-      await setVolumesForViewports(
-        this.renderingEngine,
-        [
-          {
-            volumeId: volumeID,
-            callback: setCtTransferFunctionForVolumeActor,
-          },
-        ],
-        this.viewportIds,
-        true,
-      );
+      if (value.viewportType === ViewportType.ORTHOGRAPHIC) {
+        const volumeID = `${this.volumeLoaderScheme}:${value.volumeId}`;
+        const volume = await volumeLoader.createAndCacheVolume(volumeID, {
+          imageIds,
+        });
+        volume['load']();
+        await setVolumesForViewports(
+          this.renderingEngine,
+          [
+            {
+              volumeId: volumeID,
+              callback: setCtTransferFunctionForVolumeActor,
+            },
+          ],
+          viewportIds,
+          true,
+        );
+      } else if (value.viewportType === ViewportType.STACK) {
+        // const viewport = this.renderingEngine.getViewport(
+        //   viewportIds[0],
+        // ) as IStackViewport;
+        // // this.renderingEngine.enableElement(viewport);
+        // await viewport.setStack(imageIds, 0);
+        // // Set the VOI of the stack
+        // viewport.setProperties({ voiRange: ctVoiRange });
+        // // Render the image
+        // viewport.render();
+        await setStacksForViewports(
+          this.renderingEngine,
+          viewportIds,
+          imageIds,
+          0,
+        );
+      }
     });
     this.volumeRefreshSubject.next(this.imageInfo);
   }
-
-  ngOnInit(): void {}
 
   focusViewport(viewportId: string) {
     this.focusedViewportId = viewportId;

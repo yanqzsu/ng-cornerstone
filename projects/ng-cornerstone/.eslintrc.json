@@ -10,8 +10,8 @@
       ],
       "parserOptions": {
         "project": [
-          "projects/ng-cornerstone/tsconfig.lib.json",
-          "projects/ng-cornerstone/tsconfig.spec.json"
+          "ng-cornerstone/tsconfig.lib.json",
+          "ng-cornerstone/tsconfig.spec.json"
         ],
         "createDefaultProgram": true
       },

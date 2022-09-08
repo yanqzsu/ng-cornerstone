@@ -1,17 +1,20 @@
 <div class="operations">
-  <tool-group
+  <app-tool-group
     [toolList]="toolList"
     [viewportIds]="viewportIds"
     [renderingEngineId]="renderingEngineId"
     [focusedViewportId]="focusedViewportId"
-  ></tool-group>
+    [viewportType]="viewportType"
+  ></app-tool-group>
 </div>
 <div class="container">
-  <app-viewport
-    *ngFor="let viewportId of viewportIds"
-    [viewportId]="viewportId"
-    [renderingEngineId]="renderingEngineId"
-    [focus]="viewportId === focusedViewportId"
-    (click)="focusViewport(viewportId)"
-  ></app-viewport>
+  <ng-container *ngFor="let config of viewportConfigs">
+    <app-viewport
+      [class.hidden]="config.type !== viewportType"
+      [viewportId]="config.viewportId"
+      [renderingEngineId]="renderingEngineId"
+      [focus]="config.viewportId === focusedViewportId"
+      (click)="focusViewport(config.viewportId)"
+    ></app-viewport>
+  </ng-container>
 </div>
