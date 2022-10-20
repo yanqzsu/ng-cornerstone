@@ -22,15 +22,12 @@ import {
 } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
-import {
-  ButtonComponent,
-  ButtonToggleChange,
-} from '../button/button.component';
+import { ButtonComponent, ButtonToggleChange } from './button.component';
 import { BooleanInput } from '@angular/cdk/coercion';
-import { InputBoolean } from '../core/util/convert';
+import { InputBoolean } from '../../core/util/convert';
 
 @Component({
-  selector: 'button-group',
+  selector: 'app-button-group',
   template: ` <ng-content></ng-content> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

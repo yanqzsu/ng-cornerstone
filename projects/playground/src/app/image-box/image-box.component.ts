@@ -66,6 +66,8 @@ export class ImageBoxComponent implements AfterViewInit, OnChanges {
     ToolEnum.EllipticalROITool,
     ToolEnum.TrackballRotateTool,
     ToolEnum.Rotate,
+    ToolEnum.Previous,
+    ToolEnum.Next,
     ToolEnum.FlipV,
     ToolEnum.FlipH,
     ToolEnum.Reset,

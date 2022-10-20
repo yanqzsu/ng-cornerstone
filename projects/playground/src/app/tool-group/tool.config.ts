@@ -45,6 +45,8 @@ export enum ToolEnum {
   FlipV,
   FlipH,
   Rotate,
+  Next,
+  Previous,
 }
 
 type Class<T> = new (...args: any[]) => T;
@@ -106,6 +108,39 @@ function rotate(renderingEngineId: string, viewportId: string): void {
   viewport.render();
 }
 
+function next(renderingEngineId: string, viewportId: string): void {
+  // Get the rendering engine
+  const renderingEngine = getRenderingEngine(renderingEngineId);
+  // Get the stack viewport
+  const viewport = <Types.IStackViewport>(
+    renderingEngine?.getViewport(viewportId)
+  );
+  // Get the current index of the image displayed
+  const currentImageIdIndex = viewport.getCurrentImageIdIndex();
+  // Increment the index, clamping to the last image if necessary
+  const numImages = viewport.getImageIds().length;
+  let newImageIdIndex = currentImageIdIndex + 1;
+  newImageIdIndex = Math.min(newImageIdIndex, numImages - 1);
+  // Set the new image index, the viewport itself does a re-render
+  viewport.setImageIdIndex(newImageIdIndex);
+}
+
+function previous(renderingEngineId: string, viewportId: string): void {
+  // Get the rendering engine
+  const renderingEngine = getRenderingEngine(renderingEngineId);
+  // Get the stack viewport
+  const viewport = <Types.IStackViewport>(
+    renderingEngine?.getViewport(viewportId)
+  );
+  // Get the current index of the image displayed
+  const currentImageIdIndex = viewport.getCurrentImageIdIndex();
+  // Increment the index, clamping to the first image if necessary
+  let newImageIdIndex = currentImageIdIndex - 1;
+  newImageIdIndex = Math.max(newImageIdIndex, 0);
+  // Set the new image index, the viewport itself does a re-render
+  viewport.setImageIdIndex(newImageIdIndex);
+}
+
 export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
   [ToolEnum.Reset]: {
     icon: 'dmv-recover',
@@ -133,6 +168,20 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     label: '旋转',
     name: 'rotate',
     callback: rotate,
+    types: [ViewportType.STACK],
+  },
+  [ToolEnum.Next]: {
+    icon: 'dmv-left',
+    label: '下一张',
+    name: 'next',
+    callback: next,
+    types: [ViewportType.STACK],
+  },
+  [ToolEnum.Previous]: {
+    icon: 'dmv-left',
+    label: '上一张',
+    name: 'previous',
+    callback: previous,
     types: [ViewportType.STACK],
   },
   [ToolEnum.ArrowAnnotateTool]: {

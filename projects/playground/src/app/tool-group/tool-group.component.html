@@ -1,4 +1,4 @@
-<button-group>
+<app-button-group>
   <button
     app-button
     *ngFor="let config of toolConfigList"
@@ -8,7 +8,7 @@
     [icon]="config.icon"
     [text]="config.label"
   ></button>
-</button-group>
+</app-button-group>
 <select (change)="changeOrientation($event)">
   <option
     *ngFor="let value of OrientationStringList"

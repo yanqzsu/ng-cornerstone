@@ -10,7 +10,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { InputBoolean } from '../core/util/convert';
+import { InputBoolean } from '../../core/util/convert';
 import { Observable, Subject } from 'rxjs';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
 
@@ -24,7 +24,7 @@ export interface ButtonToggleChange {
 }
 
 @Component({
-  selector: 'button[app-button], , a[app-button]',
+  selector: 'button[app-button], a[app-button]',
   exportAs: 'appButton',
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss'],

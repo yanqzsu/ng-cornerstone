@@ -9,8 +9,8 @@ import { IconComponent } from './icon.component';
   imports: [CommonModule],
   exports: [IconComponent],
 })
-export class NiIconModule {
-  static forRoot(iconJsPath: string[]): ModuleWithProviders<NiIconModule> {
+export class IconModule {
+  static forRoot(iconJsPath: string[]): ModuleWithProviders<IconModule> {
     const providers = iconJsPath.map((path) => {
       return {
         provide: ICONFONT_URL,
@@ -19,7 +19,7 @@ export class NiIconModule {
       };
     });
     return {
-      ngModule: NiIconModule,
+      ngModule: IconModule,
       providers,
     };
   }
