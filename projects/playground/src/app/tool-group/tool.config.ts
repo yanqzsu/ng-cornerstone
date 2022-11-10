@@ -171,7 +171,7 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     types: [ViewportType.STACK],
   },
   [ToolEnum.Next]: {
-    icon: 'dmv-left',
+    icon: 'dmv-right',
     label: '下一张',
     name: 'next',
     callback: next,

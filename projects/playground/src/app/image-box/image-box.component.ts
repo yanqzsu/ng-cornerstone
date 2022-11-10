@@ -23,19 +23,12 @@ import {
 import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
 import { ToolEnum } from '../tool-group/tool.config';
 import { ToolGroupComponent } from '../tool-group/tool-group.component';
-import { OrientationEnum } from '../core/constants';
+import { OrientationEnum, ImageInfo } from '../core';
 import { ViewportComponent } from '../viewport/viewport.component';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types/IViewport';
 import setStacksForViewports from '../core/load/setStackForViewports';
 
-export interface ImageInfo {
-  studyInstanceUID: string;
-  seriesInstanceUID: string;
-  wadoRsRoot: string;
-  viewportType: ViewportType;
-  volumeId: string;
-}
 export type ViewportConfig = Omit<PublicViewportInput, 'element'>;
 
 @Component({
@@ -45,7 +38,7 @@ export type ViewportConfig = Omit<PublicViewportInput, 'element'>;
 })
 export class ImageBoxComponent implements AfterViewInit, OnChanges {
   @Input()
-  imageInfo!: ImageInfo;
+  imageInfo?: ImageInfo;
   volumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
   volumeId = `${this.volumeLoaderScheme}:VOLUME_ID`; // VolumeId with loader id + volume id
   renderingEngineId = 'myRenderingEngine';
@@ -123,7 +116,7 @@ export class ImageBoxComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     const { imageInfo } = changes;
-    if (imageInfo) {
+    if (imageInfo && this.imageInfo) {
       this.volumeRefreshSubject.next(this.imageInfo!);
     }
   }
@@ -183,7 +176,6 @@ export class ImageBoxComponent implements AfterViewInit, OnChanges {
         );
       }
     });
-    this.volumeRefreshSubject.next(this.imageInfo);
   }
 
   focusViewport(viewportId: string) {

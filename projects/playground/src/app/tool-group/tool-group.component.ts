@@ -16,7 +16,7 @@ import {
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
 import { getRenderingEngine } from '@cornerstonejs/core';
-import { OrientationEnum, OrientationStringList } from '../core/constants';
+import { OrientationEnum, OrientationStringList } from '../core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 
 @Component({

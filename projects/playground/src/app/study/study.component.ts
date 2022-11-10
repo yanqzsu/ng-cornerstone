@@ -1,54 +1,68 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
-import { ImageInfo } from '../image-box/image-box.component';
+import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs';
+import { DICOM_SERVER, ImageInfo, SeriesInfo } from '../core';
+import { data } from 'dcmjs';
+const { DicomMetaDictionary } = data;
+import { api } from 'dicomweb-client';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-study',
   templateUrl: './study.component.html',
   styleUrls: ['./study.component.scss'],
 })
-export class StudyComponent {
-  imageInfoRemote = {
-    studyInstanceUID:
-      '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
-    seriesInstanceUID:
-      '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561',
-    wadoRsRoot: 'https://d1qmxk7r72ysft.cloudfront.net/dicomweb',
-    viewportType: ViewportType.ORTHOGRAPHIC,
-    volumeId: 'imageInfoRemote',
-  };
+export class StudyComponent implements OnInit {
+  imageInfo?: ImageInfo;
+  seriesInfos: SeriesInfo[] = [];
+  constructor(private route: ActivatedRoute) {}
 
-  imageInfoStack: ImageInfo = {
-    studyInstanceUID: '1.2.840.113619.2.207.3596.11798570.20933.1191218624.826',
-    seriesInstanceUID:
-      '1.2.840.113619.2.207.3596.11798570.20933.1191218624.828',
-    wadoRsRoot: 'http://10.81.20.156:8080/dicom-web',
-    viewportType: ViewportType.STACK,
-    volumeId: 'imageInfoStack',
-  };
-
-  imageInfoVolume: ImageInfo = {
-    studyInstanceUID:
-      '1.2.840.113711.7041813.2.3212.182276852.26.2116281012.16720',
-    seriesInstanceUID:
-      '1.3.12.2.1107.5.2.6.14114.30000006101211003631200000970',
-    wadoRsRoot: 'http://10.81.20.156:8080/dicom-web',
-    viewportType: ViewportType.ORTHOGRAPHIC,
-    volumeId: 'imageInfoVolume',
-  };
-
-  imageInfoVolume2: ImageInfo = {
-    studyInstanceUID: '1.2.392.200055.5.4.80861305518.20150928153455671288',
-    seriesInstanceUID:
-      '1.2.392.200036.9142.10002202.1020869001.2.20150928174647.30151',
-    wadoRsRoot: 'http://10.81.20.156:8080/dicom-web',
-    viewportType: ViewportType.ORTHOGRAPHIC,
-    volumeId: 'imageInfoVolume2',
-  };
-
-  imageInfo: ImageInfo = this.imageInfoVolume2;
-  constructor() {}
-  switchImage(imageInfo: ImageInfo) {
-    this.imageInfo = imageInfo;
+  ngOnInit(): void {
+    this.route.paramMap
+      .pipe(map((params) => params.get('id')))
+      .subscribe((uid) => {
+        const client = new api.DICOMwebClient({ url: DICOM_SERVER });
+        client
+          .searchForSeries({
+            studyInstanceUID: uid,
+          })
+          .then((series) => {
+            this.seriesInfos = series.map((seriesMeta) => {
+              const metadata =
+                DicomMetaDictionary.naturalizeDataset(seriesMeta);
+              console.log('series');
+              console.log(metadata);
+              return {
+                studyInstanceUID: uid,
+                seriesInstanceUID: metadata.SeriesInstanceUID,
+                wadoRsRoot: DICOM_SERVER,
+                volumeId: metadata.SeriesInstanceUID,
+                accessionNumber: metadata.AccessionNumber,
+                seriesDesc: metadata.SeriesDescription,
+                numberOfSeriesRelatedInstances:
+                  metadata.NumberOfSeriesRelatedInstances,
+              };
+            });
+            // if (this.seriesInfos.length > 0) {
+            //   this.switchImage(this.seriesInfos[0]);
+            // }
+          });
+      });
+  }
+  switchImage(event: CdkDragDrop<SeriesInfo[]>) {
+    if (event.previousContainer === event.container) {
+      return;
+    } else {
+      const seriesList = event.previousContainer.data;
+      this.imageInfo = {
+        wadoRsRoot: DICOM_SERVER,
+        viewportType: ViewportType.ORTHOGRAPHIC,
+        studyInstanceUID: seriesList[event.previousIndex].studyInstanceUID,
+        seriesInstanceUID: seriesList[event.previousIndex].seriesInstanceUID,
+        volumeId: seriesList[event.previousIndex].seriesInstanceUID,
+      };
+      console.log(this.imageInfo);
+    }
   }
 }

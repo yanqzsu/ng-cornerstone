@@ -1,8 +1,8 @@
 @font-face {
   font-family: "dmv"; /* Project id 3603247 */
-  src: url('iconfont.woff2?t=1661150743897') format('woff2'),
-       url('iconfont.woff?t=1661150743897') format('woff'),
-       url('iconfont.ttf?t=1661150743897') format('truetype');
+  src: url('iconfont.woff2?t=1666319901222') format('woff2'),
+       url('iconfont.woff?t=1666319901222') format('woff'),
+       url('iconfont.ttf?t=1666319901222') format('truetype');
 }
 
 .dmv {
@@ -13,24 +13,32 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.dmv-rectangle:before {
+  content: "\e88e";
+}
+
+.dmv-left:before {
+  content: "\e61d";
+}
+
+.dmv-right:before {
+  content: "\e62e";
+}
+
 .dmv-more:before {
-  content: "\e636";
+  content: "\e6ad";
+}
+
+.dmv-search:before {
+  content: "\e654";
 }
 
 .dmv-about:before {
   content: "\e637";
 }
 
-.dmv-left:before {
-  content: "\e638";
-}
-
 .dmv-recover:before {
   content: "\e639";
-}
-
-.dmv-rectangle:before {
-  content: "\e63a";
 }
 
 .dmv-pan:before {

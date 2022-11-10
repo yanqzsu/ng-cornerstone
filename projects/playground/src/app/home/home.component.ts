@@ -2,16 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { api } from 'dicomweb-client';
 import { data } from 'dcmjs';
+import { Router } from '@angular/router';
+import { DICOM_SERVER, StudyInfo } from '../core';
 
-const QIDO_SERVER: string = 'http://10.81.20.156:8080/dicom-web';
 const { DicomMetaDictionary } = data;
-
-export interface Study {
-  patientName?: string;
-  studyDate?: Date;
-  patientId?: string;
-  modality?: string;
-}
 
 @Component({
   selector: 'app-home',
@@ -19,34 +13,40 @@ export interface Study {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  studyList: Study[] = [];
+  studyList: StudyInfo[] = [];
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
-    this.httpClient
-      .get(QIDO_SERVER + '/studies', {
-        responseType: 'json',
-      })
-      .subscribe((value) => {
-        if (value) {
-          console.log(value);
-        }
-      });
-    const client = new api.DICOMwebClient({ url: QIDO_SERVER });
+    // this.httpClient
+    //   .get(DICOM_SERVER + '/studies', {
+    //     responseType: 'json',
+    //   })
+    //   .subscribe((value) => {
+    //     if (value) {
+    //       console.log(value);
+    //     }
+    //   });
+    const client = new api.DICOMwebClient({ url: DICOM_SERVER });
     client.searchForStudies().then((studies) => {
-      const studyObject = studies.map((studyMeta) => {
-        const instance = DicomMetaDictionary.naturalizeDataset(studyMeta);
-        console.log(instance);
+      const studyObject = studies.map((study) => {
+        const metadata = DicomMetaDictionary.naturalizeDataset(study);
+        console.log('study');
+        console.log(metadata);
         return {
-          patientName: instance.PatientName.Alphabetic,
-          studyDate: instance.StudyDate,
-          patientId: instance.PatientID,
-          modality: instance.ModalitiesInStudy,
+          patientName: metadata.PatientName.Alphabetic,
+          studyDate: metadata.StudyDate,
+          patientId: metadata.PatientID,
+          modality: metadata.ModalitiesInStudy,
+          studyInstanceUID: metadata.StudyInstanceUID,
         };
       });
       this.studyList = [...studyObject];
       console.log(studyObject);
     });
+  }
+
+  gotoStudy(study: StudyInfo) {
+    this.router.navigate(['study', study.studyInstanceUID]);
   }
 }

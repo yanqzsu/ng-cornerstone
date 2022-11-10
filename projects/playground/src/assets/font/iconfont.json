@@ -6,11 +6,39 @@
   "description": "dicom mobile viewer",
   "glyphs": [
     {
-      "icon_id": "31393877",
+      "icon_id": "12310332",
+      "name": "rectangle",
+      "font_class": "rectangle",
+      "unicode": "e88e",
+      "unicode_decimal": 59534
+    },
+    {
+      "icon_id": "11266190",
+      "name": "left",
+      "font_class": "left",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "11267679",
+      "name": "right",
+      "font_class": "right",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "269810",
       "name": "more",
       "font_class": "more",
-      "unicode": "e636",
-      "unicode_decimal": 58934
+      "unicode": "e6ad",
+      "unicode_decimal": 59053
+    },
+    {
+      "icon_id": "109785",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e654",
+      "unicode_decimal": 58964
     },
     {
       "icon_id": "31393878",
@@ -20,25 +48,11 @@
       "unicode_decimal": 58935
     },
     {
-      "icon_id": "31393879",
-      "name": "left",
-      "font_class": "left",
-      "unicode": "e638",
-      "unicode_decimal": 58936
-    },
-    {
       "icon_id": "31393880",
       "name": "recover",
       "font_class": "recover",
       "unicode": "e639",
       "unicode_decimal": 58937
-    },
-    {
-      "icon_id": "31393881",
-      "name": "rectangle",
-      "font_class": "rectangle",
-      "unicode": "e63a",
-      "unicode_decimal": 58938
     },
     {
       "icon_id": "31393884",

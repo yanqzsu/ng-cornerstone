@@ -1,8 +1,21 @@
-<app-button-group>
-  <button app-button [content]="'text'" [text]="'local volume'" [isToggle]="true" (click)='switchImage(imageInfoVolume)'></button>
-  <button app-button  [content]="'text'" [text]="'remove volume'" [isToggle]="true"  (click)='switchImage(imageInfoRemote)'></button>
-  <button app-button [content]="'text'"  [text]="'local stack'" [isToggle]="true"  (click)='switchImage(imageInfoStack)'></button>
-  <button app-button [content]="'text'"  [text]="'local volume2'" [isToggle]="true"  (click)='switchImage(imageInfoVolume2)'></button>
-</app-button-group>
-
-<app-image-box [imageInfo]="imageInfo"></app-image-box>
+<app-collapse-item>
+  <div
+    class="series-panel"
+    cdkDropList
+    [cdkDropListData]="seriesInfos"
+    #seriesList="cdkDropList"
+    [cdkDropListConnectedTo]="[imageBox]"
+  >
+    <app-series
+      cdkDrag
+      *ngFor="let series of seriesInfos"
+      [seriesInfo]="series"
+    ></app-series>
+  </div>
+</app-collapse-item>
+<app-image-box
+  cdkDropList
+  #imageBox="cdkDropList"
+  (cdkDropListDropped)="switchImage($event)"
+  [imageInfo]="imageInfo"
+></app-image-box>

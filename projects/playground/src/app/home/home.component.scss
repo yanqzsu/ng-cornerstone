@@ -1,0 +1,58 @@
+@use '../../assets/styles/index';
+
+:host {
+  margin-left: 10px;
+  margin-right: 10px;
+  display: flex;
+  flex-flow: column;
+}
+.search-bar{
+  display: flex;
+  width: 100%;
+  .control-prefix {
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: -40px;
+    z-index: 2;
+    [app-icon] {
+      color: grey;
+      font-size: 20px;
+    }
+  }
+  .control {
+    padding-left: 40px;
+    border: 1px green solid;
+    border-radius: 16px;
+    line-height: 40px;
+    width: 100%;
+    font-size: 20px;
+  }
+}
+
+.study-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 5px 20px ;
+  width: 100%;
+  cursor: pointer;
+  &:hover {
+    transform: translate3d(0px, 2px, 200px);
+    perspective: 400px;
+  }
+}
+app-list-item {
+  border-radius: 10px;
+  &:nth-child(even) {
+    background-color: index.$white-3;
+  }
+  &:nth-child(odd) {
+    background-color: index.$white-4;
+  }
+}
+
+

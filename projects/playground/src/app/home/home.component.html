@@ -1,8 +1,16 @@
+<div class="search-bar">
+  <div class="control-prefix">
+    <i app-icon="dmv-search"></i>
+  </div>
+  <input type="search" class="control" />
+</div>
 <app-list>
   <app-list-item *ngFor="let study of studyList">
-    <span>{{ study.patientName }}' '</span>
-    <span>{{ study.patientId }}' '</span>
-    <span>{{ study.studyDate }}' '</span>
-    <span>{{ study.modality }}' '</span>
+    <div class="study-item" (click)="gotoStudy(study)">
+      <span>{{ study.patientName }}</span>
+      <span>{{ study.modality }}</span>
+      <span>{{ study.patientId }}</span>
+      <span>{{ study.studyDate }}</span>
+    </div>
   </app-list-item>
 </app-list>

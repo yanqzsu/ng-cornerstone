@@ -15,14 +15,18 @@ import { ComponentsModule } from './components/components.module';
 import { ButtonModule } from './components/button/button.module';
 import { ListModule } from './components/list/list.module';
 import { HttpClientModule } from '@angular/common/http';
+import { CollapseModule } from './components/collapse/collapse.module';
+import { SeriesComponent } from './series/series.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    StudyComponent,
-    ImageBoxComponent,
     ToolGroupComponent,
+    StudyComponent,
+    SeriesComponent,
+    ImageBoxComponent,
     ViewportComponent,
   ],
   imports: [
@@ -30,11 +34,13 @@ import { HttpClientModule } from '@angular/common/http';
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    DragDropModule,
     CoreModule.forRoot(),
     IconModule.forRoot(['./assets/font/iconfont.js']),
     ComponentsModule,
     ButtonModule,
     ListModule,
+    CollapseModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
