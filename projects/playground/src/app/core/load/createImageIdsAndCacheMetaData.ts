@@ -1,13 +1,16 @@
 import { api } from 'dicomweb-client';
 import dcmjs from 'dcmjs';
-import { calculateSUVScalingFactors } from '@cornerstonejs/calculate-suv';
+import {
+  calculateSUVScalingFactors,
+  InstanceMetadata,
+} from '@cornerstonejs/calculate-suv';
 import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import { utilities } from '@cornerstonejs/core';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 
 import WADORSHeaderProvider from '../provider/WADORSHeaderProvider';
 import ptScalingMetaDataProvider from '../provider/ptScalingMetaDataProvider';
-import getPixelSpacingInformation from './getPixelSpacingInformation';
+import { getPixelSpacingInformation } from './getPixelSpacingInformation';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 
 const { DicomMetaDictionary } = dcmjs.data;
@@ -59,7 +62,7 @@ export default async function createImageIdsAndCacheMetaData(value) {
       '/instances/' +
       sopInstanceUID +
       '/frames/1';
-
+    console.log(imageId);
     cornerstoneWADOImageLoader.wadors.metaDataManager.add(
       imageId,
       instanceMetaData,
@@ -70,12 +73,16 @@ export default async function createImageIdsAndCacheMetaData(value) {
     // Add calibrated pixel spacing
     const m = JSON.parse(JSON.stringify(instanceMetaData));
     const instance = DicomMetaDictionary.naturalizeDataset(m);
-    const pixelSpacing = getPixelSpacingInformation(instance);
-
-    calibratedPixelSpacingMetadataProvider.add(
-      imageId,
-      pixelSpacing.map((s) => parseFloat(s)),
-    );
+    const spacingInfo = getPixelSpacingInformation(instance);
+    if (spacingInfo && Array.isArray(spacingInfo.pixelSpacing)) {
+      calibratedPixelSpacingMetadataProvider.add(
+        imageId,
+        spacingInfo.pixelSpacing.map((s) => parseFloat(String(s))) as [
+          number,
+          number,
+        ],
+      );
+    }
 
     return imageId;
   });
@@ -83,7 +90,7 @@ export default async function createImageIdsAndCacheMetaData(value) {
   // we don't want to add non-pet
   // Note: for 99% of scanners SUV calculation is consistent bw slices
   if (modality === 'PT') {
-    const InstanceMetadataArray = [];
+    const InstanceMetadataArray: InstanceMetadata[] = [];
     imageIds.forEach((imageId) => {
       const instanceMetadata = getPTImageIdInstanceMetadata(imageId);
 
@@ -92,8 +99,9 @@ export default async function createImageIdsAndCacheMetaData(value) {
       // It's showing up like 'DECY\\ATTN\\SCAT\\DTIM\\RAN\\RADL\\DCAL\\SLSENS\\NORM'
       // but calculate-suv expects ['DECY', 'ATTN', ...]
       if (typeof instanceMetadata.CorrectedImage === 'string') {
-        instanceMetadata.CorrectedImage =
-          instanceMetadata.CorrectedImage.split('\\');
+        instanceMetadata.CorrectedImage = (
+          instanceMetadata.CorrectedImage as string
+        ).split('\\');
       }
 
       if (instanceMetadata) {

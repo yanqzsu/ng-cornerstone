@@ -3,20 +3,20 @@ import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import { utilities } from '@cornerstonejs/core';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import WADORSHeaderProvider from '../provider/WADORSHeaderProvider';
-import getPixelSpacingInformation from './getPixelSpacingInformation';
+import { getPixelSpacingInformation } from './getPixelSpacingInformation';
 const { calibratedPixelSpacingMetadataProvider } = utilities;
 import { DICOM_SERVER } from '../config/server';
 const { DicomMetaDictionary } = data;
 
 export function createSingleImageIdsAndCacheMetaData(
-  instanceMetaData: any,
+  instance: any,
   isWadoRs: boolean = true,
 ) {
-  const metadata = DicomMetaDictionary.naturalizeDataset(instanceMetaData);
-  const studyInstanceUID = metadata.StudyInstanceUID;
-  const seriesInstanceUID = metadata.SeriesInstanceUID;
-  const sopInstanceUID = metadata.SOPInstanceUID;
-  const numberOfFrames = metadata.NumberOfFrames;
+  const instanceMetaData = DicomMetaDictionary.naturalizeDataset(instance);
+  const studyInstanceUID = instanceMetaData.StudyInstanceUID;
+  const seriesInstanceUID = instanceMetaData.SeriesInstanceUID;
+  const sopInstanceUID = instanceMetaData.SOPInstanceUID;
+  const numberOfFrames = instanceMetaData.NumberOfFrames;
   const prefix = isWadoRs ? 'wadors:' : 'wadouri:';
   let imageId;
   if (numberOfFrames > 0) {
@@ -30,7 +30,8 @@ export function createSingleImageIdsAndCacheMetaData(
       '/instances/' +
       sopInstanceUID +
       '/frames/' +
-      Math.round(numberOfFrames / 2);
+      1;
+    // Math.round(numberOfFrames / 2);
   } else {
     imageId =
       prefix +
@@ -41,24 +42,26 @@ export function createSingleImageIdsAndCacheMetaData(
       seriesInstanceUID +
       '/instances/' +
       sopInstanceUID +
-      '/frames/1';
+      // '/pixeldata';
+      '/frames/' +
+      1;
   }
+  console.log(seriesInstanceUID + ' ' + sopInstanceUID);
+  cornerstoneWADOImageLoader.wadors.metaDataManager.add(imageId, instance);
 
-  cornerstoneWADOImageLoader.wadors.metaDataManager.add(
-    imageId,
-    instanceMetaData,
-  );
-
-  WADORSHeaderProvider.addInstance(imageId, instanceMetaData);
+  WADORSHeaderProvider.addInstance(imageId, instance);
 
   // Add calibrated pixel spacing
-  const pixelSpacing = getPixelSpacingInformation(metadata);
-
-  calibratedPixelSpacingMetadataProvider.add(
-    imageId,
-    pixelSpacing.map((s) => parseFloat(s)),
-  );
-
+  const spaceInfo = getPixelSpacingInformation(instanceMetaData);
+  if (spaceInfo && Array.isArray(spaceInfo.pixelSpacing)) {
+    calibratedPixelSpacingMetadataProvider.add(
+      imageId,
+      spaceInfo.pixelSpacing.map((s) => parseFloat(String(s))) as [
+        number,
+        number,
+      ],
+    );
+  }
   return imageId;
 }
 

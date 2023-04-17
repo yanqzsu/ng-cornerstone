@@ -1,7 +1,9 @@
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { ImageInfo } from './type';
 
-export const DICOM_SERVER: string = 'http://10.81.20.156:8080/dicom-web';
+// export const DICOM_SERVER: string = 'http://10.81.22.40:38081/dicom-web';
+export const DICOM_SERVER: string = 'http://localhost:8080/dicom-web';
+
 const imageInfoRemote = {
   studyInstanceUID:
     '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',

@@ -23,11 +23,12 @@ import {
 import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
 import { ToolEnum } from '../tool-group/tool.config';
 import { ToolGroupComponent } from '../tool-group/tool-group.component';
-import { OrientationEnum, ImageInfo } from '../core';
+import { OrientationEnum } from '../core/config/constants';
 import { ViewportComponent } from '../viewport/viewport.component';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types/IViewport';
 import setStacksForViewports from '../core/load/setStackForViewports';
+import { ImageInfo } from '../core/config/type';
 
 export type ViewportConfig = Omit<PublicViewportInput, 'element'>;
 
@@ -147,6 +148,7 @@ export class ImageBoxComponent implements AfterViewInit, OnChanges {
           imageIds,
         });
         volume['load']();
+        console.log('ORTHOGRAPHIC');
         await setVolumesForViewports(
           this.renderingEngine,
           [

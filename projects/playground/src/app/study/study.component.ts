@@ -40,6 +40,7 @@ export class StudyComponent implements OnInit {
                 volumeId: metadata.SeriesInstanceUID,
                 accessionNumber: metadata.AccessionNumber,
                 seriesDesc: metadata.SeriesDescription,
+                seriesNumber: metadata.SeriesNumber,
                 numberOfSeriesRelatedInstances:
                   metadata.NumberOfSeriesRelatedInstances,
               };

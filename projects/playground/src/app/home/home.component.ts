@@ -34,11 +34,11 @@ export class HomeComponent implements OnInit {
         console.log('study');
         console.log(metadata);
         return {
-          patientName: metadata.PatientName.Alphabetic,
-          studyDate: metadata.StudyDate,
-          patientId: metadata.PatientID,
-          modality: metadata.ModalitiesInStudy,
-          studyInstanceUID: metadata.StudyInstanceUID,
+          patientName: metadata?.PatientName?.Alphabetic,
+          studyDate: metadata?.StudyDate,
+          patientId: metadata?.PatientID,
+          modality: metadata?.ModalitiesInStudy,
+          studyInstanceUID: metadata?.StudyInstanceUID,
         };
       });
       this.studyList = [...studyObject];

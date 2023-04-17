@@ -6,12 +6,13 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { DICOM_SERVER, InstanceInfo, SeriesInfo } from '../core';
+import { DICOM_SERVER, SeriesInfo } from '../core';
 import { api } from 'dicomweb-client';
 import { createSingleImageIdsAndCacheMetaData } from '../core/load/createSingleImageIdAndCache';
 import { RenderingEngine } from '@cornerstonejs/core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { IStackViewport } from '@cornerstonejs/core/dist/esm/types';
+
 @Component({
   selector: 'app-series',
   templateUrl: './series.component.html',
@@ -37,8 +38,14 @@ export class SeriesComponent implements OnInit, OnDestroy {
         studyInstanceUID: this.seriesInfo.studyInstanceUID,
         seriesInstanceUID: this.seriesInfo.seriesInstanceUID,
       })
-      .then((instances) => {
+      .then((instances: Array<any>) => {
+        const INSTANCE_NUMBER = '00200013';
         if (instances) {
+          instances.sort((a, b) => {
+            const numberA = a?.[INSTANCE_NUMBER]?.Value?.[0] || 0;
+            const numberB = b?.[INSTANCE_NUMBER]?.Value?.[0] || 0;
+            return numberA - numberB;
+          });
           if (instances.length > 1) {
             const middle = Math.round(instances.length / 2);
             this.downloadAndView(instances[middle]);
@@ -64,7 +71,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
   }
 
   downloadAndView(instanceMeta: any) {
-    const imageId = createSingleImageIdsAndCacheMetaData(instanceMeta);
+    const imageId = createSingleImageIdsAndCacheMetaData(instanceMeta, true);
     const viewport = this.renderingEngine.getViewport(
       this.viewportId,
     ) as IStackViewport;
