@@ -1,14 +1,21 @@
 import dicomParser from 'dicom-parser';
 import * as cornerstone from '@cornerstonejs/core';
+import * as cornerstoneTools from '@cornerstonejs/tools';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 
-export default function initCornerstoneWADOImageLoader() {
+window.cornerstone = cornerstone;
+window.cornerstoneTools = cornerstoneTools;
+const { preferSizeOverAccuracy, useNorm16Texture } =
+  cornerstone.getConfiguration().rendering;
+
+export default function initCornerstoneDICOMImageLoader() {
   cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
   cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
   cornerstoneWADOImageLoader.configure({
     useWebWorkers: true,
     decodeConfig: {
       convertFloatPixelDataToInt: false,
+      use16BitDataType: preferSizeOverAccuracy || useNorm16Texture,
     },
   });
 

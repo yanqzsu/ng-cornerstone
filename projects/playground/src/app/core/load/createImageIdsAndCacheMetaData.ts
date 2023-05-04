@@ -7,8 +7,6 @@ import {
 import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import { utilities } from '@cornerstonejs/core';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
-
-import WADORSHeaderProvider from '../provider/WADORSHeaderProvider';
 import ptScalingMetaDataProvider from '../provider/ptScalingMetaDataProvider';
 import { getPixelSpacingInformation } from './getPixelSpacingInformation';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
@@ -47,10 +45,7 @@ export default async function createImageIdsAndCacheMetaData(value) {
 
     // const prefix =
     //   type === ViewportType.ORTHOGRAPHIC ? 'streaming-wadors:' : 'wadors:';
-    const prefix =
-      viewportType === ViewportType.ORTHOGRAPHIC
-        ? 'streaming-wadors:'
-        : 'wadors:';
+    const prefix = 'wadors:';
 
     const imageId =
       prefix +
@@ -67,8 +62,6 @@ export default async function createImageIdsAndCacheMetaData(value) {
       imageId,
       instanceMetaData,
     );
-
-    WADORSHeaderProvider.addInstance(imageId, instanceMetaData);
 
     // Add calibrated pixel spacing
     const m = JSON.parse(JSON.stringify(instanceMetaData));

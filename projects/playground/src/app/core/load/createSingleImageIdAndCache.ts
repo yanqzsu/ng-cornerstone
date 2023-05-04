@@ -2,7 +2,6 @@ import { data } from 'dcmjs';
 import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import { utilities } from '@cornerstonejs/core';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
-import WADORSHeaderProvider from '../provider/WADORSHeaderProvider';
 import { getPixelSpacingInformation } from './getPixelSpacingInformation';
 const { calibratedPixelSpacingMetadataProvider } = utilities;
 import { DICOM_SERVER } from '../config/server';
@@ -48,8 +47,6 @@ export function createSingleImageIdsAndCacheMetaData(
   }
   console.log(seriesInstanceUID + ' ' + sopInstanceUID);
   cornerstoneWADOImageLoader.wadors.metaDataManager.add(imageId, instance);
-
-  WADORSHeaderProvider.addInstance(imageId, instance);
 
   // Add calibrated pixel spacing
   const spaceInfo = getPixelSpacingInformation(instanceMetaData);

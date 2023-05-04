@@ -1,19 +1,6 @@
 // See https://github.com/OHIF/Viewers/blob/94a9067fe3d291d30e25a1bda5913511388edea2/platform/core/src/utils/metadataProvider/getPixelSpacingInformation.js
 
-export const enum TYPES {
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-  UNKNOWN = 'UNKNOWN',
-  CALIBRATED = 'CALIBRATED',
-  DETECTOR = 'DETECTOR',
-}
-
-export function getPixelSpacingInformation(instance): {
-  pixelSpacing?: number[];
-  isProjection?: boolean;
-  type?: TYPES;
-  pixelSpacingCalibrationType?: string;
-  pixelSpacingCalibrationDescription?: string;
-} | null {
+export default function getPixelSpacingInformation(instance) {
   // See http://gdcm.sourceforge.net/wiki/index.php/Imager_Pixel_Spacing
 
   // TODO: Add Ultrasound region spacing
@@ -47,8 +34,15 @@ export function getPixelSpacingInformation(instance): {
 
   const isProjection = projectionRadiographSOPClassUIDs.includes(SOPClassUID);
 
+  const TYPES = {
+    NOT_APPLICABLE: 'NOT_APPLICABLE',
+    UNKNOWN: 'UNKNOWN',
+    CALIBRATED: 'CALIBRATED',
+    DETECTOR: 'DETECTOR',
+  };
+
   if (!isProjection) {
-    return { pixelSpacing: PixelSpacing };
+    return PixelSpacing;
   }
 
   if (isProjection && !ImagerPixelSpacing) {
@@ -56,7 +50,7 @@ export function getPixelSpacingInformation(instance): {
     // PixelSpacing should be used, but the user should be informed that
     // what it means is unknown
     return {
-      pixelSpacing: PixelSpacing,
+      PixelSpacing,
       type: TYPES.UNKNOWN,
       isProjection,
     };
@@ -68,7 +62,7 @@ export function getPixelSpacingInformation(instance): {
     // If Imager Pixel Spacing and Pixel Spacing are present and they have the same values,
     // then the user should be informed that the measurements are at the detector plane
     return {
-      pixelSpacing: PixelSpacing,
+      PixelSpacing,
       type: TYPES.DETECTOR,
       isProjection,
     };
@@ -82,11 +76,11 @@ export function getPixelSpacingInformation(instance): {
     // (in some unknown manner if Pixel Spacing Calibration Type and/or
     // Pixel Spacing Calibration Description are absent)
     return {
-      pixelSpacing: PixelSpacing,
+      PixelSpacing,
       type: TYPES.CALIBRATED,
       isProjection,
-      pixelSpacingCalibrationType: PixelSpacingCalibrationType,
-      pixelSpacingCalibrationDescription: PixelSpacingCalibrationDescription,
+      PixelSpacingCalibrationType,
+      PixelSpacingCalibrationDescription,
     };
   } else if (!PixelSpacing && ImagerPixelSpacing) {
     let CorrectedImagerPixelSpacing = ImagerPixelSpacing;
@@ -105,7 +99,7 @@ export function getPixelSpacingInformation(instance): {
     }
 
     return {
-      pixelSpacing: CorrectedImagerPixelSpacing,
+      PixelSpacing: CorrectedImagerPixelSpacing,
       isProjection,
     };
   } else if (
@@ -116,7 +110,7 @@ export function getPixelSpacingInformation(instance): {
     const USPixelSpacing = [PhysicalDeltaX * 10, PhysicalDeltaY * 10];
 
     return {
-      pixelSpacing: USPixelSpacing,
+      PixelSpacing: USPixelSpacing,
     };
   } else if (
     SequenceOfUltrasoundRegions &&
@@ -126,11 +120,11 @@ export function getPixelSpacingInformation(instance): {
     console.warn(
       'Sequence of Ultrasound Regions > one entry. This is not yet implemented, all measurements will be shown in pixels.',
     );
-  } else if (!isProjection && !ImagerPixelSpacing) {
+  } else if (isProjection === false && !ImagerPixelSpacing) {
     // If only Pixel Spacing is present, and this is not a projection radiograph,
     // we can stop here
     return {
-      pixelSpacing: PixelSpacing,
+      PixelSpacing,
       type: TYPES.NOT_APPLICABLE,
       isProjection,
     };
@@ -139,5 +133,4 @@ export function getPixelSpacingInformation(instance): {
   console.warn(
     'Unknown combination of PixelSpacing and ImagerPixelSpacing identified. Unable to determine spacing.',
   );
-  return null;
 }

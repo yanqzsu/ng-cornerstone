@@ -14,7 +14,6 @@ import {
   ToolGroupManager,
 } from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
-import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
 import { getRenderingEngine } from '@cornerstonejs/core';
 import { OrientationEnum, OrientationStringList } from '../core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
@@ -118,8 +117,8 @@ export class ToolGroupComponent implements OnInit, OnChanges, OnDestroy {
       case 'AXIAL':
       case 'CORONAL':
       case 'SAGITTAL':
-        viewUp = ORIENTATION[selectedValue].viewUp;
-        viewPlaneNormal = ORIENTATION[selectedValue].sliceNormal;
+        viewUp = OrientationEnum[selectedValue].viewUp;
+        viewPlaneNormal = OrientationEnum[selectedValue].sliceNormal;
         break;
       case 'OBLIQUE':
         // Some random oblique value for this dataset

@@ -20,7 +20,6 @@ import {
   createImageIdsAndCacheMetaData,
   setCtTransferFunctionForVolumeActor,
 } from '../core/load';
-import { ORIENTATION } from '@cornerstonejs/core/dist/esm/constants';
 import { ToolEnum } from '../tool-group/tool.config';
 import { ToolGroupComponent } from '../tool-group/tool-group.component';
 import { OrientationEnum } from '../core/config/constants';
@@ -29,6 +28,7 @@ import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types/IViewport';
 import setStacksForViewports from '../core/load/setStackForViewports';
 import { ImageInfo } from '../core/config/type';
+import { OrientationAxis } from '@cornerstonejs/core/dist/esm/enums';
 
 export type ViewportConfig = Omit<PublicViewportInput, 'element'>;
 
@@ -77,7 +77,7 @@ export class ImageBoxComponent implements AfterViewInit, OnChanges {
       viewportId: 'VIEWPORT_ID_1',
       type: ViewportType.ORTHOGRAPHIC,
       defaultOptions: {
-        orientation: ORIENTATION[OrientationEnum.AXIAL],
+        orientation: OrientationAxis[OrientationEnum.AXIAL],
         background: <Types.Point3>[0, 0, 0],
       },
     },
@@ -85,7 +85,7 @@ export class ImageBoxComponent implements AfterViewInit, OnChanges {
       viewportId: 'VIEWPORT_ID_2',
       type: ViewportType.ORTHOGRAPHIC,
       defaultOptions: {
-        orientation: ORIENTATION[OrientationEnum.SAGITTAL],
+        orientation: OrientationAxis[OrientationEnum.SAGITTAL],
         background: <Types.Point3>[0, 0, 0],
       },
     },
@@ -93,7 +93,7 @@ export class ImageBoxComponent implements AfterViewInit, OnChanges {
       viewportId: 'VIEWPORT_ID_3',
       type: ViewportType.ORTHOGRAPHIC,
       defaultOptions: {
-        orientation: ORIENTATION[OrientationEnum.CORONAL],
+        orientation: OrientationAxis[OrientationEnum.CORONAL],
         background: <Types.Point3>[0, 0, 0],
       },
     },
