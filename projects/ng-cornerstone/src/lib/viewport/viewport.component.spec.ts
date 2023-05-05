@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NgCornerstoneComponent } from './ng-cornerstone.component';
+import { ViewportComponent } from './viewport.component';
 
 describe('NgCornerstoneComponent', () => {
-  let component: NgCornerstoneComponent;
-  let fixture: ComponentFixture<NgCornerstoneComponent>;
+  let component: ViewportComponent;
+  let fixture: ComponentFixture<ViewportComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [NgCornerstoneComponent],
+      declarations: [ViewportComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NgCornerstoneComponent);
+    fixture = TestBed.createComponent(ViewportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

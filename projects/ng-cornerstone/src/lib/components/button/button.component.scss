@@ -1,0 +1,144 @@
+@use '../../../assets/styles/mixin';
+@use '../../../assets/styles/font';
+@use '../../../assets/styles/variables';
+
+$margin: 0;
+$min-width: 0;
+$line-height: 0;
+$padding: 2px;
+$border-radius: 2px;
+
+@mixin reset {
+  @include mixin.user-select(none);
+  cursor: pointer;
+  outline: none;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  // The `outline: none` from above works on all browsers, however Firefox also
+  // adds a special `focus-inner` which we have to disable explicitly. See:
+  // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#Firefox
+  &::-moz-focus-inner {
+    border: 0;
+  }
+}
+
+// Applies base styles to all button types.
+@mixin base {
+  @extend .button;
+  // Reset browser <button> styles.
+  @include reset();
+  // Basic
+  box-sizing: border-box;
+  position: relative;
+  // Make anchors render like buttons.
+  appearance: none;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  text-decoration: none;
+  // Sizing.
+  margin: $margin;
+  min-width: $min-width;
+  padding: $padding;
+  // Explicitly set the default overflow to `visible`. It is already set
+  // on most browsers except on IE11 where it defaults to `hidden`.
+  overflow: visible;
+  // Style
+  border-radius: 0;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  font-size: 16px;
+  line-height: 20px;
+  &.disabled {
+    cursor: default;
+  }
+
+  &.transition {
+    @include mixin.component-animation(background-color, border-color, box-shadow, color);
+  }
+}
+
+:host.app-btn {
+  @include base;
+}
+
+:host.btn-type-primary {
+  color: variables.$normal-color;
+  background-color: variables.$primary-color;
+  &:hover {
+    background-color: lighten(variables.$primary-color, 20%);
+  }
+  &:focus {
+    //border-color: variables.$border-color;
+  }
+  &:active {
+    background-color: variables.$primary-color;
+  }
+  &.pressed{
+    background-color: lighten(variables.$primary-color, 20%);
+  }
+}
+
+:host.btn-type-default {
+  // style
+  color: variables.$normal-color;
+  background-color: transparent;
+  &:hover {
+    border: 1px transparent solid !important;
+    color: variables.$active-color;
+  }
+  &:focus {
+    border: 1px variables.$border-color solid;
+  }
+  &:active {
+    border: 1px transparent solid !important;
+    color: variables.$active-color;
+  }
+  &.pressed{
+    border: 1px transparent solid !important;
+    color: variables.$active-color;
+  }
+}
+
+:host.btn-content-icon-text {
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 42px;
+  i {
+    font-size: 20px;
+  }
+  span {
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
+
+:host.btn-content-icon {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+:host.btn-content-text {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+:host.btn-shape-round {
+  border-radius: 2px;
+}
+
+:host.btn-shape-circle {
+  border-radius: 50%;
+}
+
+:host.btn-size-lg {
+}
+
+:host.btn-size-sm {
+}

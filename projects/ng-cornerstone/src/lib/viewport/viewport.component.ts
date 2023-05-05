@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'lib-ng-cornerstone',
+  selector: 'nc-viewport',
   template: ` <p>ng-cornerstone works!</p> `,
   styles: [],
 })
-export class NgCornerstoneComponent implements OnInit {
+export class ViewportComponent implements OnInit {
   constructor() {}
   ngOnInit(): void {
     console.log('');

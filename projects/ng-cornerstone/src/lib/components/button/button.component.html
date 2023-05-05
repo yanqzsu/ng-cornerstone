@@ -1,0 +1,13 @@
+<ng-container [ngSwitch]="content">
+  <ng-container *ngSwitchCase="'icon-text'">
+    <i [app-icon]="icon"></i>
+    <span class="text">{{ text }}</span>
+  </ng-container>
+  <div *ngSwitchCase="'text'">
+    <span>{{ text }}</span>
+  </div>
+  <div *ngSwitchCase="'icon'">
+    <i [app-icon]="icon"></i>
+  </div>
+  <ng-content *ngSwitchDefault></ng-content>
+</ng-container>
