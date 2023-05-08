@@ -1,6 +1,6 @@
-@use '../../../assets/styles/mixin';
-@use '../../../assets/styles/font';
-@use '../../../assets/styles/variables';
+@use '../../../styles/mixin';
+@use '../../../styles/font';
+@use '../../../styles/variables';
 
 $margin: 0;
 $min-width: 0;
@@ -63,7 +63,7 @@ $border-radius: 2px;
   }
 }
 
-:host.app-btn {
+:host.nc-btn {
   @include base;
 }
 

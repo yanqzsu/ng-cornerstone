@@ -1,0 +1,34 @@
+@use 'sass:map';
+/// Defines a typography level from the Material Design spec.
+/// @param {String} $font-size The font-size for this level.
+/// @param {String | Number} $line-height The line-height for this level.
+/// @param {String | Number} $font-weight The font-weight for this level.
+/// @param {String} $font-family The font-family for this level.
+/// @param {String} $letter-spacing The letter-spacing for this level.
+/// @returns {Map} A map representing the definition of this typpographic level.
+@function define-typography-level(
+  $font-size,
+  $line-height: $font-size,
+  $font-weight: 400,
+  $font-family: null,
+  $letter-spacing: normal) {
+
+  @return (
+    font-size: $font-size,
+    line-height: $line-height,
+    font-weight: $font-weight,
+    font-family: $font-family,
+    letter-spacing: $letter-spacing
+  );
+}
+
+
+
+
+@mixin font($typography) {
+  font-size: map.get($typography, font-size);
+  line-height: map.get($typography, line-height);
+  font-weight: map.get($typography, font-weight);
+  font-family: map.get($typography, font-family);
+  letter-spacing: map.get($typography, letter-spacing);
+}

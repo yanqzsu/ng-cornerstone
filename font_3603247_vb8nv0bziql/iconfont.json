@@ -1,0 +1,268 @@
+{
+  "id": "3603247",
+  "name": "dmv",
+  "font_family": "dmv",
+  "css_prefix_text": "dmv-",
+  "description": "dicom mobile viewer",
+  "glyphs": [
+    {
+      "icon_id": "19267900",
+      "name": "Axial",
+      "font_class": "axial",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "19268311",
+      "name": "Sagittal",
+      "font_class": "sagittal",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "19268313",
+      "name": "Coronal",
+      "font_class": "coronal",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "35242786",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e655",
+      "unicode_decimal": 58965
+    },
+    {
+      "icon_id": "15838446",
+      "name": "calendar",
+      "font_class": "calendar",
+      "unicode": "e667",
+      "unicode_decimal": 58983
+    },
+    {
+      "icon_id": "12310332",
+      "name": "rectangle",
+      "font_class": "rectangle",
+      "unicode": "e88e",
+      "unicode_decimal": 59534
+    },
+    {
+      "icon_id": "11266190",
+      "name": "left",
+      "font_class": "left",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "11267679",
+      "name": "right",
+      "font_class": "right",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "269810",
+      "name": "more",
+      "font_class": "more",
+      "unicode": "e6ad",
+      "unicode_decimal": 59053
+    },
+    {
+      "icon_id": "109785",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e654",
+      "unicode_decimal": 58964
+    },
+    {
+      "icon_id": "31393878",
+      "name": "about",
+      "font_class": "about",
+      "unicode": "e637",
+      "unicode_decimal": 58935
+    },
+    {
+      "icon_id": "31393880",
+      "name": "recover",
+      "font_class": "recover",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "31393884",
+      "name": "pan",
+      "font_class": "pan",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "31393885",
+      "name": "ellipse",
+      "font_class": "ellipse",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "31393886",
+      "name": "angle",
+      "font_class": "angle",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    },
+    {
+      "icon_id": "31393887",
+      "name": "shrink",
+      "font_class": "shrink",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
+      "icon_id": "31393890",
+      "name": "stop",
+      "font_class": "stop",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "31393891",
+      "name": "download",
+      "font_class": "download",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
+      "icon_id": "31393892",
+      "name": "flip-h",
+      "font_class": "fliph",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "31393894",
+      "name": "flip-v",
+      "font_class": "flipv",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "31393896",
+      "name": "rotate",
+      "font_class": "rotate",
+      "unicode": "e643",
+      "unicode_decimal": 58947
+    },
+    {
+      "icon_id": "31393897",
+      "name": "triangle",
+      "font_class": "triangle",
+      "unicode": "e644",
+      "unicode_decimal": 58948
+    },
+    {
+      "icon_id": "31393898",
+      "name": "measurement",
+      "font_class": "measurement",
+      "unicode": "e645",
+      "unicode_decimal": 58949
+    },
+    {
+      "icon_id": "31393899",
+      "name": "layer",
+      "font_class": "layer",
+      "unicode": "e646",
+      "unicode_decimal": 58950
+    },
+    {
+      "icon_id": "31393900",
+      "name": "add",
+      "font_class": "add",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "31393901",
+      "name": "ruler",
+      "font_class": "ruler",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "31393902",
+      "name": "pin",
+      "font_class": "pin",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "31393903",
+      "name": "pause",
+      "font_class": "pause",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
+      "icon_id": "31393904",
+      "name": "zoom",
+      "font_class": "zoom",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "31393905",
+      "name": "panel",
+      "font_class": "panel",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    },
+    {
+      "icon_id": "31393906",
+      "name": "expand",
+      "font_class": "expand",
+      "unicode": "e64d",
+      "unicode_decimal": 58957
+    },
+    {
+      "icon_id": "31393907",
+      "name": "down",
+      "font_class": "down",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    },
+    {
+      "icon_id": "31393908",
+      "name": "menu",
+      "font_class": "menu",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
+      "icon_id": "31393909",
+      "name": "annotation",
+      "font_class": "annotation",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "31393911",
+      "name": "clear",
+      "font_class": "clear",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "31393912",
+      "name": "play",
+      "font_class": "play",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "31393913",
+      "name": "window-level",
+      "font_class": "window-level",
+      "unicode": "e653",
+      "unicode_decimal": 58963
+    }
+  ]
+}

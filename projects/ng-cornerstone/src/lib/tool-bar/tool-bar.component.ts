@@ -7,7 +7,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { TOOL_CONFIG_MAP, ToolConfig, ToolEnum } from './tool.config';
+import { ORIENTATION_LIST, TOOL_CONFIG_MAP } from './tool.config';
 import {
   addTool,
   Enums as ToolsEnums,
@@ -15,7 +15,7 @@ import {
 } from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 import { getRenderingEngine } from '@cornerstonejs/core';
-import { OrientationEnum, OrientationStringList } from '../core';
+import { OrientationEnum, ToolConfig, ToolEnum  } from '../core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 
 @Component({
@@ -26,7 +26,7 @@ import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 })
 export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   private destroy$ = new Subject<void>();
-  OrientationStringList = OrientationStringList;
+  ORIENTATION_LIST = ORIENTATION_LIST;
 
   @Input()
   toolList: ToolEnum[] = [];
@@ -43,6 +43,7 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
 
   public toolGroup!: IToolGroup;
   toolConfigList: ToolConfig[] = [];
+  orientationList: ToolConfig[] = [];
   orientation = OrientationEnum.SAGITTAL;
   activeTool?: ToolConfig;
 
@@ -86,6 +87,16 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
     if (!this.focusedViewportId) {
       this.focusedViewportId = this.viewportIds[0];
     }
+    this.orientationList = Object.keys(ORIENTATION_LIST)
+      .map((tool) => {
+        return ORIENTATION_LIST[tool];
+      })
+      .filter(
+        (value) =>
+          value !== undefined &&
+          value.types.findIndex((type) => type === this.viewportType) > -1,
+      );
+    console.log(this.orientationList);
   }
 
   toolActive(toolConfig: ToolConfig) {

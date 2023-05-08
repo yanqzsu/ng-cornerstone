@@ -16,10 +16,13 @@ export class IconService {
   constructor(
     @Inject(DOCUMENT) private doc: any,
     private rendererFactory2: RendererFactory2,
-    @Inject(ICONFONT_URL) @Optional() iconfontUrls?: string[],
-  ) {
-    if (iconfontUrls) {
-      for (const url of iconfontUrls) {
+    @Inject(ICONFONT_URL) @Optional() private iconfontUrls?: string[],
+  ) {}
+
+  init() {
+    if (this.iconfontUrls) {
+      console.log('Icon init');
+      for (const url of this.iconfontUrls) {
         this.fetchIconfont(url);
       }
     }

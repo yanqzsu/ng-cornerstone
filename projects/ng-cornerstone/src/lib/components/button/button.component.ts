@@ -10,7 +10,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { InputBoolean } from '../../core/util/convert';
+import { InputBoolean } from '../../core';
 import { Observable, Subject } from 'rxjs';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
 
@@ -24,13 +24,13 @@ export interface ButtonToggleChange {
 }
 
 @Component({
-  selector: 'button[app-button], a[app-button]',
-  exportAs: 'appButton',
+  selector: 'button[nc-button], a[nc-button]',
+  exportAs: 'ncButton',
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'app-btn',
+    class: 'nc-btn',
     '[class.btn-type-primary]': `type === 'primary'`,
     '[class.btn-type-default]': `type === 'default'`,
     '[class.btn-content-icon-text]': `content === 'icon-text'`,

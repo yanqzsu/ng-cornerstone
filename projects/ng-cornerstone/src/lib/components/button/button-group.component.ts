@@ -24,10 +24,10 @@ import { switchMap, takeUntil } from 'rxjs/operators';
 
 import { ButtonComponent, ButtonToggleChange } from './button.component';
 import { BooleanInput } from '@angular/cdk/coercion';
-import { InputBoolean } from '../../core/util/convert';
+import { InputBoolean } from '../../core';
 
 @Component({
-  selector: 'app-button-group',
+  selector: 'nc-button-group',
   template: ` <ng-content></ng-content> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

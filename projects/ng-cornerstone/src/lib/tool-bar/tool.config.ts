@@ -12,52 +12,7 @@ import {
 } from '@cornerstonejs/tools';
 import { getRenderingEngine, Types } from '@cornerstonejs/core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
-
-export enum ToolEnum {
-  Reset,
-  BaseToo,
-  PanTool,
-  TrackballRotateTool,
-  DragProbeTool,
-  WindowLevelTool,
-  ZoomTool,
-  StackScrollTool,
-  StackScrollMouseWheelTool,
-  VolumeRotateMouseWheelTool,
-  MIPJumpToClickTool,
-  LengthTool,
-  CrosshairsTool,
-  ProbeTool,
-  RectangleROITool,
-  EllipticalROITool,
-  BidirectionalTool,
-  PlanarFreehandROITool,
-  ArrowAnnotateTool,
-  AngleTool,
-  MagnifyTool,
-  SegmentationDisplayTool,
-  RectangleScissorsTool,
-  CircleScissorsTool,
-  SphereScissorsTool,
-  RectangleROIThresholdTool,
-  RectangleROIStartEndThresholdTool,
-  BrushTool,
-  FlipV,
-  FlipH,
-  Rotate,
-  Next,
-  Previous,
-}
-
-type Class<T> = new (...args: any[]) => T;
-export interface ToolConfig {
-  label: string;
-  icon: string;
-  name: string;
-  tool?: any;
-  callback?: (renderingEngineId: string, viewportId: string) => void;
-  types: ViewportType[];
-}
+import { ToolConfig, ToolEnum, OrientationEnum } from '../core';
 
 function reset(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
@@ -253,5 +208,29 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     tool: StackScrollTool,
     name: StackScrollTool.toolName,
     types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+  },
+};
+
+export const ORIENTATION_LIST: { [key in OrientationEnum]?: ToolConfig } = {
+  [OrientationEnum.SAGITTAL]: {
+    icon: 'dmv-sagittal',
+    label: '矢量',
+    name: 'Reset',
+    callback: reset,
+    types: [ViewportType.ORTHOGRAPHIC],
+  },
+  [OrientationEnum.CORONAL]: {
+    icon: 'dmv-coronal',
+    label: '冠状',
+    name: 'fliph',
+    callback: flipH,
+    types: [ViewportType.ORTHOGRAPHIC],
+  },
+  [OrientationEnum.AXIAL]: {
+    icon: 'dmv-axial',
+    label: '轴向',
+    name: 'flipV',
+    callback: flipV,
+    types: [ViewportType.ORTHOGRAPHIC],
   },
 };

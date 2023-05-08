@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-
-import { IconService } from './icon.service';
-
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'i[app-icon]',
+  selector: 'i[nc-icon]',
   template: `
-    <svg class="app-icon" aria-hidden="true">
+    <svg class="icon" aria-hidden="true">
       <use attr.xlink:href="#{{ iconfont }}"></use>
     </svg>
   `,
@@ -17,7 +14,7 @@ import { IconService } from './icon.service';
         line-height: 0;
       }
 
-      .app-icon {
+      .icon {
         fill: currentColor;
         height: 1em;
         overflow: hidden;
@@ -30,7 +27,5 @@ import { IconService } from './icon.service';
 })
 export class IconComponent {
   // tslint:disable-next-line:no-input-rename
-  @Input('app-icon') iconfont: string | null = '';
-
-  constructor(service: IconService) {}
+  @Input('nc-icon') iconfont: string | null = '';
 }

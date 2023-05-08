@@ -43,3 +43,49 @@ export interface InstanceInfo extends SeriesInfo {
   sopInstanceUID?: string;
   numberOfFrames?: number; // Number of frames in a Multi-frame Image. See Section C.7.6.6.1.1 for further explanation.
 }
+
+export enum ToolEnum {
+  Reset,
+  BaseToo,
+  PanTool,
+  TrackballRotateTool,
+  DragProbeTool,
+  WindowLevelTool,
+  ZoomTool,
+  StackScrollTool,
+  StackScrollMouseWheelTool,
+  VolumeRotateMouseWheelTool,
+  MIPJumpToClickTool,
+  LengthTool,
+  CrosshairsTool,
+  ProbeTool,
+  RectangleROITool,
+  EllipticalROITool,
+  BidirectionalTool,
+  PlanarFreehandROITool,
+  ArrowAnnotateTool,
+  AngleTool,
+  MagnifyTool,
+  SegmentationDisplayTool,
+  RectangleScissorsTool,
+  CircleScissorsTool,
+  SphereScissorsTool,
+  RectangleROIThresholdTool,
+  RectangleROIStartEndThresholdTool,
+  BrushTool,
+  FlipV,
+  FlipH,
+  Rotate,
+  Next,
+  Previous,
+}
+
+type Class<T> = new (...args: any[]) => T;
+export interface ToolConfig {
+  label: string;
+  icon: string;
+  name: string;
+  tool?: any;
+  callback?: (renderingEngineId: string, viewportId: string) => void;
+  types: ViewportType[];
+}

@@ -1,6 +1,6 @@
-<app-button-group>
+<nc-button-group>
   <button
-    app-button
+    nc-button
     *ngFor="let config of toolConfigList"
     (click)="toolActive(config)"
     [isToggle]="!!config.tool"
@@ -8,12 +8,16 @@
     [icon]="config.icon"
     [text]="config.label"
   ></button>
-</app-button-group>
-<select (change)="changeOrientation($event)">
-  <option
-    *ngFor="let value of OrientationStringList"
-    [value]="value"
-    [label]="value"
-    [selected]="orientation === value"
-  ></option>
-</select>
+</nc-button-group>
+<nc-button-group>
+  <button
+    nc-button
+    *ngFor="let config of orientationList"
+    (click)="toolActive(config)"
+    [isToggle]="!!config.tool"
+    [content]="'icon-text'"
+    [icon]="config.icon"
+    [text]="config.label"
+  ></button>
+</nc-button-group>
+<div></div>

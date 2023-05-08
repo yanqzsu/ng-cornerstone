@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { ViewportComponent } from './viewport.component';
 
 @NgModule({
@@ -6,4 +6,16 @@ import { ViewportComponent } from './viewport.component';
   imports: [],
   exports: [ViewportComponent],
 })
-export class ViewportModule {}
+export class ViewportModule {
+  static forRoot(): ModuleWithProviders<ViewportModule> {
+    return {
+      ngModule: ViewportModule,
+      providers: [],
+    };
+  }
+  static forChild(): ModuleWithProviders<ViewportModule> {
+    return {
+      ngModule: ViewportModule,
+    };
+  }
+}

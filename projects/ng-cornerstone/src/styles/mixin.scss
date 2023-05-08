@@ -1,0 +1,11 @@
+@mixin user-select($value) {
+  -webkit-user-select: $value;
+  -moz-user-select: $value;
+  user-select: $value;
+}
+
+@mixin component-animation($properties...) {
+  transition-duration: 0.15s;
+  transition-property: $properties;
+  transition-timing-function: ease-in;
+}
