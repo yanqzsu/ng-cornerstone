@@ -8,8 +8,7 @@ import {
   coerceCssPixelValue,
   _isNumberValue,
 } from '@angular/cdk/coercion';
-
-import { FunctionProp, SafeAny } from './any';
+import { FunctionProp, SafeAny } from '../config/types';
 
 export function toBoolean(value: boolean | string): boolean {
   return coerceBooleanProperty(value);

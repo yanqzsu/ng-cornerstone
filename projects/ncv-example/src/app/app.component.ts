@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types/IViewport';
 import { ToolEnum } from 'ng-cornerstone';
-export type ViewportConfig = Omit<PublicViewportInput, 'element'>;
 
 @Component({
   selector: 'app-root',

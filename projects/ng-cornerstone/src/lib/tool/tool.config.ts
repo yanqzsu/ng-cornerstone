@@ -179,7 +179,7 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     label: '3D旋转',
     tool: TrackballRotateTool,
     name: TrackballRotateTool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.ZoomTool]: {
     icon: 'dmv-zoom',

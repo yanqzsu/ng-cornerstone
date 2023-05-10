@@ -1,8 +1,15 @@
-import { ENVIRONMENT_INITIALIZER, inject, NgModule } from '@angular/core';
+import {
+  ENVIRONMENT_INITIALIZER,
+  inject,
+  NgModule,
+  Optional,
+  SkipSelf,
+} from '@angular/core';
 import { ToolBarComponent } from './tool-bar.component';
 import { ICONFONT_URL, IconService } from '../components/icon/icon.service';
 import { ButtonModule } from '../components/button/button.module';
 import { CommonModule } from '@angular/common';
+import { init } from '@cornerstonejs/tools';
 
 @NgModule({
   declarations: [ToolBarComponent],
@@ -26,4 +33,12 @@ import { CommonModule } from '@angular/common';
   ],
   exports: [ToolBarComponent],
 })
-export class ToolBarModule {}
+export class ToolModule {
+  constructor(@SkipSelf() @Optional() parent?: ToolModule) {
+    if (parent) {
+      throw new Error('ToolBarModule should be imported only once!');
+    }
+    init();
+    console.log('Tool init');
+  }
+}

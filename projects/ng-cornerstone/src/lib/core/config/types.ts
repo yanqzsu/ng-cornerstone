@@ -1,47 +1,18 @@
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
+import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types';
+
+export enum RequestSchema {
+  WadoRs = 'wadors:',
+  WadoUri = 'wadouri:',
+}
 
 export interface ImageInfo {
-  studyInstanceUID?: string;
-  seriesInstanceUID?: string;
-  sopInstanceUID?: string;
-  wadoRsRoot: string;
+  studyInstanceUID: string;
+  seriesInstanceUID: string;
+  sopInstanceUIDs?: string[];
+  urlRoot: string;
+  schema: RequestSchema;
   viewportType: ViewportType;
-  volumeId?: string;
-}
-
-export interface PatientInfo {
-  patientName?: string;
-  patientId?: string;
-  patientSex?: string;
-  patientBirthDate?: Date;
-}
-
-export interface StudyInfo extends PatientInfo {
-  patientName?: string;
-  studyDate?: string;
-  studyID?: string;
-  patientId?: string;
-  modality?: string;
-  patientSex?: string;
-  patientBirthDate?: Date;
-  studyInstanceUID?: string;
-}
-
-export interface SeriesInfo extends StudyInfo {
-  accessionNumber?: string;
-  seriesNumber?: string;
-  seriesDesc?: string;
-  seriesInstanceUID?: string;
-  numberOfSeriesRelatedInstances?: number;
-}
-
-export interface InstanceInfo extends SeriesInfo {
-  instanceNumber?: number;
-  bitsAllocated?: number;
-  columns?: number;
-  rows?: number;
-  sopInstanceUID?: string;
-  numberOfFrames?: number; // Number of frames in a Multi-frame Image. See Section C.7.6.6.1.1 for further explanation.
 }
 
 export enum ToolEnum {
@@ -89,3 +60,17 @@ export interface ToolConfig {
   callback?: (renderingEngineId: string, viewportId: string) => void;
   types: ViewportType[];
 }
+
+export enum OrientationEnum {
+  AXIAL = 'AXIAL',
+  SAGITTAL = 'SAGITTAL',
+  CORONAL = 'CORONAL',
+  OBLIQUE = 'OBLIQUE',
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SafeAny = any;
+
+export type FunctionProp<T> = (...args: SafeAny[]) => T;
+
+export type ViewportConfig = Omit<PublicViewportInput, 'element'>;

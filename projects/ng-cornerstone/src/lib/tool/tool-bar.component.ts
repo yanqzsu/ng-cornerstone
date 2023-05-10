@@ -15,7 +15,7 @@ import {
 } from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 import { getRenderingEngine } from '@cornerstonejs/core';
-import { OrientationEnum, ToolConfig, ToolEnum  } from '../core';
+import { OrientationEnum, ToolConfig, ToolEnum } from '../core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 
 @Component({
@@ -27,11 +27,10 @@ import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   private destroy$ = new Subject<void>();
   ORIENTATION_LIST = ORIENTATION_LIST;
+  toolGroupId: string = 'MY_TOOLGROUP_ID';
 
   @Input()
   toolList: ToolEnum[] = [];
-  @Input()
-  toolGroupId: string = 'MY_TOOLGROUP_ID';
   @Input()
   viewportIds: string[] = [];
   @Input()
@@ -40,6 +39,25 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   focusedViewportId: string = '';
   @Input()
   renderingEngineId: string = '';
+
+  toolList1 = [
+    ToolEnum.StackScrollTool,
+    ToolEnum.PanTool,
+    ToolEnum.ZoomTool,
+    ToolEnum.WindowLevelTool,
+    ToolEnum.ArrowAnnotateTool,
+    ToolEnum.LengthTool,
+    ToolEnum.AngleTool,
+    ToolEnum.RectangleROITool,
+    ToolEnum.EllipticalROITool,
+    ToolEnum.TrackballRotateTool,
+    ToolEnum.Rotate,
+    ToolEnum.Previous,
+    ToolEnum.Next,
+    ToolEnum.FlipV,
+    ToolEnum.FlipH,
+    ToolEnum.Reset,
+  ];
 
   public toolGroup!: IToolGroup;
   toolConfigList: ToolConfig[] = [];
