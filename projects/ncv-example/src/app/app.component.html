@@ -1,11 +1,15 @@
-<div class="operations">
-  <nc-tool-bar
-    [toolList]="toolList"
-    [viewportIds]="viewportIds"
-    [renderingEngineId]="renderingEngineId"
-    [focusedViewportId]="focusedViewportId"
-  ></nc-tool-bar>
-</div>
+<select (change)="changeImage($event)">
+  <option
+    *ngFor="let value of imageInfos; index as i"
+    [value]="i"
+    [label]="i"
+    [selected]="imageIndex === i"
+  ></option>
+</select>
+
 <div class="container">
-  <nc-viewport></nc-viewport>
+  <nc-viewport
+    [toolList]="toolList"
+    [imageInfo]="imageInfos[imageIndex]"
+  ></nc-viewport>
 </div>

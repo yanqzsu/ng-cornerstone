@@ -4,9 +4,9 @@
  */
 
 import {
+  _isNumberValue,
   coerceBooleanProperty,
   coerceCssPixelValue,
-  _isNumberValue,
 } from '@angular/cdk/coercion';
 import { FunctionProp, SafeAny } from '../config/types';
 

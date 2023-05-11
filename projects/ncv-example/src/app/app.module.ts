@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { ViewportModule, ToolBarModule } from 'ng-cornerstone';
+import { ViewportModule } from 'ng-cornerstone';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, ToolBarModule, ViewportModule],
+  imports: [BrowserModule, ViewportModule],
   providers: [],
   bootstrap: [AppComponent],
 })

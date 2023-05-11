@@ -6,6 +6,11 @@ export enum RequestSchema {
   WadoUri = 'wadouri:',
 }
 
+export enum VolumeLoaderSchema {
+  stream = 'cornerstoneStreamingImageVolume',
+  dynamicStream = 'cornerstoneStreamingDynamicImageVolume',
+}
+
 export interface ImageInfo {
   studyInstanceUID: string;
   seriesInstanceUID: string;
@@ -13,6 +18,7 @@ export interface ImageInfo {
   urlRoot: string;
   schema: RequestSchema;
   viewportType: ViewportType;
+  volumeLoaderScheme?: VolumeLoaderSchema; // Loader id which defines which volume loader to use
 }
 
 export enum ToolEnum {

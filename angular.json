@@ -178,13 +178,27 @@
     },
     "ncv-example": {
       "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "less"
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
       "root": "projects/ncv-example",
       "sourceRoot": "projects/ncv-example/src",
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js",
+              "mergeRules": {
+                "externals": "replace"
+              }
+            },
             "outputPath": "dist/ncv-example",
             "index": "projects/ncv-example/src/index.html",
             "main": "projects/ncv-example/src/main.ts",
@@ -198,6 +212,11 @@
                 "glob": "**/*",
                 "input": "./dist/ng-cornerstone/src/assets",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/cornerstone-wado-image-loader/dist/dynamic-import",
+                "output": "/"
               }
             ],
             "styles": ["projects/ncv-example/src/styles.less"],
@@ -245,6 +264,14 @@
             "development": {
               "browserTarget": "ncv-example:build:development"
             }
+          },
+          "options": {
+            "host": "0.0.0.0",
+            "headers": {
+              "Cross-Origin-Embedder-Policy": "require-corp",
+              "Cross-Origin-Opener-Policy": "same-origin"
+            },
+            "browserTarget": "ncv-example:build"
           },
           "defaultConfiguration": "development"
         },

@@ -12,7 +12,7 @@ import {
 } from '@cornerstonejs/tools';
 import { getRenderingEngine, Types } from '@cornerstonejs/core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
-import { ToolConfig, ToolEnum, OrientationEnum } from '../core';
+import { OrientationEnum, ToolConfig, ToolEnum } from '../core';
 
 function reset(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
@@ -94,6 +94,41 @@ function previous(renderingEngineId: string, viewportId: string): void {
   newImageIdIndex = Math.max(newImageIdIndex, 0);
   // Set the new image index, the viewport itself does a re-render
   viewport.setImageIdIndex(newImageIdIndex);
+}
+
+function changeOrientation(event: any) {
+  const selectedValue = event?.target?.value;
+  const renderingEngine = getRenderingEngine(this.renderingEngineId);
+  const viewport = renderingEngine!.getViewport(this.focusedViewportId);
+
+  // TODO -> Maybe we should rename sliceNormal to viewPlaneNormal everywhere?
+  let viewUp;
+  let viewPlaneNormal;
+
+  switch (selectedValue) {
+    case 'AXIAL':
+    case 'CORONAL':
+    case 'SAGITTAL':
+      viewUp = OrientationEnum[selectedValue].viewUp;
+      viewPlaneNormal = OrientationEnum[selectedValue].sliceNormal;
+      break;
+    case 'OBLIQUE':
+      // Some random oblique value for this dataset
+      viewUp = [-0.5962687530844388, 0.5453181550345819, -0.5891448751239446];
+      viewPlaneNormal = [
+        -0.5962687530844388, 0.5453181550345819, -0.5891448751239446,
+      ];
+      break;
+    default:
+      throw new Error('undefined orientation option');
+  }
+
+  // TODO -> Maybe we should have a helper for this on the viewport
+  // Set the new orientation
+  viewport.setCamera({ viewUp, viewPlaneNormal });
+  // Reset the camera after the normal changes
+  viewport.resetCamera();
+  viewport.render();
 }
 
 export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {

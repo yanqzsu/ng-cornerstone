@@ -13,7 +13,6 @@ import { ImageInfo, RequestSchema } from '../config/types';
 
 import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import ptScalingMetaDataProvider from './ptScalingMetaDataProvider';
-import { map, Observable } from 'rxjs';
 
 const { DicomMetaDictionary } = dcmjs.data;
 @Injectable({
@@ -22,55 +21,51 @@ const { DicomMetaDictionary } = dcmjs.data;
 export class ImageIdService {
   constructor() {}
 
-  wadoRsCreateImageIdsAndCacheMetaData(
+  async wadoRsCreateImageIdsAndCacheMetaData(
     imageInfo: ImageInfo,
-  ): Observable<string[]> {
+  ): Promise<string[]> {
     const MODALITY = '00080060';
     const SOP_INSTANCE_UID = '00080018';
     const { urlRoot, studyInstanceUID, seriesInstanceUID } = imageInfo;
     const client = new api.DICOMwebClient({ url: urlRoot });
-    return client
-      .retrieveSeriesMetadata({
-        studyInstanceUID,
-        seriesInstanceUID,
-      })
-      .pipe(
-        map((instances: any) => {
-          const modality = instances[0][MODALITY].Value[0];
-          let sopInstanceUIDSet;
-          if (imageInfo?.sopInstanceUIDs?.length === 0) {
-            sopInstanceUIDSet = new Set<string>(
-              instances.map((instanceMetaData) => {
-                return instanceMetaData[SOP_INSTANCE_UID].Value[0];
-              }),
-            );
-          } else {
-            sopInstanceUIDSet = new Set<string>(imageInfo?.sopInstanceUIDs);
-          }
-          let imageIds = ImageIdService.wadoRsCreateImageIds({
-            ...imageInfo,
-            sopInstanceUIDs: Array.from(sopInstanceUIDSet),
-          });
-          instances.forEach((instanceMetaData) => {
-            const sopInstanceUID = instanceMetaData[SOP_INSTANCE_UID].Value[0];
-            if (sopInstanceUIDSet.has(sopInstanceUID)) {
-              cornerstoneWADOImageLoader.wadors.metaDataManager.add(
-                imageIds,
-                instanceMetaData,
-              );
-            }
-          });
-          imageIds = this.convertMultiframeImageIds(imageIds);
-
-          this.pixelSpacingProvider(imageIds);
-
-          if (modality === 'PT') {
-            this.ptProvider(imageIds);
-          }
-
-          return imageIds;
+    const instances = await client.retrieveSeriesMetadata({
+      studyInstanceUID,
+      seriesInstanceUID,
+    });
+    const modality = instances[0][MODALITY].Value[0];
+    let sopInstanceUIDSet;
+    if (imageInfo?.sopInstanceUIDs && imageInfo?.sopInstanceUIDs.length >= 0) {
+      sopInstanceUIDSet = new Set<string>(imageInfo?.sopInstanceUIDs);
+    } else {
+      sopInstanceUIDSet = new Set<string>(
+        instances.map((instanceMetaData) => {
+          return instanceMetaData[SOP_INSTANCE_UID].Value[0];
         }),
       );
+    }
+    let imageIds: string[] = [];
+    instances.forEach((instanceMetaData) => {
+      const sopInstanceUID = instanceMetaData[SOP_INSTANCE_UID].Value[0];
+      if (sopInstanceUIDSet.has(sopInstanceUID)) {
+        const imageId = ImageIdService.wadoRsCreateImageIds({
+          ...imageInfo,
+          sopInstanceUIDs: [sopInstanceUID],
+        });
+        imageIds.push(...imageId); // only one image id
+        cornerstoneWADOImageLoader.wadors.metaDataManager.add(
+          imageId[0],
+          instanceMetaData,
+        );
+      }
+    });
+    imageIds = this.convertMultiframeImageIds(imageIds);
+
+    this.pixelSpacingProvider(imageIds);
+
+    if (modality === 'PT') {
+      this.ptProvider(imageIds);
+    }
+    return imageIds;
   }
 
   static createImageIds(imageInfo: ImageInfo) {
@@ -104,7 +99,7 @@ export class ImageIdService {
       imageInfo;
     const wadoURIRoot = `${RequestSchema.WadoRs}${urlRoot}/studies/${studyInstanceUID}/series/${seriesInstanceUID}`;
     return sopInstanceUIDs!.map((uid) => {
-      return `${wadoURIRoot}/instances/${uid}/frame/1`;
+      return `${wadoURIRoot}/instances/${uid}/frames/1`;
     });
   }
 
