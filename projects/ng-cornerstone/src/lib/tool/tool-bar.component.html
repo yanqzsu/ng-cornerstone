@@ -1,0 +1,21 @@
+<nc-button-group (valueChange)="activeTool($event)">
+  <button
+    nc-button
+    *ngFor="let config of toolConfigList"
+    [isToggle]="!!config.tool"
+    [content]="'icon-text'"
+    [icon]="config.icon"
+    [text]="config.label"
+    [value]="config.name"
+  ></button>
+</nc-button-group>
+<nc-button-group>
+  <button
+    nc-button
+    *ngFor="let config of cameraList"
+    (click)="changeCamera(config.name)"
+    [content]="'icon-text'"
+    [icon]="config.icon"
+    [text]="config.label"
+  ></button>
+</nc-button-group>

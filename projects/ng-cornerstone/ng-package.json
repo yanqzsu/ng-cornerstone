@@ -3,5 +3,6 @@
   "dest": "../../dist/ng-cornerstone",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "assets": ["README.md", "src/assets", "src/styles"]
 }

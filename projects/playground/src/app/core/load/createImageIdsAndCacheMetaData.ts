@@ -8,8 +8,7 @@ import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import { utilities } from '@cornerstonejs/core';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import ptScalingMetaDataProvider from '../provider/ptScalingMetaDataProvider';
-import { getPixelSpacingInformation } from './getPixelSpacingInformation';
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
+import getPixelSpacingInformation from './getPixelSpacingInformation';
 
 const { DicomMetaDictionary } = dcmjs.data;
 const { calibratedPixelSpacingMetadataProvider } = utilities;

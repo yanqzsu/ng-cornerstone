@@ -98,7 +98,7 @@ export class ToolGroupComponent implements OnInit, OnChanges, OnDestroy {
       this.toolGroup.setToolActive(this.activeTool?.name!, {
         bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
       });
-      this.toolGroup.setViewportsCursorByToolName;
+      this.toolGroup.setViewportsCursorByToolName(toolConfig.tool);
     } else if (toolConfig.callback) {
       toolConfig?.callback(this.renderingEngineId, this.focusedViewportId);
     }

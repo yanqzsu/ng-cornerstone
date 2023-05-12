@@ -1,9 +1,7 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "cli": {
-    "schematicCollections": [
-      "@angular-eslint/schematics"
-    ]
+    "schematicCollections": ["@angular-eslint/schematics"]
   },
   "version": 1,
   "newProjectRoot": "projects",
@@ -46,9 +44,7 @@
                 "output": "/"
               }
             ],
-            "styles": [
-              "projects/playground/src/styles.scss"
-            ],
+            "styles": ["projects/playground/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -125,9 +121,7 @@
               "projects/playground/src/favicon.ico",
               "projects/playground/src/assets"
             ],
-            "styles": [
-              "projects/playground/src/styles.scss"
-            ],
+            "styles": ["projects/playground/src/styles.scss"],
             "scripts": []
           }
         },
@@ -178,6 +172,129 @@
               "projects/ng-cornerstone/**/*.ts",
               "projects/ng-cornerstone/**/*.html"
             ]
+          }
+        }
+      }
+    },
+    "ncv-example": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "less"
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "root": "projects/ncv-example",
+      "sourceRoot": "projects/ncv-example/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js",
+              "mergeRules": {
+                "externals": "replace"
+              }
+            },
+            "outputPath": "dist/ncv-example",
+            "index": "projects/ncv-example/src/index.html",
+            "main": "projects/ncv-example/src/main.ts",
+            "polyfills": "projects/ncv-example/src/polyfills.ts",
+            "tsConfig": "projects/ncv-example/tsconfig.app.json",
+            "inlineStyleLanguage": "less",
+            "assets": [
+              "projects/ncv-example/src/favicon.ico",
+              "projects/ncv-example/src/assets",
+              {
+                "glob": "**/*",
+                "input": "./dist/ng-cornerstone/src/assets",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/cornerstone-wado-image-loader/dist/dynamic-import",
+                "output": "/"
+              }
+            ],
+            "styles": ["projects/ncv-example/src/styles.less"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/ncv-example/src/environments/environment.ts",
+                  "with": "projects/ncv-example/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "ncv-example:build:production"
+            },
+            "development": {
+              "browserTarget": "ncv-example:build:development"
+            }
+          },
+          "options": {
+            "host": "0.0.0.0",
+            "headers": {
+              "Cross-Origin-Embedder-Policy": "require-corp",
+              "Cross-Origin-Opener-Policy": "same-origin"
+            },
+            "browserTarget": "ncv-example:build"
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ncv-example:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ncv-example/src/test.ts",
+            "polyfills": "projects/ncv-example/src/polyfills.ts",
+            "tsConfig": "projects/ncv-example/tsconfig.spec.json",
+            "karmaConfig": "projects/ncv-example/karma.conf.js",
+            "inlineStyleLanguage": "less",
+            "assets": [
+              "projects/ncv-example/src/favicon.ico",
+              "projects/ncv-example/src/assets"
+            ],
+            "styles": ["projects/ncv-example/src/styles.less"],
+            "scripts": []
           }
         }
       }
