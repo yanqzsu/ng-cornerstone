@@ -34,6 +34,9 @@ export class AppComponent {
     ToolEnum.FlipV,
     ToolEnum.FlipH,
     ToolEnum.Reset,
+    ToolEnum.Axial,
+    ToolEnum.Sagittal,
+    ToolEnum.Coronal,
   ];
 
   imageInfos: ImageInfo[] = [

@@ -11,8 +11,12 @@ import {
   ZoomTool,
 } from '@cornerstonejs/tools';
 import { getRenderingEngine, Types } from '@cornerstonejs/core';
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
-import { OrientationEnum, ToolConfig, ToolEnum } from '../core';
+import { ToolConfig, ToolEnum } from '../core';
+import {
+  OrientationAxis,
+  ViewportType,
+} from '@cornerstonejs/core/dist/esm/enums';
+import { IVolumeViewport } from '@cornerstonejs/core/dist/esm/types';
 
 function reset(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
@@ -58,8 +62,8 @@ function rotate(renderingEngineId: string, viewportId: string): void {
   const viewport = <Types.IStackViewport>(
     renderingEngine?.getViewport(viewportId)
   );
-  const rotation = Math.random() * 360;
-  viewport.setProperties({ rotation });
+  const rotation = viewport.getProperties()?.rotation || 0;
+  viewport.setProperties({ rotation: rotation + 15 });
   viewport.render();
 }
 
@@ -96,36 +100,16 @@ function previous(renderingEngineId: string, viewportId: string): void {
   viewport.setImageIdIndex(newImageIdIndex);
 }
 
-function changeOrientation(event: any) {
-  const selectedValue = event?.target?.value;
-  const renderingEngine = getRenderingEngine(this.renderingEngineId);
-  const viewport = renderingEngine!.getViewport(this.focusedViewportId);
-
-  // TODO -> Maybe we should rename sliceNormal to viewPlaneNormal everywhere?
-  let viewUp;
-  let viewPlaneNormal;
-
-  switch (selectedValue) {
-    case 'AXIAL':
-    case 'CORONAL':
-    case 'SAGITTAL':
-      viewUp = OrientationEnum[selectedValue].viewUp;
-      viewPlaneNormal = OrientationEnum[selectedValue].sliceNormal;
-      break;
-    case 'OBLIQUE':
-      // Some random oblique value for this dataset
-      viewUp = [-0.5962687530844388, 0.5453181550345819, -0.5891448751239446];
-      viewPlaneNormal = [
-        -0.5962687530844388, 0.5453181550345819, -0.5891448751239446,
-      ];
-      break;
-    default:
-      throw new Error('undefined orientation option');
-  }
-
-  // TODO -> Maybe we should have a helper for this on the viewport
+function changeOrientation(
+  renderingEngineId: string,
+  viewportId: string,
+  options: any,
+) {
+  const renderingEngine = getRenderingEngine(renderingEngineId);
+  const viewport = renderingEngine!.getViewport(viewportId) as IVolumeViewport;
+  const { orientation } = options;
   // Set the new orientation
-  viewport.setCamera({ viewUp, viewPlaneNormal });
+  viewport.setOrientation(orientation);
   // Reset the camera after the normal changes
   viewport.resetCamera();
   viewport.render();
@@ -159,6 +143,30 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     name: 'rotate',
     callback: rotate,
     types: [ViewportType.STACK],
+  },
+  [ToolEnum.Sagittal]: {
+    icon: 'dmv-sagittal',
+    label: '矢量',
+    name: 'sagittal',
+    callback: changeOrientation,
+    options: { orientation: OrientationAxis.SAGITTAL },
+    types: [ViewportType.ORTHOGRAPHIC],
+  },
+  [ToolEnum.Coronal]: {
+    icon: 'dmv-coronal',
+    label: '冠状',
+    name: 'coronal',
+    callback: changeOrientation,
+    options: { orientation: OrientationAxis.CORONAL },
+    types: [ViewportType.ORTHOGRAPHIC],
+  },
+  [ToolEnum.Axial]: {
+    icon: 'dmv-axial',
+    label: '轴向',
+    name: 'axial',
+    callback: changeOrientation,
+    options: { orientation: OrientationAxis.AXIAL },
+    types: [ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.Next]: {
     icon: 'dmv-right',
@@ -243,29 +251,5 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     tool: StackScrollTool,
     name: StackScrollTool.toolName,
     types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
-  },
-};
-
-export const ORIENTATION_LIST: { [key in OrientationEnum]?: ToolConfig } = {
-  [OrientationEnum.SAGITTAL]: {
-    icon: 'dmv-sagittal',
-    label: '矢量',
-    name: 'Reset',
-    callback: reset,
-    types: [ViewportType.ORTHOGRAPHIC],
-  },
-  [OrientationEnum.CORONAL]: {
-    icon: 'dmv-coronal',
-    label: '冠状',
-    name: 'fliph',
-    callback: flipH,
-    types: [ViewportType.ORTHOGRAPHIC],
-  },
-  [OrientationEnum.AXIAL]: {
-    icon: 'dmv-axial',
-    label: '轴向',
-    name: 'flipV',
-    callback: flipV,
-    types: [ViewportType.ORTHOGRAPHIC],
   },
 };

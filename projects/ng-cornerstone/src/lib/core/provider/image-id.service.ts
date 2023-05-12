@@ -37,11 +37,11 @@ export class ImageIdService {
     if (imageInfo?.sopInstanceUIDs && imageInfo?.sopInstanceUIDs.length >= 0) {
       sopInstanceUIDSet = new Set<string>(imageInfo?.sopInstanceUIDs);
     } else {
-      sopInstanceUIDSet = new Set<string>(
-        instances.map((instanceMetaData) => {
-          return instanceMetaData[SOP_INSTANCE_UID].Value[0];
-        }),
-      );
+      const instanceUIDs = instances.map((instanceMetaData) => {
+        return instanceMetaData[SOP_INSTANCE_UID].Value[0];
+      });
+      sopInstanceUIDSet = new Set<string>(instanceUIDs);
+      imageInfo.sopInstanceUIDs = instanceUIDs;
     }
     let imageIds: string[] = [];
     instances.forEach((instanceMetaData) => {

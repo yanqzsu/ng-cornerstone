@@ -1,6 +1,11 @@
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SafeAny = any;
+type Class<T> = new (...args: any[]) => T;
+export type FunctionProp<T> = (...args: SafeAny[]) => T;
+
 export enum RequestSchema {
   WadoRs = 'wadors:',
   WadoUri = 'wadouri:',
@@ -55,28 +60,21 @@ export enum ToolEnum {
   Rotate,
   Next,
   Previous,
+  Coronal,
+  Axial,
+  Sagittal,
 }
 
-type Class<T> = new (...args: any[]) => T;
 export interface ToolConfig {
   label: string;
   icon: string;
   name: string;
   tool?: any;
-  callback?: (renderingEngineId: string, viewportId: string) => void;
+  callback?: (
+    renderingEngineId: string,
+    viewportId: string,
+    options?: any,
+  ) => void;
+  options?: any;
   types: ViewportType[];
 }
-
-export enum OrientationEnum {
-  AXIAL = 'AXIAL',
-  SAGITTAL = 'SAGITTAL',
-  CORONAL = 'CORONAL',
-  OBLIQUE = 'OBLIQUE',
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type SafeAny = any;
-
-export type FunctionProp<T> = (...args: SafeAny[]) => T;
-
-export type ViewportConfig = Omit<PublicViewportInput, 'element'>;

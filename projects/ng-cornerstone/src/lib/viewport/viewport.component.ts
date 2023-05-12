@@ -25,12 +25,10 @@ import {
   CornerstoneInitService,
   ImageIdService,
   ImageInfo,
-  OrientationEnum,
   RequestSchema,
   setCtTransferFunctionForVolumeActor,
   setStacksForViewports,
   ToolEnum,
-  ViewportConfig,
 } from '../core';
 
 @Component({
@@ -42,12 +40,10 @@ import {
 export class ViewportComponent implements OnInit, OnChanges {
   viewportId = 'VIEWPORT_ID';
   renderingEngineId = 'RENDERING_ENGINE_ID';
-  toolGroupId = 'TOOLGROUP_ID';
-  volumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
-  volumeId = `${this.volumeLoaderScheme}:VOLUME_ID`; // VolumeId with loader id + volume id
+  defaultVolumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
+  volumeIdRoot = `${this.defaultVolumeLoaderScheme}:VOLUME_ID:`; // VolumeId with loader id + volume id + instance uid
   viewportType: ViewportType = ViewportType.STACK;
   renderingEngine!: RenderingEngine;
-  orientationAxis: OrientationAxis = OrientationAxis.AXIAL;
 
   @Input()
   imageInfo?: ImageInfo;
@@ -87,46 +83,30 @@ export class ViewportComponent implements OnInit, OnChanges {
           this.viewportType = imageInfo.viewportType;
           this.setViewports();
         }
-        if (
-          imageInfo?.volumeLoaderScheme &&
-          imageInfo.volumeLoaderScheme !== this.volumeLoaderScheme
-        ) {
-          this.volumeLoaderScheme = imageInfo.volumeLoaderScheme;
-        }
         if (imageInfo.schema === RequestSchema.WadoRs) {
           const imageIds =
             await this.imageIdService.wadoRsCreateImageIdsAndCacheMetaData(
               imageInfo,
             );
+          const firstInstanceUID = imageInfo.sopInstanceUIDs![0] || '';
+          const volumeId = this.volumeIdRoot + firstInstanceUID;
           if (imageInfo.viewportType === ViewportType.ORTHOGRAPHIC) {
-            const volume = await volumeLoader.createAndCacheVolume(
-              this.volumeId,
-              {
-                imageIds,
-              },
-            );
+            const volume = await volumeLoader.createAndCacheVolume(volumeId, {
+              imageIds,
+            });
             volume['load']();
             await setVolumesForViewports(
               this.renderingEngine,
               [
                 {
-                  volumeId: this.volumeId,
+                  volumeId,
                   callback: setCtTransferFunctionForVolumeActor,
                 },
               ],
               [this.viewportId],
-              true,
             );
+            this.renderingEngine.renderViewports([this.viewportId]);
           } else if (imageInfo.viewportType === ViewportType.STACK) {
-            // const viewport = this.renderingEngine.getViewport(
-            //   viewportIds[0],
-            // ) as IStackViewport;
-            // // this.renderingEngine.enableElement(viewport);
-            // await viewport.setStack(imageIds, 0);
-            // // Set the VOI of the stack
-            // viewport.setProperties({ voiRange: ctVoiRange });
-            // // Render the image
-            // viewport.render();
             await setStacksForViewports(
               this.renderingEngine,
               [this.viewportId],
@@ -167,12 +147,13 @@ export class ViewportComponent implements OnInit, OnChanges {
         viewportId: this.viewportId,
         type: ViewportType.ORTHOGRAPHIC,
         defaultOptions: {
-          orientation: this.orientationAxis,
+          orientation: OrientationAxis.AXIAL,
           background: <Types.Point3>[0, 0, 0],
         },
       };
       viewports.push(viewportInput);
     }
     this.renderingEngine.setViewports(viewports);
+    this.toolBarComponent?.updateViewport();
   }
 }
