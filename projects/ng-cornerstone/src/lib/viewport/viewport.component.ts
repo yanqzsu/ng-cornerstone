@@ -1,5 +1,4 @@
 import {
-  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -20,7 +19,7 @@ import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types';
 
 import { combineLatest, filter, first, ReplaySubject } from 'rxjs';
 
-import { ToolBarComponent } from '../tool/tool-bar.component';
+import { ToolBarComponent, ToolEnum } from '../tool';
 import {
   CornerstoneInitService,
   ImageIdService,
@@ -28,7 +27,6 @@ import {
   RequestSchema,
   setCtTransferFunctionForVolumeActor,
   setStacksForViewports,
-  ToolEnum,
 } from '../core';
 
 @Component({
@@ -63,7 +61,6 @@ export class ViewportComponent implements OnInit, OnChanges {
   constructor(
     private cornerStoneInitService: CornerstoneInitService,
     private imageIdService: ImageIdService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -122,7 +119,7 @@ export class ViewportComponent implements OnInit, OnChanges {
         filter((ready) => ready),
         first(),
       )
-      .subscribe((value) => {
+      .subscribe(() => {
         this.renderingEngine = new RenderingEngine(this.renderingEngineId);
         this.setViewports();
         this.readySubject.next(true);

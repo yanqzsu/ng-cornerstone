@@ -7,7 +7,7 @@ import {
   HostBinding,
   HostListener,
   Input,
-  OnInit,
+  OnDestroy,
   Output,
 } from '@angular/core';
 import { InputBoolean } from '../../core';
@@ -24,11 +24,13 @@ export interface ButtonToggleChange {
 }
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'button[nc-button], a[nc-button]',
   exportAs: 'ncButton',
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     class: 'nc-btn',
     '[class.btn-type-primary]': `type === 'primary'`,
@@ -44,7 +46,7 @@ export interface ButtonToggleChange {
     '[attr.disabled]': 'disabled || null',
   },
 })
-export class ButtonComponent implements OnInit {
+export class ButtonComponent implements OnDestroy {
   @Input() @InputBoolean() disabled = false;
   @Input() tabIndex: number | string | null = null;
   @Input() type: ButtonType = 'default';
@@ -93,8 +95,6 @@ export class ButtonComponent implements OnInit {
   private destroy$ = new Subject<void>();
 
   constructor(public _elementRef: ElementRef, private cd: ChangeDetectorRef) {}
-
-  ngOnInit(): void {}
 
   _getHostElement() {
     return this._elementRef.nativeElement;

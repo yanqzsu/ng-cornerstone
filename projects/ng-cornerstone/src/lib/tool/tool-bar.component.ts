@@ -14,8 +14,8 @@ import {
   ToolGroupManager,
 } from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
-import { ToolConfig, ToolEnum } from '../core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
+import { ToolConfig, ToolEnum } from './tool.types';
 
 @Component({
   selector: 'nc-tool-bar',

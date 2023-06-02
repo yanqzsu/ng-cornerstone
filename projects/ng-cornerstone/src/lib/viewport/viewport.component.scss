@@ -1,5 +1,20 @@
+@use '../../styles/variables';
+
+:host {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  background-color: black;
+}
+
+.tool {
+  flex: 0;
+}
+
 .viewport {
-  width: 500px;
-  height: 500px;
-  border: 1px solid green;
+  min-width: 100px;
+  min-height: 100px;
+  flex: 1;
+  border: 1px solid variables.$border-color;
 }

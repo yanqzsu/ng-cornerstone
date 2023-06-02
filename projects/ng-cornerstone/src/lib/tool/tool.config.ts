@@ -11,17 +11,16 @@ import {
   ZoomTool,
 } from '@cornerstonejs/tools';
 import { getRenderingEngine, Types } from '@cornerstonejs/core';
-import { ToolConfig, ToolEnum } from '../core';
 import {
   OrientationAxis,
   ViewportType,
 } from '@cornerstonejs/core/dist/esm/enums';
 import { IVolumeViewport } from '@cornerstonejs/core/dist/esm/types';
+import { ToolConfig, ToolEnum } from './tool.types';
 
 function reset(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
   const renderingEngine = getRenderingEngine(renderingEngineId);
-
   // Get the volume viewport
   const viewport = <Types.IVolumeViewport>(
     renderingEngine?.getViewport(viewportId)
@@ -222,7 +221,7 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     label: '3D旋转',
     tool: TrackballRotateTool,
     name: TrackballRotateTool.toolName,
-    types: [ViewportType.ORTHOGRAPHIC],
+    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.ZoomTool]: {
     icon: 'dmv-zoom',

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'i[nc-icon]',
   template: `
     <svg class="icon" aria-hidden="true">
@@ -27,6 +27,5 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent {
-  // tslint:disable-next-line:no-input-rename
-  @Input('nc-icon') iconfont: string | null = '';
+  @Input() iconfont: string | null = '';
 }
