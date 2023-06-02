@@ -9,8 +9,8 @@ module.exports = {
     // bundled version of WADO Image Loader so we can produce a single file for the viewer.
     // (Note: script-tag version of the viewer will no longer be supported in OHIF v3)
     alias: {
-      'cornerstone-wado-image-loader':
-        'cornerstone-wado-image-loader/dist/dynamic-import/cornerstoneWADOImageLoader.min.js',
+      '@cornerstonejs/dicom-image-loader':
+        '@cornerstonejs/dicom-image-loader/dist/dynamic-import/cornerstoneDICOMImageLoader.min.js',
     },
   },
   plugins: [

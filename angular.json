@@ -215,7 +215,7 @@
               },
               {
                 "glob": "**/*",
-                "input": "./node_modules/cornerstone-wado-image-loader/dist/dynamic-import",
+                "input": "./node_modules/@cornerstonejs/dicom-image-loader/dist/dynamic-import",
                 "output": "/"
               }
             ],

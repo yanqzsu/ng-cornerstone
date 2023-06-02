@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { metaData } from '@cornerstonejs/core';
 import { calibratedPixelSpacingMetadataProvider } from '@cornerstonejs/core/dist/esm/utilities';
 import { api } from 'dicomweb-client';
-import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
+import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 import dcmjs from 'dcmjs';
 import getPixelSpacingInformation from './getPixelSpacingInformation';
 import {
@@ -52,7 +52,7 @@ export class ImageIdService {
           sopInstanceUIDs: [sopInstanceUID],
         });
         imageIds.push(...imageId); // only one image id
-        cornerstoneWADOImageLoader.wadors.metaDataManager.add(
+        cornerstoneDICOMImageLoader.wadors.metaDataManager.add(
           imageId[0],
           instanceMetaData,
         );
@@ -152,7 +152,7 @@ export class ImageIdService {
   pixelSpacingProvider(imageIds: string[]): void {
     imageIds.forEach((imageId) => {
       let instanceMetaData =
-        cornerstoneWADOImageLoader.wadors.metaDataManager.get(imageId);
+        cornerstoneDICOMImageLoader.wadors.metaDataManager.get(imageId);
 
       // It was using JSON.parse(JSON.stringify(...)) before but it is 8x slower
       instanceMetaData = this.removeInvalidTags(instanceMetaData);
