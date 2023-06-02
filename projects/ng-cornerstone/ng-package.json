@@ -6,6 +6,7 @@
   },
   "assets": ["README.md", "src/assets", "src/styles"],
   "allowedNonPeerDependencies": [
+    "@angular/cdk",
     "dcmjs",
     "dicomweb-client",
     "@cornerstonejs/calculate-suv"
