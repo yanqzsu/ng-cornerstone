@@ -1,7 +1,7 @@
-const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-
-const DIST_DIR = path.join(__dirname, './dist/playground');
+// const path = require('path');
+// const CopyWebpackPlugin = require('copy-webpack-plugin');
+//
+// const DIST_DIR = path.join(__dirname, './dist/playground');
 module.exports = {
   resolve: {
     // We use this alias and the CopyPlugin below to support using the dynamic-import version

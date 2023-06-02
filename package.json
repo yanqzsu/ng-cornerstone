@@ -1,6 +1,6 @@
 {
   "name": "ng-corner",
-  "version": "0.0.0",
+  "version": "0.0.0-alpha",
   "scripts": {
     "ng": "ng",
     "start": "ng serve ncv-example",
@@ -14,9 +14,9 @@
     "lint": "ng lint",
     "orthanc": "docker run --name orthanc-nginx-proxy -v C:/Users/YANQZSU/git/dcm-js/ng-corner/orthanc:/etc/nginx/conf.d:ro -p 8080:80 -d nginx",
     "nginx": "docker run -p 8081:443 -d --name dicom-web dicom-web",
-    "docker-build": "docker build -t dicom-web . --no-cache --progress plain"
+    "docker-build": "docker build -t dicom-web . --no-cache --progress plain",
+    "publish": "npm publish"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^14.0.5",
     "@angular/cdk": "^14.0.4",
