@@ -1,7 +1,7 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { ViewportComponent } from './viewport.component';
 import { CornerstoneInitService } from '../core';
-import { ToolModule } from '../tool/tool.module';
+import { ToolModule } from '../tool';
 
 @NgModule({
   declarations: [ViewportComponent],

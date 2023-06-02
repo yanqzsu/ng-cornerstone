@@ -19,7 +19,7 @@ import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types';
 
 import { combineLatest, filter, first, ReplaySubject } from 'rxjs';
 
-import { ToolBarComponent, ToolEnum } from '../tool';
+import { ToolEnum, ToolBarComponent } from '../tool';
 import {
   CornerstoneInitService,
   ImageIdService,
