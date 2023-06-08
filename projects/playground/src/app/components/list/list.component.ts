@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  HostBinding,
-  ContentChildren,
-  QueryList,
-} from '@angular/core';
+import { Component, Input, HostBinding, ContentChildren, QueryList } from '@angular/core';
 
 /**
  * List item component is a grouping component that accepts arbitrary content.
@@ -13,7 +7,7 @@ import {
 @Component({
   selector: 'app-list-item',
   template: `<ng-content></ng-content>`,
-  styleUrls: ['list-item.component.less'],
+  styleUrls: ['list-item.component.scss'],
 })
 export class ListItemComponent {
   /**
@@ -32,7 +26,7 @@ export class ListItemComponent {
   selector: 'app-list',
   template: `<i *ngIf="empty" app-icon="infinity-empty" class="empty-icon"></i
     ><ng-content select="app-list-item"></ng-content>`,
-  styleUrls: ['./list.component.less'],
+  styleUrls: ['./list.component.scss'],
 })
 export class ListComponent {
   /**

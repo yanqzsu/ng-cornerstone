@@ -21,8 +21,7 @@ function addInstance(imageId, dicomJSONDatasetOrP10ArrayBuffer) {
   let naturalizedDataset;
 
   if (dicomJSONDataset['SeriesInstanceUID'] === undefined) {
-    naturalizedDataset =
-      DicomMetaDictionary.naturalizeDataset(dicomJSONDataset);
+    naturalizedDataset = DicomMetaDictionary.naturalizeDataset(dicomJSONDataset);
   } else {
     naturalizedDataset = dicomJSONDataset;
   }

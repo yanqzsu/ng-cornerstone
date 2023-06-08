@@ -1,0 +1,19 @@
+{
+  "extends": ["stylelint-config-standard-scss"],
+  "rules": {
+    "selector-pseudo-element-no-unknown": [
+      true,
+      {
+        "ignorePseudoElements": ["ng-deep"]
+      }
+    ],
+    "selector-class-pattern": [
+      "^([a-z][a-z0-9]*)(-[a-z0-9]+)*((__([a-z][a-z0-9]*)(-[a-z0-9]+)*)?(--([a-z][a-z0-9]*)(-[a-z0-9]+)*)?)$",
+      {
+        "message": "Expected class pattern to be BEM style"
+      }
+    ],
+    "scss/at-extend-no-missing-placeholder": null
+  },
+  "ignoreFiles": ["**/assets/*", "dist/**/*"]
+}

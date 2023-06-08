@@ -1,11 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DICOM_SERVER, SeriesInfo } from '../core';
 import { api } from 'dicomweb-client';
 import { createSingleImageIdsAndCacheMetaData } from '../core/load/createSingleImageIdAndCache';
@@ -72,9 +65,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 
   downloadAndView(instanceMeta: any) {
     const imageId = createSingleImageIdsAndCacheMetaData(instanceMeta, true);
-    const viewport = this.renderingEngine.getViewport(
-      this.viewportId,
-    ) as IStackViewport;
+    const viewport = this.renderingEngine.getViewport(this.viewportId) as IStackViewport;
     viewport
       .setStack([imageId], 0)
       .then(() => {

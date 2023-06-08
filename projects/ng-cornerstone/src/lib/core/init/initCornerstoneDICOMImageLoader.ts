@@ -2,8 +2,7 @@ import dicomParser from 'dicom-parser';
 import * as cornerstone from '@cornerstonejs/core';
 import cornerstoneWADOImageLoader from '@cornerstonejs/dicom-image-loader';
 
-const { preferSizeOverAccuracy, useNorm16Texture } =
-  cornerstone.getConfiguration().rendering;
+const { preferSizeOverAccuracy, useNorm16Texture } = cornerstone.getConfiguration().rendering;
 
 export default function initCornerstoneDICOMImageLoader() {
   cornerstoneWADOImageLoader.external.cornerstone = cornerstone;

@@ -1,18 +1,7 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 import { TOOL_CONFIG_MAP, ToolConfig, ToolEnum } from './tool.config';
-import {
-  addTool,
-  Enums as ToolsEnums,
-  ToolGroupManager,
-} from '@cornerstonejs/tools';
+import { addTool, Enums as ToolsEnums, ToolGroupManager } from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 import { getRenderingEngine } from '@cornerstonejs/core';
 import { OrientationEnum, OrientationStringList } from '../core';
@@ -22,7 +11,7 @@ import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
   selector: 'app-tool-group',
   exportAs: 'appToolGroup',
   templateUrl: './tool-group.component.html',
-  styleUrls: ['./tool-group.component.scss'],
+  styleUrls: ['./tool-grop.component.scss'],
 })
 export class ToolGroupComponent implements OnInit, OnChanges, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -56,11 +45,7 @@ export class ToolGroupComponent implements OnInit, OnChanges, OnDestroy {
         .map((tool) => {
           return TOOL_CONFIG_MAP[tool];
         })
-        .filter(
-          (value) =>
-            value !== undefined &&
-            value.types.findIndex((type) => type === this.viewportType) > -1,
-        );
+        .filter((value) => value !== undefined && value.types.findIndex((type) => type === this.viewportType) > -1);
     }
   }
 
@@ -123,9 +108,7 @@ export class ToolGroupComponent implements OnInit, OnChanges, OnDestroy {
       case 'OBLIQUE':
         // Some random oblique value for this dataset
         viewUp = [-0.5962687530844388, 0.5453181550345819, -0.5891448751239446];
-        viewPlaneNormal = [
-          -0.5962687530844388, 0.5453181550345819, -0.5891448751239446,
-        ];
+        viewPlaneNormal = [-0.5962687530844388, 0.5453181550345819, -0.5891448751239446];
         break;
       default:
         throw new Error('undefined orientation option');

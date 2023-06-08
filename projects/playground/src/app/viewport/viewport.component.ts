@@ -1,17 +1,11 @@
-import {
-  Component,
-  ElementRef,
-  HostBinding,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { Component, ElementRef, HostBinding, Input } from '@angular/core';
 
 @Component({
   selector: 'app-viewport',
   templateUrl: './viewport.component.html',
   styleUrls: ['./viewport.component.scss'],
 })
-export class ViewportComponent implements OnInit {
+export class ViewportComponent {
   @Input()
   viewportId = 'viewport';
 
@@ -23,6 +17,4 @@ export class ViewportComponent implements OnInit {
   focus: boolean = false;
 
   constructor(public element: ElementRef) {}
-
-  ngOnInit(): void {}
 }

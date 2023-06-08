@@ -5,6 +5,8 @@
   border: 2px solid gray;
 }
 
-:host:focus, :host:active, :host.focus  {
+:host:focus,
+:host:active,
+:host.focus {
   border: 2px solid green;
 }

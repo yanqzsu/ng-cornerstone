@@ -8,7 +8,8 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule, {
-  defaultEncapsulation: ViewEncapsulation.Emulated
-})
-  .catch(err => console.error(err));
+platformBrowserDynamic()
+  .bootstrapModule(AppModule, {
+    defaultEncapsulation: ViewEncapsulation.Emulated,
+  })
+  .catch((err) => console.error(err));

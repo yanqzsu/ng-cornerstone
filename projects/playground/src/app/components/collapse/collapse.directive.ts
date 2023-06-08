@@ -2,9 +2,7 @@ import { CdkAccordion } from '@angular/cdk/accordion';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Directive, InjectionToken, Input, OnInit } from '@angular/core';
 
-export const DX_ACCORDION = new InjectionToken<CollapseDirective>(
-  'DX_ACCORDION',
-);
+export const DX_ACCORDION = new InjectionToken<CollapseDirective>('DX_ACCORDION');
 
 @Directive({
   selector: '[appCollapse]',

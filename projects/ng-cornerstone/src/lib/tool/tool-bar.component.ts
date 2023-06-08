@@ -1,18 +1,7 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 import { TOOL_CONFIG_MAP } from './tool.config';
-import {
-  addTool,
-  Enums as ToolsEnums,
-  ToolGroupManager,
-} from '@cornerstonejs/tools';
+import { addTool, Enums as ToolsEnums, ToolGroupManager } from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { ToolConfig, ToolEnum } from './tool.types';
@@ -21,7 +10,6 @@ import { ToolConfig, ToolEnum } from './tool.types';
   selector: 'nc-tool-bar',
   exportAs: 'ncToolBar',
   templateUrl: './tool-bar.component.html',
-  styleUrls: ['./tool-bar.component.scss'],
 })
 export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -98,9 +86,7 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
     if (!names || names.length === 0) {
       return;
     }
-    const pressedTool = this.toolConfigList.find(
-      (toolConfig) => toolConfig.name === names[0],
-    );
+    const pressedTool = this.toolConfigList.find((toolConfig) => toolConfig.name === names[0]);
     if (!pressedTool) {
       return;
     }
@@ -120,15 +106,9 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
     if (!name) {
       return;
     }
-    const cameraTool = this.cameraList.find(
-      (toolConfig) => toolConfig.name === name,
-    );
+    const cameraTool = this.cameraList.find((toolConfig) => toolConfig.name === name);
     if (cameraTool?.callback) {
-      cameraTool.callback(
-        this.renderingEngineId,
-        this.viewportId,
-        cameraTool.options,
-      );
+      cameraTool.callback(this.renderingEngineId, this.viewportId, cameraTool.options);
     }
   }
 

@@ -1,9 +1,6 @@
 import { api } from 'dicomweb-client';
 import dcmjs from 'dcmjs';
-import {
-  calculateSUVScalingFactors,
-  InstanceMetadata,
-} from '@cornerstonejs/calculate-suv';
+import { calculateSUVScalingFactors, InstanceMetadata } from '@cornerstonejs/calculate-suv';
 import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import { utilities } from '@cornerstonejs/core';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
@@ -23,8 +20,7 @@ const { calibratedPixelSpacingMetadataProvider } = utilities;
  */
 
 export default async function createImageIdsAndCacheMetaData(value) {
-  const { studyInstanceUID, seriesInstanceUID, wadoRsRoot, viewportType } =
-    value;
+  const { studyInstanceUID, seriesInstanceUID, wadoRsRoot, viewportType } = value;
   const SOP_INSTANCE_UID = '00080018';
   const SERIES_INSTANCE_UID = '0020000E';
   const MODALITY = '00080060';
@@ -57,10 +53,7 @@ export default async function createImageIdsAndCacheMetaData(value) {
       sopInstanceUID +
       '/frames/1';
     console.log(imageId);
-    cornerstoneWADOImageLoader.wadors.metaDataManager.add(
-      imageId,
-      instanceMetaData,
-    );
+    cornerstoneWADOImageLoader.wadors.metaDataManager.add(imageId, instanceMetaData);
 
     // Add calibrated pixel spacing
     const m = JSON.parse(JSON.stringify(instanceMetaData));
@@ -69,10 +62,7 @@ export default async function createImageIdsAndCacheMetaData(value) {
     if (spacingInfo && Array.isArray(spacingInfo.pixelSpacing)) {
       calibratedPixelSpacingMetadataProvider.add(
         imageId,
-        spacingInfo.pixelSpacing.map((s) => parseFloat(String(s))) as [
-          number,
-          number,
-        ],
+        spacingInfo.pixelSpacing.map((s) => parseFloat(String(s))) as [number, number],
       );
     }
 
@@ -91,9 +81,7 @@ export default async function createImageIdsAndCacheMetaData(value) {
       // It's showing up like 'DECY\\ATTN\\SCAT\\DTIM\\RAN\\RADL\\DCAL\\SLSENS\\NORM'
       // but calculate-suv expects ['DECY', 'ATTN', ...]
       if (typeof instanceMetadata.CorrectedImage === 'string') {
-        instanceMetadata.CorrectedImage = (
-          instanceMetadata.CorrectedImage as string
-        ).split('\\');
+        instanceMetadata.CorrectedImage = (instanceMetadata.CorrectedImage as string).split('\\');
       }
 
       if (instanceMetadata) {
@@ -101,14 +89,9 @@ export default async function createImageIdsAndCacheMetaData(value) {
       }
     });
     if (InstanceMetadataArray.length) {
-      const suvScalingFactors = calculateSUVScalingFactors(
-        InstanceMetadataArray,
-      );
+      const suvScalingFactors = calculateSUVScalingFactors(InstanceMetadataArray);
       InstanceMetadataArray.forEach((instanceMetadata, index) => {
-        ptScalingMetaDataProvider.addInstance(
-          imageIds[index],
-          suvScalingFactors[index],
-        );
+        ptScalingMetaDataProvider.addInstance(imageIds[index], suvScalingFactors[index]);
       });
     }
   }

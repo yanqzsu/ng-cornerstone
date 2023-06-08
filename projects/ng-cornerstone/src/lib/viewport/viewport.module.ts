@@ -9,10 +9,7 @@ import { ToolModule } from '../tool';
   exports: [ViewportComponent],
 })
 export class ViewportModule {
-  constructor(
-    @Optional() initService: CornerstoneInitService,
-    @SkipSelf() @Optional() parent?: ViewportModule,
-  ) {
+  constructor(@Optional() initService: CornerstoneInitService, @SkipSelf() @Optional() parent?: ViewportModule) {
     if (parent) {
       throw new Error('ToolBarModule should be imported only once!');
     }

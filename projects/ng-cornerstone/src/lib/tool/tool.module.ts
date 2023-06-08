@@ -1,10 +1,4 @@
-import {
-  ENVIRONMENT_INITIALIZER,
-  inject,
-  NgModule,
-  Optional,
-  SkipSelf,
-} from '@angular/core';
+import { ENVIRONMENT_INITIALIZER, inject, NgModule, Optional, SkipSelf } from '@angular/core';
 import { ToolBarComponent } from './tool-bar.component';
 import { ICONFONT_URL, IconService } from '../components/icon/icon.service';
 import { ButtonModule } from '../components/button/button.module';

@@ -5,8 +5,7 @@ import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 
 window.cornerstone = cornerstone;
 window.cornerstoneTools = cornerstoneTools;
-const { preferSizeOverAccuracy, useNorm16Texture } =
-  cornerstone.getConfiguration().rendering;
+const { preferSizeOverAccuracy, useNorm16Texture } = cornerstone.getConfiguration().rendering;
 
 export default function initCornerstoneDICOMImageLoader() {
   cornerstoneWADOImageLoader.external.cornerstone = cornerstone;

@@ -44,11 +44,7 @@ export interface ToolConfig {
   icon: string;
   name: string;
   tool?: any;
-  callback?: (
-    renderingEngineId: string,
-    viewportId: string,
-    options?: any,
-  ) => void;
+  callback?: (renderingEngineId: string, viewportId: string, options?: any) => void;
   options?: any;
   types: ViewportType[];
 }

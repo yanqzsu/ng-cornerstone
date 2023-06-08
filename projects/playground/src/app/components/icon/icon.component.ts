@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { IconService } from './icon.service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'i[app-icon]',
   template: `
     <svg class="app-icon" aria-hidden="true">
@@ -29,7 +29,7 @@ import { IconService } from './icon.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent {
-  // tslint:disable-next-line:no-input-rename
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('app-icon') iconfont: string | null = '';
 
   constructor(service: IconService) {}

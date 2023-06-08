@@ -1,10 +1,4 @@
-import {
-  ModuleWithProviders,
-  NgModule,
-  Optional,
-  SkipSelf,
-  APP_INITIALIZER,
-} from '@angular/core';
+import { ModuleWithProviders, NgModule, Optional, SkipSelf, APP_INITIALIZER } from '@angular/core';
 import initDemo from './init/initDemo';
 
 export function startupServiceFactory(): () => Promise<void> {
@@ -27,9 +21,7 @@ export class CoreModule {
   constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
     if (parentModule) {
       // https://angular.io/guide/styleguide#style-04-12
-      throw new Error(
-        `${parentModule} has already been loaded. Import Core modules in the AppModule only.`,
-      );
+      throw new Error(`${parentModule} has already been loaded. Import Core modules in the AppModule only.`);
     }
   }
 
