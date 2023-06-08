@@ -1,5 +1,7 @@
 # NgCornerstone
 
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
 This library is an angular project for [CornerStone3D](https://www.cornerstonejs.org/)
 It can be used as a viewport of DICOM images.
 

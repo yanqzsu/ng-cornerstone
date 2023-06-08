@@ -2,6 +2,7 @@
   "name": "ng-cornerstone",
   "version": "0.0.3",
   "repository": "https://github.com/yanqzsu/ng-corner",
+  "homepage": "https://github.com/yanqzsu/ng-corner#readme.md",
   "peerDependencies": {
     "@angular/common": ">=13",
     "@angular/core": ">=13",

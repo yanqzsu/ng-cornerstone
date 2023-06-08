@@ -1,5 +1,5 @@
 {
   "*.{ts,js}": "eslint --cache",
   "*.{scss,less,css}": "stylelint --allow-empty-input",
-  "*.{ts,scss,less,html,md,js,css}": "prettier --check --ignore-unknown"
+  "*.{ts,scss,less,html,js,css}": "prettier --check --ignore-unknown"
 }
