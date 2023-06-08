@@ -1,6 +1,6 @@
 {
   "name": "ng-cornerstone",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": "https://github.com/yanqzsu/ng-corner",
   "homepage": "https://github.com/yanqzsu/ng-corner#readme.md",
   "peerDependencies": {

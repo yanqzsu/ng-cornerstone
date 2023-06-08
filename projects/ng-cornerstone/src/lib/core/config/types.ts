@@ -2,7 +2,6 @@ import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type SafeAny = any;
-type Class<T> = new (...args: any[]) => T;
 export type FunctionProp<T> = (...args: SafeAny[]) => T;
 
 export enum RequestSchema {
