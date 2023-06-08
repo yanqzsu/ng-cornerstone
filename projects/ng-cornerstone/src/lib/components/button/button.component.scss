@@ -82,7 +82,7 @@ $border-radius: 2px;
   background-color: variables.$primary-color;
 
   &:hover {
-    background-color: color.adjust(variables.$primary-color, 20%);
+    background-color: color.adjust(variables.$primary-color, $lightness: 20%);
   }
 
   &:focus {
@@ -156,4 +156,3 @@ $border-radius: 2px;
 :host.btn-shape-circle {
   border-radius: 50%;
 }
-
