@@ -19,37 +19,33 @@ export class StudyComponent implements OnInit {
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.route.paramMap
-      .pipe(map((params) => params.get('id')))
-      .subscribe((uid) => {
-        const client = new api.DICOMwebClient({ url: DICOM_SERVER });
-        client
-          .searchForSeries({
-            studyInstanceUID: uid,
-          })
-          .then((series) => {
-            this.seriesInfos = series.map((seriesMeta) => {
-              const metadata =
-                DicomMetaDictionary.naturalizeDataset(seriesMeta);
-              console.log('series');
-              console.log(metadata);
-              return {
-                studyInstanceUID: uid,
-                seriesInstanceUID: metadata.SeriesInstanceUID,
-                wadoRsRoot: DICOM_SERVER,
-                volumeId: metadata.SeriesInstanceUID,
-                accessionNumber: metadata.AccessionNumber,
-                seriesDesc: metadata.SeriesDescription,
-                seriesNumber: metadata.SeriesNumber,
-                numberOfSeriesRelatedInstances:
-                  metadata.NumberOfSeriesRelatedInstances,
-              };
-            });
-            // if (this.seriesInfos.length > 0) {
-            //   this.switchImage(this.seriesInfos[0]);
-            // }
+    this.route.paramMap.pipe(map((params) => params.get('id'))).subscribe((uid) => {
+      const client = new api.DICOMwebClient({ url: DICOM_SERVER });
+      client
+        .searchForSeries({
+          studyInstanceUID: uid,
+        })
+        .then((series) => {
+          this.seriesInfos = series.map((seriesMeta) => {
+            const metadata = DicomMetaDictionary.naturalizeDataset(seriesMeta);
+            console.log('series');
+            console.log(metadata);
+            return {
+              studyInstanceUID: uid,
+              seriesInstanceUID: metadata.SeriesInstanceUID,
+              wadoRsRoot: DICOM_SERVER,
+              volumeId: metadata.SeriesInstanceUID,
+              accessionNumber: metadata.AccessionNumber,
+              seriesDesc: metadata.SeriesDescription,
+              seriesNumber: metadata.SeriesNumber,
+              numberOfSeriesRelatedInstances: metadata.NumberOfSeriesRelatedInstances,
+            };
           });
-      });
+          // if (this.seriesInfos.length > 0) {
+          //   this.switchImage(this.seriesInfos[0]);
+          // }
+        });
+    });
   }
   switchImage(event: CdkDragDrop<SeriesInfo[]>) {
     if (event.previousContainer === event.container) {

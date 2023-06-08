@@ -1,9 +1,7 @@
 import { metaData } from '@cornerstonejs/core';
 import type { InstanceMetadata } from '@cornerstonejs/calculate-suv';
 
-export default function getPTImageIdInstanceMetadata(
-  imageId: string,
-): InstanceMetadata {
+export default function getPTImageIdInstanceMetadata(imageId: string): InstanceMetadata {
   const petSequenceModule = metaData.get('petIsotopeModule', imageId);
   const generalSeriesModule = metaData.get('generalSeriesModule', imageId);
   const patientStudyModule = metaData.get('patientStudyModule', imageId);
@@ -17,8 +15,7 @@ export default function getPTImageIdInstanceMetadata(
 
   const radiopharmaceuticalInfo = petSequenceModule.radiopharmaceuticalInfo;
 
-  const { seriesDate, seriesTime, acquisitionDate, acquisitionTime } =
-    generalSeriesModule;
+  const { seriesDate, seriesTime, acquisitionDate, acquisitionTime } = generalSeriesModule;
   const { patientWeight } = patientStudyModule;
   const { correctedImage, units, decayCorrection } = ptSeriesModule;
 
@@ -59,8 +56,7 @@ export default function getPTImageIdInstanceMetadata(
     radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime !== undefined &&
     typeof radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime === 'string'
   ) {
-    instanceMetadata.RadiopharmaceuticalStartDateTime =
-      radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime;
+    instanceMetadata.RadiopharmaceuticalStartDateTime = radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime;
   }
 
   if (
@@ -68,9 +64,7 @@ export default function getPTImageIdInstanceMetadata(
     radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime !== undefined &&
     typeof radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime !== 'string'
   ) {
-    const dateString = convertInterfaceDateToString(
-      radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime,
-    );
+    const dateString = convertInterfaceDateToString(radiopharmaceuticalInfo.radiopharmaceuticalStartDateTime);
     instanceMetadata.RadiopharmaceuticalStartDateTime = dateString;
   }
 
@@ -79,9 +73,7 @@ export default function getPTImageIdInstanceMetadata(
     instanceMetadata.AcquisitionDate !== undefined &&
     typeof instanceMetadata.AcquisitionDate !== 'string'
   ) {
-    const dateString = convertInterfaceDateToString(
-      instanceMetadata.AcquisitionDate,
-    );
+    const dateString = convertInterfaceDateToString(instanceMetadata.AcquisitionDate);
     instanceMetadata.AcquisitionDate = dateString;
   }
 
@@ -90,9 +82,7 @@ export default function getPTImageIdInstanceMetadata(
     instanceMetadata.SeriesDate !== undefined &&
     typeof instanceMetadata.SeriesDate !== 'string'
   ) {
-    const dateString = convertInterfaceDateToString(
-      instanceMetadata.SeriesDate,
-    );
+    const dateString = convertInterfaceDateToString(instanceMetadata.SeriesDate);
     instanceMetadata.SeriesDate = dateString;
   }
 
@@ -101,8 +91,7 @@ export default function getPTImageIdInstanceMetadata(
     radiopharmaceuticalInfo.radiopharmaceuticalStartTime !== undefined &&
     typeof radiopharmaceuticalInfo.radiopharmaceuticalStartTime === 'string'
   ) {
-    instanceMetadata.RadiopharmaceuticalStartTime =
-      radiopharmaceuticalInfo.radiopharmaceuticalStartTime;
+    instanceMetadata.RadiopharmaceuticalStartTime = radiopharmaceuticalInfo.radiopharmaceuticalStartTime;
   }
 
   if (
@@ -110,9 +99,7 @@ export default function getPTImageIdInstanceMetadata(
     radiopharmaceuticalInfo.radiopharmaceuticalStartTime !== undefined &&
     typeof radiopharmaceuticalInfo.radiopharmaceuticalStartTime !== 'string'
   ) {
-    const timeString = convertInterfaceTimeToString(
-      radiopharmaceuticalInfo.radiopharmaceuticalStartTime,
-    );
+    const timeString = convertInterfaceTimeToString(radiopharmaceuticalInfo.radiopharmaceuticalStartTime);
     instanceMetadata.RadiopharmaceuticalStartTime = timeString;
   }
 
@@ -121,9 +108,7 @@ export default function getPTImageIdInstanceMetadata(
     instanceMetadata.AcquisitionTime !== undefined &&
     typeof instanceMetadata.AcquisitionTime !== 'string'
   ) {
-    const timeString = convertInterfaceTimeToString(
-      instanceMetadata.AcquisitionTime,
-    );
+    const timeString = convertInterfaceTimeToString(instanceMetadata.AcquisitionTime);
     instanceMetadata.AcquisitionTime = timeString;
   }
 
@@ -132,37 +117,23 @@ export default function getPTImageIdInstanceMetadata(
     instanceMetadata.SeriesTime !== undefined &&
     typeof instanceMetadata.SeriesTime !== 'string'
   ) {
-    const timeString = convertInterfaceTimeToString(
-      instanceMetadata.SeriesTime,
-    );
+    const timeString = convertInterfaceTimeToString(instanceMetadata.SeriesTime);
     instanceMetadata.SeriesTime = timeString;
   }
 
-  if (
-    ptImageModule.frameReferenceTime &&
-    ptImageModule.frameReferenceTime !== undefined
-  ) {
+  if (ptImageModule.frameReferenceTime && ptImageModule.frameReferenceTime !== undefined) {
     instanceMetadata.FrameReferenceTime = ptImageModule.frameReferenceTime;
   }
 
-  if (
-    ptImageModule.actualFrameDuration &&
-    ptImageModule.actualFrameDuration !== undefined
-  ) {
+  if (ptImageModule.actualFrameDuration && ptImageModule.actualFrameDuration !== undefined) {
     instanceMetadata.ActualFrameDuration = ptImageModule.actualFrameDuration;
   }
 
-  if (
-    patientStudyModule.patientSex &&
-    patientStudyModule.patientSex !== undefined
-  ) {
+  if (patientStudyModule.patientSex && patientStudyModule.patientSex !== undefined) {
     instanceMetadata.PatientSex = patientStudyModule.patientSex;
   }
 
-  if (
-    patientStudyModule.patientSize &&
-    patientStudyModule.patientSize !== undefined
-  ) {
+  if (patientStudyModule.patientSize && patientStudyModule.patientSize !== undefined) {
     instanceMetadata.PatientSize = patientStudyModule.patientSize;
   }
 
@@ -192,10 +163,7 @@ function convertInterfaceTimeToString(time): string {
   const minutes = `${time.minutes || '00'}`.padStart(2, '0');
   const seconds = `${time.seconds || '00'}`.padStart(2, '0');
 
-  const fractionalSeconds = `${time.fractionalSeconds || '000000'}`.padEnd(
-    6,
-    '0',
-  );
+  const fractionalSeconds = `${time.fractionalSeconds || '000000'}`.padEnd(6, '0');
 
   const timeString = `${hours}${minutes}${seconds}.${fractionalSeconds}`;
   return timeString;

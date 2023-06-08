@@ -1,12 +1,11 @@
 @font-face {
-  font-family: "dmv"; /* Project id 3603247 */
-  src: url('iconfont.woff2?t=1683536263112') format('woff2'),
-       url('iconfont.woff?t=1683536263112') format('woff'),
-       url('iconfont.ttf?t=1683536263112') format('truetype');
+  font-family: 'dmv'; /* Project id 3603247 */
+  src: url('iconfont.woff2?t=1683536263112') format('woff2'), url('iconfont.woff?t=1683536263112') format('woff'),
+    url('iconfont.ttf?t=1683536263112') format('truetype');
 }
 
 .dmv {
-  font-family: "dmv" !important;
+  font-family: 'dmv' !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
@@ -14,150 +13,149 @@
 }
 
 .dmv-axial:before {
-  content: "\e601";
+  content: '\e601';
 }
 
 .dmv-sagittal:before {
-  content: "\e602";
+  content: '\e602';
 }
 
 .dmv-coronal:before {
-  content: "\e603";
+  content: '\e603';
 }
 
 .dmv-close:before {
-  content: "\e655";
+  content: '\e655';
 }
 
 .dmv-calendar:before {
-  content: "\e667";
+  content: '\e667';
 }
 
 .dmv-rectangle:before {
-  content: "\e88e";
+  content: '\e88e';
 }
 
 .dmv-left:before {
-  content: "\e61d";
+  content: '\e61d';
 }
 
 .dmv-right:before {
-  content: "\e62e";
+  content: '\e62e';
 }
 
 .dmv-more:before {
-  content: "\e6ad";
+  content: '\e6ad';
 }
 
 .dmv-search:before {
-  content: "\e654";
+  content: '\e654';
 }
 
 .dmv-about:before {
-  content: "\e637";
+  content: '\e637';
 }
 
 .dmv-recover:before {
-  content: "\e639";
+  content: '\e639';
 }
 
 .dmv-pan:before {
-  content: "\e63b";
+  content: '\e63b';
 }
 
 .dmv-ellipse:before {
-  content: "\e63c";
+  content: '\e63c';
 }
 
 .dmv-angle:before {
-  content: "\e63d";
+  content: '\e63d';
 }
 
 .dmv-shrink:before {
-  content: "\e63e";
+  content: '\e63e';
 }
 
 .dmv-stop:before {
-  content: "\e63f";
+  content: '\e63f';
 }
 
 .dmv-download:before {
-  content: "\e640";
+  content: '\e640';
 }
 
 .dmv-fliph:before {
-  content: "\e641";
+  content: '\e641';
 }
 
 .dmv-flipv:before {
-  content: "\e642";
+  content: '\e642';
 }
 
 .dmv-rotate:before {
-  content: "\e643";
+  content: '\e643';
 }
 
 .dmv-triangle:before {
-  content: "\e644";
+  content: '\e644';
 }
 
 .dmv-measurement:before {
-  content: "\e645";
+  content: '\e645';
 }
 
 .dmv-layer:before {
-  content: "\e646";
+  content: '\e646';
 }
 
 .dmv-add:before {
-  content: "\e647";
+  content: '\e647';
 }
 
 .dmv-ruler:before {
-  content: "\e648";
+  content: '\e648';
 }
 
 .dmv-pin:before {
-  content: "\e649";
+  content: '\e649';
 }
 
 .dmv-pause:before {
-  content: "\e64a";
+  content: '\e64a';
 }
 
 .dmv-zoom:before {
-  content: "\e64b";
+  content: '\e64b';
 }
 
 .dmv-panel:before {
-  content: "\e64c";
+  content: '\e64c';
 }
 
 .dmv-expand:before {
-  content: "\e64d";
+  content: '\e64d';
 }
 
 .dmv-down:before {
-  content: "\e64e";
+  content: '\e64e';
 }
 
 .dmv-menu:before {
-  content: "\e64f";
+  content: '\e64f';
 }
 
 .dmv-annotation:before {
-  content: "\e650";
+  content: '\e650';
 }
 
 .dmv-clear:before {
-  content: "\e651";
+  content: '\e651';
 }
 
 .dmv-play:before {
-  content: "\e652";
+  content: '\e652';
 }
 
 .dmv-window-level:before {
-  content: "\e653";
+  content: '\e653';
 }
-

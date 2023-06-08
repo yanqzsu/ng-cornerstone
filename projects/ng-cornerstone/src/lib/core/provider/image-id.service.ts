@@ -5,10 +5,7 @@ import { api } from 'dicomweb-client';
 import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 import dcmjs from 'dcmjs';
 import getPixelSpacingInformation from './getPixelSpacingInformation';
-import {
-  calculateSUVScalingFactors,
-  InstanceMetadata,
-} from '@cornerstonejs/calculate-suv';
+import { calculateSUVScalingFactors, InstanceMetadata } from '@cornerstonejs/calculate-suv';
 import { ImageInfo, RequestSchema } from '../config/types';
 
 import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
@@ -21,9 +18,7 @@ const { DicomMetaDictionary } = dcmjs.data;
 export class ImageIdService {
   constructor() {}
 
-  async wadoRsCreateImageIdsAndCacheMetaData(
-    imageInfo: ImageInfo,
-  ): Promise<string[]> {
+  async wadoRsCreateImageIdsAndCacheMetaData(imageInfo: ImageInfo): Promise<string[]> {
     const MODALITY = '00080060';
     const SOP_INSTANCE_UID = '00080018';
     const { urlRoot, studyInstanceUID, seriesInstanceUID } = imageInfo;
@@ -52,10 +47,7 @@ export class ImageIdService {
           sopInstanceUIDs: [sopInstanceUID],
         });
         imageIds.push(...imageId); // only one image id
-        cornerstoneDICOMImageLoader.wadors.metaDataManager.add(
-          imageId[0],
-          instanceMetaData,
-        );
+        cornerstoneDICOMImageLoader.wadors.metaDataManager.add(imageId[0], instanceMetaData);
       }
     });
     imageIds = this.convertMultiframeImageIds(imageIds);
@@ -82,8 +74,7 @@ export class ImageIdService {
       console.error('Invalid image info', imageInfo);
       return [];
     }
-    const { urlRoot, studyInstanceUID, seriesInstanceUID, sopInstanceUIDs } =
-      imageInfo;
+    const { urlRoot, studyInstanceUID, seriesInstanceUID, sopInstanceUIDs } = imageInfo;
     const wadoURIRoot = `${RequestSchema.WadoUri}${urlRoot}?requestType=WADO&studyUID=${studyInstanceUID}&seriesUID=${seriesInstanceUID}&contentType=application%2Fdicom`;
     return sopInstanceUIDs!.map((uid) => {
       return `${wadoURIRoot}&objectUID=${uid}`;
@@ -95,8 +86,7 @@ export class ImageIdService {
       console.error('Invalid image info', imageInfo);
       return [];
     }
-    const { urlRoot, studyInstanceUID, seriesInstanceUID, sopInstanceUIDs } =
-      imageInfo;
+    const { urlRoot, studyInstanceUID, seriesInstanceUID, sopInstanceUIDs } = imageInfo;
     const wadoURIRoot = `${RequestSchema.WadoRs}${urlRoot}/studies/${studyInstanceUID}/series/${seriesInstanceUID}`;
     return sopInstanceUIDs!.map((uid) => {
       return `${wadoURIRoot}/instances/${uid}/frames/1`;
@@ -108,11 +98,7 @@ export class ImageIdService {
     imageIds.forEach((imageId) => {
       const { imageIdFrameless } = this.getFrameInformation(imageId);
       const instanceMetaData = metaData.get('multiframeModule', imageId);
-      if (
-        instanceMetaData &&
-        instanceMetaData.NumberOfFrames &&
-        instanceMetaData.NumberOfFrames > 1
-      ) {
+      if (instanceMetaData && instanceMetaData.NumberOfFrames && instanceMetaData.NumberOfFrames > 1) {
         const NumberOfFrames = instanceMetaData.NumberOfFrames;
         for (let i = 0; i < NumberOfFrames; i++) {
           const newImageId = imageIdFrameless + (i + 1);
@@ -129,16 +115,14 @@ export class ImageIdService {
   } {
     if (imageId.includes('wadors:')) {
       const frameIndex = imageId.indexOf('/frames/');
-      const imageIdFrameless =
-        frameIndex > 0 ? imageId.slice(0, frameIndex + 8) : imageId;
+      const imageIdFrameless = frameIndex > 0 ? imageId.slice(0, frameIndex + 8) : imageId;
       return {
         frameIndex,
         imageIdFrameless,
       };
     } else {
       const frameIndex = imageId.indexOf('&frame=');
-      let imageIdFrameless =
-        frameIndex > 0 ? imageId.slice(0, frameIndex + 7) : imageId;
+      let imageIdFrameless = frameIndex > 0 ? imageId.slice(0, frameIndex + 7) : imageId;
       if (!imageIdFrameless.includes('&frame=')) {
         imageIdFrameless = imageIdFrameless + '&frame=';
       }
@@ -151,16 +135,14 @@ export class ImageIdService {
 
   pixelSpacingProvider(imageIds: string[]): void {
     imageIds.forEach((imageId) => {
-      let instanceMetaData =
-        cornerstoneDICOMImageLoader.wadors.metaDataManager.get(imageId);
+      let instanceMetaData = cornerstoneDICOMImageLoader.wadors.metaDataManager.get(imageId);
 
       // It was using JSON.parse(JSON.stringify(...)) before but it is 8x slower
       instanceMetaData = this.removeInvalidTags(instanceMetaData);
 
       if (instanceMetaData) {
         // Add calibrated pixel spacing
-        const metadata =
-          DicomMetaDictionary.naturalizeDataset(instanceMetaData);
+        const metadata = DicomMetaDictionary.naturalizeDataset(instanceMetaData);
         const pixelSpacing = getPixelSpacingInformation(metadata);
 
         if (pixelSpacing) {
@@ -182,9 +164,7 @@ export class ImageIdService {
       // It's showing up like 'DECY\\ATTN\\SCAT\\DTIM\\RAN\\RADL\\DCAL\\SLSENS\\NORM'
       // but calculate-suv expects ['DECY', 'ATTN', ...]
       if (typeof instanceMetadata.CorrectedImage === 'string') {
-        instanceMetadata.CorrectedImage = (
-          instanceMetadata.CorrectedImage as string
-        ).split('\\');
+        instanceMetadata.CorrectedImage = (instanceMetadata.CorrectedImage as string).split('\\');
       }
 
       if (instanceMetadata) {
@@ -192,14 +172,9 @@ export class ImageIdService {
       }
     });
     if (instanceMetadataArray.length) {
-      const suvScalingFactors = calculateSUVScalingFactors(
-        instanceMetadataArray,
-      );
+      const suvScalingFactors = calculateSUVScalingFactors(instanceMetadataArray);
       instanceMetadataArray.forEach((instanceMetadata, index) => {
-        ptScalingMetaDataProvider.addInstance(
-          imageIds[index],
-          suvScalingFactors[index],
-        );
+        ptScalingMetaDataProvider.addInstance(imageIds[index], suvScalingFactors[index]);
       });
     }
   }

@@ -1,21 +1,9 @@
-<div
-  class="collapse__header"
-  [class.disabled]="disabled"
-  role="button"
-  (click)="clickHeader()"
-  [id]="id"
->
-  <div
-    *ngIf="!hideIndicator"
-    class="collapse__indicator"
-    [@indicatorRotate]="expanded ? 'expanded' : 'collapsed'"
-  >
+<div class="collapse__header" [class.disabled]="disabled" role="button" (click)="clickHeader()" [id]="id">
+  <div *ngIf="!hideIndicator" class="collapse__indicator" [@indicatorRotate]="expanded ? 'expanded' : 'collapsed'">
     <ng-template #defaultIcon>
       <div class="collapse__icon_default"></div>
     </ng-template>
-    <ng-container
-      *ngTemplateOutlet="iconTemplate ? iconTemplate : defaultIcon"
-    ></ng-container>
+    <ng-container *ngTemplateOutlet="iconTemplate ? iconTemplate : defaultIcon"></ng-container>
   </div>
 
   <div class="collapse__title">
@@ -27,9 +15,6 @@
     <ng-template [cdkPortalOutlet]="_portal"></ng-template>
   </div>
 </div>
-<div
-  class="collapse__content"
-  [@bodyExpansion]="expanded ? 'expanded' : 'collapsed'"
->
+<div class="collapse__content" [@bodyExpansion]="expanded ? 'expanded' : 'collapsed'">
   <ng-content></ng-content>
 </div>

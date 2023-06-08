@@ -11,10 +11,7 @@ import {
   ZoomTool,
 } from '@cornerstonejs/tools';
 import { getRenderingEngine, Types } from '@cornerstonejs/core';
-import {
-  OrientationAxis,
-  ViewportType,
-} from '@cornerstonejs/core/dist/esm/enums';
+import { OrientationAxis, ViewportType } from '@cornerstonejs/core/dist/esm/enums';
 import { IVolumeViewport } from '@cornerstonejs/core/dist/esm/types';
 import { ToolConfig, ToolEnum } from './tool.types';
 
@@ -22,9 +19,7 @@ function reset(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
   const renderingEngine = getRenderingEngine(renderingEngineId);
   // Get the volume viewport
-  const viewport = <Types.IVolumeViewport>(
-    renderingEngine?.getViewport(viewportId)
-  );
+  const viewport = <Types.IVolumeViewport>renderingEngine?.getViewport(viewportId);
   // Resets the viewport's camera
   viewport.resetCamera();
   viewport.render();
@@ -34,9 +29,7 @@ function flipV(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
   const renderingEngine = getRenderingEngine(renderingEngineId);
   // Get the stack viewport
-  const viewport = <Types.IStackViewport>(
-    renderingEngine?.getViewport(viewportId)
-  );
+  const viewport = <Types.IStackViewport>renderingEngine?.getViewport(viewportId);
   const { flipVertical } = viewport.getCamera();
   viewport.setCamera({ flipVertical: !flipVertical });
   viewport.render();
@@ -46,9 +39,7 @@ function flipH(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
   const renderingEngine = getRenderingEngine(renderingEngineId);
   // Get the stack viewport
-  const viewport = <Types.IStackViewport>(
-    renderingEngine?.getViewport(viewportId)
-  );
+  const viewport = <Types.IStackViewport>renderingEngine?.getViewport(viewportId);
   const { flipHorizontal } = viewport.getCamera();
   viewport.setCamera({ flipHorizontal: !flipHorizontal });
   viewport.render();
@@ -58,9 +49,7 @@ function rotate(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
   const renderingEngine = getRenderingEngine(renderingEngineId);
   // Get the stack viewport
-  const viewport = <Types.IStackViewport>(
-    renderingEngine?.getViewport(viewportId)
-  );
+  const viewport = <Types.IStackViewport>renderingEngine?.getViewport(viewportId);
   const rotation = viewport.getProperties()?.rotation || 0;
   viewport.setProperties({ rotation: rotation + 15 });
   viewport.render();
@@ -70,9 +59,7 @@ function next(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
   const renderingEngine = getRenderingEngine(renderingEngineId);
   // Get the stack viewport
-  const viewport = <Types.IStackViewport>(
-    renderingEngine?.getViewport(viewportId)
-  );
+  const viewport = <Types.IStackViewport>renderingEngine?.getViewport(viewportId);
   // Get the current index of the image displayed
   const currentImageIdIndex = viewport.getCurrentImageIdIndex();
   // Increment the index, clamping to the last image if necessary
@@ -87,9 +74,7 @@ function previous(renderingEngineId: string, viewportId: string): void {
   // Get the rendering engine
   const renderingEngine = getRenderingEngine(renderingEngineId);
   // Get the stack viewport
-  const viewport = <Types.IStackViewport>(
-    renderingEngine?.getViewport(viewportId)
-  );
+  const viewport = <Types.IStackViewport>renderingEngine?.getViewport(viewportId);
   // Get the current index of the image displayed
   const currentImageIdIndex = viewport.getCurrentImageIdIndex();
   // Increment the index, clamping to the first image if necessary
@@ -99,11 +84,7 @@ function previous(renderingEngineId: string, viewportId: string): void {
   viewport.setImageIdIndex(newImageIdIndex);
 }
 
-function changeOrientation(
-  renderingEngineId: string,
-  viewportId: string,
-  options: any,
-) {
+function changeOrientation(renderingEngineId: string, viewportId: string, options: any) {
   const renderingEngine = getRenderingEngine(renderingEngineId);
   const viewport = renderingEngine!.getViewport(viewportId) as IVolumeViewport;
   const { orientation } = options;

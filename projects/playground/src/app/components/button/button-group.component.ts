@@ -11,15 +11,7 @@ import {
   Output,
   QueryList,
 } from '@angular/core';
-import {
-  debounceTime,
-  filter,
-  from,
-  merge,
-  Observable,
-  startWith,
-  Subject,
-} from 'rxjs';
+import { debounceTime, filter, from, merge, Observable, startWith, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
 import { ButtonComponent, ButtonToggleChange } from './button.component';
@@ -69,11 +61,9 @@ export class ButtonGroupComponent implements AfterContentInit, OnDestroy {
   }
 
   ngAfterContentInit(): void {
-    this.buttonsChange$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((buttons: ButtonComponent[]) => {
-        this.listenButtonPressedState(buttons);
-      });
+    this.buttonsChange$.pipe(takeUntil(this.destroy$)).subscribe((buttons: ButtonComponent[]) => {
+      this.listenButtonPressedState(buttons);
+    });
 
     this.buttons.changes
       .pipe(
@@ -82,9 +72,7 @@ export class ButtonGroupComponent implements AfterContentInit, OnDestroy {
         // initialization doesn't make sense. Changes won't be picked up and should cause an "expression changed" error.
         // Instead, we wrap the new buttons list into a promise to defer update to the following microtask and also to
         // trigger change detection one more time.
-        switchMap((buttons: QueryList<ButtonComponent>) =>
-          from(Promise.resolve(buttons.toArray())),
-        ),
+        switchMap((buttons: QueryList<ButtonComponent>) => from(Promise.resolve(buttons.toArray()))),
         takeUntil(this.destroy$),
       )
       .subscribe((value) => this.buttonsChange$.next(value));
@@ -93,18 +81,17 @@ export class ButtonGroupComponent implements AfterContentInit, OnDestroy {
   }
 
   protected listenButtonPressedState(buttons: ButtonComponent[]): void {
-    const toggleButtons: ButtonComponent[] = buttons.filter(
-      (button: ButtonComponent) => {
-        return button.isToggle;
-      },
-    );
+    const toggleButtons: ButtonComponent[] = buttons.filter((button: ButtonComponent) => {
+      return button.isToggle;
+    });
 
     if (!toggleButtons.length) {
       return;
     }
 
-    const buttonsPressedChange$: Observable<ButtonToggleChange>[] =
-      toggleButtons.map((button: ButtonComponent) => button.pressedChange$);
+    const buttonsPressedChange$: Observable<ButtonToggleChange>[] = toggleButtons.map(
+      (button: ButtonComponent) => button.pressedChange$,
+    );
 
     merge(...buttonsPressedChange$)
       .pipe(
@@ -130,16 +117,11 @@ export class ButtonGroupComponent implements AfterContentInit, OnDestroy {
 
   protected emitCurrentValue(toggleButtons: ButtonComponent[]): void {
     const pressedToggleValues = toggleButtons
-      .filter(
-        (b: ButtonComponent) => b.pressed && typeof b.value !== 'undefined',
-      )
+      .filter((b: ButtonComponent) => b.pressed && typeof b.value !== 'undefined')
       .map((b: ButtonComponent) => b.value);
 
     // Prevent multiple emissions of empty value.
-    if (
-      pressedToggleValues.length === 0 &&
-      this.lastEmittedValue.length === 0
-    ) {
+    if (pressedToggleValues.length === 0 && this.lastEmittedValue.length === 0) {
       return;
     }
 

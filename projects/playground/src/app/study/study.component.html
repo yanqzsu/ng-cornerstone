@@ -6,11 +6,7 @@
     #seriesList="cdkDropList"
     [cdkDropListConnectedTo]="[imageBox]"
   >
-    <app-series
-      cdkDrag
-      *ngFor="let series of seriesInfos"
-      [seriesInfo]="series"
-    ></app-series>
+    <app-series cdkDrag *ngFor="let series of seriesInfos" [seriesInfo]="series"></app-series>
   </div>
 </app-collapse-item>
 <app-image-box

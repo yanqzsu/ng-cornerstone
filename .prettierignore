@@ -4,3 +4,5 @@
 **/.vscode
 **/.github
 **/node_modules
+**/.angular
+./CHANGELOG.md

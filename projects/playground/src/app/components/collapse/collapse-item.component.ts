@@ -26,13 +26,11 @@ import { TextPortalComponent, PORTAL_TEXT } from './text.component';
   templateUrl: './collapse-item.component.html',
   styleUrls: ['./collapse-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    collapseAnimations.bodyExpansion,
-    collapseAnimations.indicatorRotate,
-  ],
+  animations: [collapseAnimations.bodyExpansion, collapseAnimations.indicatorRotate],
+  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     '[attr.aria-disabled]': 'disabled',
-    '[class._animation-noopable]': '_animationMode === "NoopAnimations"',
+    '[class.animation-noopable]': '_animationMode === "NoopAnimations"',
   },
 })
 export class CollapseItemComponent extends CdkAccordionItem {
@@ -42,9 +40,7 @@ export class CollapseItemComponent extends CdkAccordionItem {
   /** Whether the toggle indicator should be hidden. */
   @Input()
   get hideIndicator(): boolean {
-    return (
-      this._hideIndicator || (this.accordion && this.accordion.hideIndicator)
-    );
+    return this._hideIndicator || (this.accordion && this.accordion.hideIndicator);
   }
   set hideIndicator(value: boolean) {
     this._hideIndicator = coerceBooleanProperty(value);

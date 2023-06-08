@@ -5,10 +5,7 @@
     {
       "files": ["*.ts"],
       "parserOptions": {
-        "project": [
-          "ng-cornerstone/tsconfig.lib.json",
-          "ng-cornerstone/tsconfig.spec.json"
-        ],
+        "project": ["projects/ng-cornerstone/tsconfig.lib.json", "projects/ng-cornerstone/tsconfig.spec.json"],
         "createDefaultProgram": true
       },
       "rules": {

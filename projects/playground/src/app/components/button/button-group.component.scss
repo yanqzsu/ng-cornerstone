@@ -4,28 +4,31 @@
 
     [nbButton],
     [nbButtonToggle] {
-      @include nb-ltr() {
+      @include nb-ltr {
         &:first-child:not(:last-child) {
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
         }
+
         &:last-child:not(:first-child) {
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
         }
       }
-      @include nb-rtl() {
+
+      @include nb-rtl {
         &:first-child:not(:last-child) {
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
         }
+
         &:last-child:not(:first-child) {
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
         }
       }
 
-      &:not(:first-child):not(:last-child) {
+      &:not(:first-child, :last-child) {
         border-radius: 0;
       }
 
@@ -54,7 +57,7 @@
       }
 
       // See the comment on the selector above
-      &.appearance-ghost:not(:first-child):not(:hover):not(:focus):not(:active):not([disabled]) {
+      &.appearance-ghost:not(:first-child, :hover, :focus, :active, [disabled]) {
         @include nb-ltr(border-left-color, nb-theme(button-group-ghost-divider-color));
         @include nb-rtl(border-right-color, nb-theme(button-group-ghost-divider-color));
       }

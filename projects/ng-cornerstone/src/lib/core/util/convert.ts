@@ -3,11 +3,7 @@
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
-import {
-  _isNumberValue,
-  coerceBooleanProperty,
-  coerceCssPixelValue,
-} from '@angular/cdk/coercion';
+import { _isNumberValue, coerceBooleanProperty, coerceCssPixelValue } from '@angular/cdk/coercion';
 import { FunctionProp, SafeAny } from '../config/types';
 
 export function toBoolean(value: boolean | string): boolean {
@@ -16,10 +12,7 @@ export function toBoolean(value: boolean | string): boolean {
 
 export function toNumber(value: number | string): number;
 export function toNumber<D>(value: number | string, fallback: D): number | D;
-export function toNumber(
-  value: number | string,
-  fallbackValue: number = 0,
-): number {
+export function toNumber(value: number | string, fallbackValue: number = 0): number {
   return _isNumberValue(value) ? Number(value) : fallbackValue;
 }
 
@@ -32,17 +25,11 @@ export function toCssPixel(value: number | string): string {
 /**
  * Get the function-property type's value
  */
-export function valueFunctionProp<T>(
-  prop: FunctionProp<T> | T,
-  ...args: SafeAny[]
-): T {
+export function valueFunctionProp<T>(prop: FunctionProp<T> | T, ...args: SafeAny[]): T {
   return typeof prop === 'function' ? (prop as FunctionProp<T>)(...args) : prop;
 }
 
-function propDecoratorFactory<T, D>(
-  name: string,
-  fallback: (v: T) => D,
-): (target: SafeAny, propName: string) => void {
+function propDecoratorFactory<T, D>(name: string, fallback: (v: T) => D): (target: SafeAny, propName: string) => void {
   function propDecorator(
     target: SafeAny,
     propName: string,
@@ -51,9 +38,7 @@ function propDecoratorFactory<T, D>(
     const privatePropName = `$$__zorroPropDecorator__${propName}`;
 
     if (Object.prototype.hasOwnProperty.call(target, privatePropName)) {
-      console.warn(
-        `The prop "${privatePropName}" is already exist, it will be overrided by ${name} decorator.`,
-      );
+      console.warn(`The prop "${privatePropName}" is already exist, it will be overrided by ${name} decorator.`);
     }
 
     Object.defineProperty(target, privatePropName, {
@@ -104,7 +89,5 @@ export function InputCssPixel(): SafeAny {
 }
 
 export function InputNumber(fallbackValue?: SafeAny): SafeAny {
-  return propDecoratorFactory('InputNumber', (value: string | number) =>
-    toNumber(value, fallbackValue),
-  );
+  return propDecoratorFactory('InputNumber', (value: string | number) => toNumber(value, fallbackValue));
 }

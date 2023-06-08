@@ -6,10 +6,7 @@ const { calibratedPixelSpacingMetadataProvider } = utilities;
 import { DICOM_SERVER } from '../config/server';
 const { DicomMetaDictionary } = data;
 
-export function createSingleImageIdsAndCacheMetaData(
-  instance: any,
-  isWadoRs: boolean = true,
-) {
+export function createSingleImageIdsAndCacheMetaData(instance: any, isWadoRs: boolean = true) {
   const instanceMetaData = DicomMetaDictionary.naturalizeDataset(instance);
   const studyInstanceUID = instanceMetaData.StudyInstanceUID;
   const seriesInstanceUID = instanceMetaData.SeriesInstanceUID;
@@ -51,10 +48,7 @@ export function createSingleImageIdsAndCacheMetaData(
   if (spaceInfo && Array.isArray(spaceInfo.pixelSpacing)) {
     calibratedPixelSpacingMetadataProvider.add(
       imageId,
-      spaceInfo.pixelSpacing.map((s) => parseFloat(String(s))) as [
-        number,
-        number,
-      ],
+      spaceInfo.pixelSpacing.map((s) => parseFloat(String(s))) as [number, number],
     );
   }
   return imageId;

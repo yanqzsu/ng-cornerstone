@@ -1,0 +1,19 @@
+$list-item-divider-width: 1px;
+$list-item-divider-style: solid;
+$list-item-divider-color: #bbb;
+$list-item-font-size: 16px;
+$list-item-line-height: 1.5em;
+$list-item-padding: 0.25em;
+
+:host {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-bottom: $list-item-divider-width $list-item-divider-style $list-item-divider-color;
+  line-height: $list-item-line-height;
+  padding: $list-item-padding;
+
+  &:first-child {
+    border-top: $list-item-divider-width $list-item-divider-style $list-item-divider-color;
+  }
+}

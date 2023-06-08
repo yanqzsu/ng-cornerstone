@@ -1,6 +1,7 @@
 {
   "name": "ng-corner",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve ncv-example",
@@ -10,12 +11,22 @@
     "build:lib": "ng build ng-cornerstone",
     "watch": "ng build ncv-example --watch --configuration development",
     "watch:lib": "ng build ng-cornerstone --watch --configuration development",
+    "check:prettier": "npx eslint-config-prettier commitlint.config.js",
+    "format": "prettier --config .prettierrc.json --list-different \"projects/**/*.{ts,html,scss}\"",
     "test": "ng test",
     "lint": "ng lint",
+    "lint:ts": "eslint --cache . --ext .ts,.html",
+    "lint:ts:fix": "eslint --fix --cache . --ext .ts,.html",
+    "lint:styles": "stylelint ./projects/**/*.scss",
+    "lint:styles:fix": "stylelint ./projects/**/*.scss --fix",
+    "lint:stage": "lint-staged --config ./.lintstagedrc.json",
+    "lint:stage:fix": "lint-staged --config ./.lintstagedrc-fix.json",
     "orthanc": "docker run --name orthanc-nginx-proxy -v C:/Users/YANQZSU/git/dcm-js/ng-corner/orthanc:/etc/nginx/conf.d:ro -p 8080:80 -d nginx",
     "nginx": "docker run -p 8081:443 -d --name dicom-web dicom-web",
     "docker-build": "docker build -t dicom-web . --no-cache --progress plain",
-    "publish": "npm publish"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --pkg projects/ng-cornerstone/package.json && git add CHANGELOG.md",
+    "publish": "npm publish",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@angular/animations": "^14.0.5",
@@ -27,11 +38,11 @@
     "@angular/platform-browser": "^14.0.5",
     "@angular/platform-browser-dynamic": "^14.0.5",
     "@angular/router": "^14.0.5",
+    "@cornerstonejs/calculate-suv": "1.0.3",
     "@cornerstonejs/core": "~1.1.6",
+    "@cornerstonejs/dicom-image-loader": "~1.1.6",
     "@cornerstonejs/streaming-image-volume-loader": "~1.1.6",
     "@cornerstonejs/tools": "~1.1.6",
-    "@cornerstonejs/dicom-image-loader": "~1.1.6",
-    "@cornerstonejs/calculate-suv": "1.0.3",
     "dcmjs": "^0.24.4",
     "dicomweb-client": "^0.8.4",
     "rxjs": "~7.5.0",
@@ -48,21 +59,34 @@
     "@angular-eslint/template-parser": "14.0.2",
     "@angular/cli": "^14.0.5",
     "@angular/compiler-cli": "^14.0.5",
+    "@commitlint/cli": "^17.6.5",
+    "@commitlint/config-angular": "^17.6.5",
     "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
+    "conventional-changelog-cli": "^3.0.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.18.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^8.0.0",
     "jasmine-core": "~4.0.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "lint-staged": "^13.2.2",
     "ng-packagr": "^14.0.3",
     "prettier": "2.5.1",
+    "stylelint": "^15.7.0",
+    "stylelint-config-standard-scss": "^9.0.0",
     "typescript": "~4.7.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

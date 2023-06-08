@@ -1,11 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import {
-  Inject,
-  Injectable,
-  InjectionToken,
-  Optional,
-  RendererFactory2,
-} from '@angular/core';
+import { Inject, Injectable, InjectionToken, Optional, RendererFactory2 } from '@angular/core';
 
 export const ICONFONT_URL = new InjectionToken<string>('IconfontUrl');
 

@@ -117,10 +117,7 @@
             "tsConfig": "projects/playground/tsconfig.spec.json",
             "karmaConfig": "projects/playground/karma.conf.js",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "projects/playground/src/favicon.ico",
-              "projects/playground/src/assets"
-            ],
+            "assets": ["projects/playground/src/favicon.ico", "projects/playground/src/assets"],
             "styles": ["projects/playground/src/styles.scss"],
             "scripts": []
           }
@@ -128,10 +125,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/playground/**/*.ts",
-              "projects/playground/**/*.html"
-            ]
+            "lintFilePatterns": ["projects/playground/**/*.ts", "projects/playground/**/*.html"]
           }
         }
       }
@@ -168,10 +162,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/ng-cornerstone/**/*.ts",
-              "projects/ng-cornerstone/**/*.html"
-            ]
+            "lintFilePatterns": ["projects/ng-cornerstone/**/*.ts", "projects/ng-cornerstone/**/*.html"]
           }
         }
       }
@@ -180,7 +171,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "less"
+          "style": "scss"
         },
         "@schematics/angular:application": {
           "strict": true
@@ -204,7 +195,7 @@
             "main": "projects/ncv-example/src/main.ts",
             "polyfills": "projects/ncv-example/src/polyfills.ts",
             "tsConfig": "projects/ncv-example/tsconfig.app.json",
-            "inlineStyleLanguage": "less",
+            "inlineStyleLanguage": "scss",
             "assets": [
               "projects/ncv-example/src/favicon.ico",
               "projects/ncv-example/src/assets",
@@ -219,7 +210,7 @@
                 "output": "/"
               }
             ],
-            "styles": ["projects/ncv-example/src/styles.less"],
+            "styles": ["projects/ncv-example/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -228,7 +219,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -288,13 +279,16 @@
             "polyfills": "projects/ncv-example/src/polyfills.ts",
             "tsConfig": "projects/ncv-example/tsconfig.spec.json",
             "karmaConfig": "projects/ncv-example/karma.conf.js",
-            "inlineStyleLanguage": "less",
-            "assets": [
-              "projects/ncv-example/src/favicon.ico",
-              "projects/ncv-example/src/assets"
-            ],
-            "styles": ["projects/ncv-example/src/styles.less"],
+            "inlineStyleLanguage": "scss",
+            "assets": ["projects/ncv-example/src/favicon.ico", "projects/ncv-example/src/assets"],
+            "styles": ["projects/ncv-example/src/styles.scss"],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/ncv-example/**/*.ts", "projects/ncv-example/**/*.html"]
           }
         }
       }

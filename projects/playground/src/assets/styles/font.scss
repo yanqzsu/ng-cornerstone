@@ -1,7 +1,6 @@
 @use 'typography';
 
-
-$font-family: Roboto, 'Noto Sans SC', sans-serif;
+$font-family: roboto, 'Noto Sans SC', sans-serif;
 $headline: typography.define-typography-level(24px, 32px, 400, $font-family);
 $title: typography.define-typography-level(20px, 32px, 500, $font-family);
 $subheading: typography.define-typography-level(16px, 28px, 400, $font-family);
@@ -9,23 +8,32 @@ $body: typography.define-typography-level(14px, 24px, 500, $font-family);
 $caption: typography.define-typography-level(12px, 20px, 400, $font-family);
 $button: typography.define-typography-level(14px, 14px, 500, $font-family);
 
-.h1, h1, .headline {
+.h1,
+h1,
+.headline {
   @include typography.font($headline);
 }
 
-.h2, h2, .title{
+.h2,
+h2,
+.title {
   @include typography.font($title);
 }
 
-.h3, h3, .subheading {
+.h3,
+h3,
+.subheading {
   @include typography.font($subheading);
 }
 
-.h4, h4, .body{
+.h4,
+h4,
+.body {
   @include typography.font($body);
 }
 
-.h5, h5, .button {
+.h5,
+h5,
+.button {
   @include typography.font($button);
 }
-

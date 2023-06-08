@@ -1,14 +1,5 @@
 <select (change)="changeImage($event)">
-  <option
-    *ngFor="let value of imageInfos; index as i"
-    [value]="i"
-    [label]="i"
-    [selected]="imageIndex === i"
-  ></option>
+  <option *ngFor="let value of imageInfos; index as i" [value]="i" [label]="i" [selected]="imageIndex === i"></option>
 </select>
 
-<nc-viewport
-  class="container"
-  [toolList]="toolList"
-  [imageInfo]="imageInfos[imageIndex]"
-></nc-viewport>
+<nc-viewport class="container" [toolList]="toolList" [imageInfo]="imageInfos[imageIndex]"></nc-viewport>

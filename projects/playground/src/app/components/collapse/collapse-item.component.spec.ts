@@ -13,7 +13,7 @@ describe('CollapseItemComponent', () => {
         declarations: [NiCollapseItemComponent],
         imports: [BrowserAnimationsModule],
       }).compileComponents();
-    })
+    }),
   );
 
   beforeEach(() => {

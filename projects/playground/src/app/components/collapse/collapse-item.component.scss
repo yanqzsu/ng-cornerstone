@@ -21,6 +21,7 @@ $margin-horizon: 10px;
   display: flex;
   justify-content: center;
   margin: 0 $margin-horizon 0 0;
+
   [dir='rtl'] & {
     margin: 0 0 0 $margin-horizon;
   }
@@ -41,8 +42,9 @@ $margin-horizon: 10px;
 /**
  * Creates the expansion indicator arrow.
  */
-.collapse__icon_default {
+.collapse__icon-default {
   line-height: 0;
+
   &::after {
     border-style: solid;
     border-width: 2px 2px 0 0;
@@ -58,15 +60,17 @@ $margin-horizon: 10px;
   padding: 0 10px 10px;
   overflow: hidden;
 }
+
 [aria-disabled='true'] .collapse__header {
-  color: rgba(0, 0, 0, 0.26);
+  color: rgb(0 0 0 / 26%);
   cursor: not-allowed;
+
   .collapse__title,
   .collapse__description {
     color: inherit;
   }
 }
 
-._animation-noopable {
+.animation-noopable {
   transition: none;
 }

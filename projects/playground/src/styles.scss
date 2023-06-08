@@ -1,13 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
 @use 'assets/styles/index';
 
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: index.$font-family;
   color: index.$font-light-1;
-  background-color: index.$background-color
+  background-color: index.$background-color;
 }
+
 button {
   @extend .button;
 }

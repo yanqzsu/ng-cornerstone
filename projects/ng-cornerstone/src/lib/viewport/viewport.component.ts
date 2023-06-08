@@ -1,20 +1,7 @@
-import {
-  Component,
-  ElementRef,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { OrientationAxis } from '@cornerstonejs/core/dist/esm/enums';
-import {
-  RenderingEngine,
-  setVolumesForViewports,
-  Types,
-  volumeLoader,
-} from '@cornerstonejs/core';
+import { RenderingEngine, setVolumesForViewports, Types, volumeLoader } from '@cornerstonejs/core';
 import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types';
 
 import { combineLatest, filter, first, ReplaySubject } from 'rxjs';
@@ -58,10 +45,7 @@ export class ViewportComponent implements OnInit, OnChanges {
   private volumeRefreshSubject = new ReplaySubject<ImageInfo>(1);
   private readySubject = new ReplaySubject<boolean>(1);
 
-  constructor(
-    private cornerStoneInitService: CornerstoneInitService,
-    private imageIdService: ImageIdService,
-  ) {}
+  constructor(private cornerStoneInitService: CornerstoneInitService, private imageIdService: ImageIdService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     const { imageInfo } = changes;
@@ -71,49 +55,39 @@ export class ViewportComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    combineLatest([this.readySubject, this.volumeRefreshSubject]).subscribe(
-      async ([ready, imageInfo]) => {
-        if (!ready || !imageInfo) {
-          return;
+    combineLatest([this.readySubject, this.volumeRefreshSubject]).subscribe(async ([ready, imageInfo]) => {
+      if (!ready || !imageInfo) {
+        return;
+      }
+      if (imageInfo.viewportType !== this.viewportType) {
+        this.viewportType = imageInfo.viewportType;
+        this.setViewports();
+      }
+      if (imageInfo.schema === RequestSchema.WadoRs) {
+        const imageIds = await this.imageIdService.wadoRsCreateImageIdsAndCacheMetaData(imageInfo);
+        const firstInstanceUID = imageInfo.sopInstanceUIDs![0] || '';
+        const volumeId = this.volumeIdRoot + firstInstanceUID;
+        if (imageInfo.viewportType === ViewportType.ORTHOGRAPHIC) {
+          const volume = await volumeLoader.createAndCacheVolume(volumeId, {
+            imageIds,
+          });
+          volume['load']();
+          await setVolumesForViewports(
+            this.renderingEngine,
+            [
+              {
+                volumeId,
+                callback: setCtTransferFunctionForVolumeActor,
+              },
+            ],
+            [this.viewportId],
+          );
+          this.renderingEngine.renderViewports([this.viewportId]);
+        } else if (imageInfo.viewportType === ViewportType.STACK) {
+          await setStacksForViewports(this.renderingEngine, [this.viewportId], imageIds, 0);
         }
-        if (imageInfo.viewportType !== this.viewportType) {
-          this.viewportType = imageInfo.viewportType;
-          this.setViewports();
-        }
-        if (imageInfo.schema === RequestSchema.WadoRs) {
-          const imageIds =
-            await this.imageIdService.wadoRsCreateImageIdsAndCacheMetaData(
-              imageInfo,
-            );
-          const firstInstanceUID = imageInfo.sopInstanceUIDs![0] || '';
-          const volumeId = this.volumeIdRoot + firstInstanceUID;
-          if (imageInfo.viewportType === ViewportType.ORTHOGRAPHIC) {
-            const volume = await volumeLoader.createAndCacheVolume(volumeId, {
-              imageIds,
-            });
-            volume['load']();
-            await setVolumesForViewports(
-              this.renderingEngine,
-              [
-                {
-                  volumeId,
-                  callback: setCtTransferFunctionForVolumeActor,
-                },
-              ],
-              [this.viewportId],
-            );
-            this.renderingEngine.renderViewports([this.viewportId]);
-          } else if (imageInfo.viewportType === ViewportType.STACK) {
-            await setStacksForViewports(
-              this.renderingEngine,
-              [this.viewportId],
-              imageIds,
-              0,
-            );
-          }
-        }
-      },
-    );
+      }
+    });
     this.cornerStoneInitService.ready$
       .pipe(
         filter((ready) => ready),

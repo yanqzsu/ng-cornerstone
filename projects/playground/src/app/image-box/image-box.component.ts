@@ -10,16 +10,8 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import {
-  RenderingEngine,
-  setVolumesForViewports,
-  Types,
-  volumeLoader,
-} from '@cornerstonejs/core';
-import {
-  createImageIdsAndCacheMetaData,
-  setCtTransferFunctionForVolumeActor,
-} from '../core/load';
+import { RenderingEngine, setVolumesForViewports, Types, volumeLoader } from '@cornerstonejs/core';
+import { createImageIdsAndCacheMetaData, setCtTransferFunctionForVolumeActor } from '../core/load';
 import { ToolEnum } from '../tool-group/tool.config';
 import { ToolGroupComponent } from '../tool-group/tool-group.component';
 import { OrientationEnum } from '../core/config/constants';
@@ -123,16 +115,12 @@ export class ImageBoxComponent implements AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
-    const viewportInputArray: PublicViewportInput[] = this.viewports.map(
-      (component) => {
-        return {
-          ...this.viewportConfigs.find(
-            (value) => value.viewportId === component.viewportId,
-          ),
-          element: component.element.nativeElement,
-        } as PublicViewportInput;
-      },
-    );
+    const viewportInputArray: PublicViewportInput[] = this.viewports.map((component) => {
+      return {
+        ...this.viewportConfigs.find((value) => value.viewportId === component.viewportId),
+        element: component.element.nativeElement,
+      } as PublicViewportInput;
+    });
     this.renderingEngine.setViewports(viewportInputArray);
 
     this.volumeRefreshSubject.subscribe(async (value) => {
@@ -170,12 +158,7 @@ export class ImageBoxComponent implements AfterViewInit, OnChanges {
         // viewport.setProperties({ voiRange: ctVoiRange });
         // // Render the image
         // viewport.render();
-        await setStacksForViewports(
-          this.renderingEngine,
-          viewportIds,
-          imageIds,
-          0,
-        );
+        await setStacksForViewports(this.renderingEngine, viewportIds, imageIds, 0);
       }
     });
   }

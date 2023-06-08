@@ -5,6 +5,4 @@ export enum OrientationEnum {
   OBLIQUE = 'OBLIQUE',
 }
 
-export const OrientationStringList = Object.values(OrientationEnum).filter(
-  (value) => typeof value === 'string',
-);
+export const OrientationStringList = Object.values(OrientationEnum).filter((value) => typeof value === 'string');

@@ -10,10 +10,7 @@
  * @param immediateRender - If true, the volumes will be rendered immediately
  * @returns A promise that resolves when all volumes have been added
  */
-import {
-  IRenderingEngine,
-  IStackViewport,
-} from '@cornerstonejs/core/dist/esm/types';
+import { IRenderingEngine, IStackViewport } from '@cornerstonejs/core/dist/esm/types';
 import { StackViewport } from '@cornerstonejs/core';
 import { ctVoiRange } from './setCtTransferFunctionForVolumeActor';
 
