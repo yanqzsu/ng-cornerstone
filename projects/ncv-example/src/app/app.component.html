@@ -1,5 +1,8 @@
-<select (change)="changeImage($event)">
-  <option *ngFor="let value of imageInfos; index as i" [value]="i" [label]="i" [selected]="imageIndex === i"></option>
-</select>
+<button (click)="onClick()" style="color: black">show/hide</button>
+<ng-container *ngIf="showImageViewer">
+  <select (change)="changeImage($event)">
+    <option *ngFor="let value of imageInfos; index as i" [value]="i" [label]="i" [selected]="imageIndex === i"></option>
+  </select>
 
-<nc-viewport class="container" [toolList]="toolList" [imageInfo]="imageInfos[imageIndex]"></nc-viewport>
+  <nc-viewport class="container" [toolList]="toolList" [imageInfo]="imageInfos[imageIndex]"></nc-viewport>
+</ng-container>

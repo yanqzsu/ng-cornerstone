@@ -2,10 +2,11 @@ import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { ViewportComponent } from './viewport.component';
 import { CornerstoneInitService } from '../core';
 import { ToolModule } from '../tool';
+import { ImageBoxModule } from '../image-box/image-box.module';
 
 @NgModule({
   declarations: [ViewportComponent],
-  imports: [ToolModule],
+  imports: [ToolModule, ImageBoxModule],
   exports: [ViewportComponent],
 })
 export class ViewportModule {

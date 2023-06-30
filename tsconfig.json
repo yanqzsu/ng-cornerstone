@@ -12,7 +12,7 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "paths": {
-      "ng-cornerstone": ["dist/ng-cornerstone/ng-cornerstone", "dist/ng-cornerstone"]
+      "ng-cornerstone": ["dist/ng-cornerstone"]
     },
     "declaration": false,
     "downlevelIteration": true,
