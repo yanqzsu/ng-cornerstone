@@ -126,7 +126,7 @@ export class ViewportComponent implements OnInit, AfterViewInit, OnChanges, OnDe
       imageBoxChange$.pipe(
         switchMap((imageBoxComponents) => zip(imageBoxComponents.map((imageBox) => imageBox.viewportEvent))),
       ),
-    ).subscribe((value) => {
+    ).subscribe(() => {
       const viewportInputs = this.imageBoxComponentList.map((component) => component.viewportInput!);
       this.viewportIds = viewportInputs.map((viewportInput) => viewportInput.viewportId);
       this.renderingEngine.setViewports(viewportInputs);
