@@ -1,12 +1,21 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
-import { OrientationAxis } from '@cornerstonejs/core/dist/esm/enums';
-import { RenderingEngine, setVolumesForViewports, Types, volumeLoader } from '@cornerstonejs/core';
-import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types';
+import { cache, eventTarget, RenderingEngine, setVolumesForViewports, volumeLoader } from '@cornerstonejs/core';
 
-import { combineLatest, filter, first, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, first, merge, ReplaySubject, startWith, Subject, zip } from 'rxjs';
 
-import { ToolEnum, ToolBarComponent } from '../tool';
+import { ToolBarComponent, ToolEnum } from '../tool';
 import {
   CornerstoneInitService,
   ImageIdService,
@@ -15,6 +24,8 @@ import {
   setCtTransferFunctionForVolumeActor,
   setStacksForViewports,
 } from '../core';
+import { ImageBoxComponent } from '../image-box/image-box.component';
+import { switchMap, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'nc-viewport',
@@ -22,109 +33,117 @@ import {
   templateUrl: './viewport.component.html',
   styleUrls: ['./viewport.component.scss'],
 })
-export class ViewportComponent implements OnInit, OnChanges {
-  viewportId = 'VIEWPORT_ID';
+export class ViewportComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+  activatedViewportId = 'VIEWPORT_ID';
   renderingEngineId = 'RENDERING_ENGINE_ID';
-  defaultVolumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
-  volumeIdRoot = `${this.defaultVolumeLoaderScheme}:VOLUME_ID:`; // VolumeId with loader id + volume id + instance uid
-  viewportType: ViewportType = ViewportType.STACK;
-  renderingEngine!: RenderingEngine;
+  viewportType?: ViewportType;
+  private defaultVolumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
+  private volumeIdRoot = `${this.defaultVolumeLoaderScheme}:VOLUME_ID:`; // VolumeId with loader id + volume id + instance uid
+  private renderingEngine!: RenderingEngine;
+  private volumeRefreshSubject = new ReplaySubject<ImageInfo>(1);
+  private destroy$ = new Subject<void>();
+
+  viewportIds?: string[];
+  viewportIdsSubject = new BehaviorSubject<string[]>([]);
 
   @Input()
   imageInfo?: ImageInfo;
 
   @ViewChild(ToolBarComponent)
-  toolBarComponent?: ToolBarComponent;
+  toolBarComponent!: ToolBarComponent;
 
-  @ViewChild('viewport', { read: ElementRef, static: true })
-  viewportElementRef?: ElementRef<HTMLElement>;
+  @ViewChildren(ImageBoxComponent)
+  imageBoxComponentList!: QueryList<ImageBoxComponent>;
 
   @Input()
   toolList: ToolEnum[] = [];
-
-  private volumeRefreshSubject = new ReplaySubject<ImageInfo>(1);
-  private readySubject = new ReplaySubject<boolean>(1);
 
   constructor(private cornerStoneInitService: CornerstoneInitService, private imageIdService: ImageIdService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     const { imageInfo } = changes;
-    if (imageInfo && this.imageInfo) {
+    if (imageInfo) {
       this.volumeRefreshSubject.next(this.imageInfo!);
     }
   }
 
   ngOnInit(): void {
-    combineLatest([this.readySubject, this.volumeRefreshSubject]).subscribe(async ([ready, imageInfo]) => {
-      if (!ready || !imageInfo) {
-        return;
-      }
-      if (imageInfo.viewportType !== this.viewportType) {
-        this.viewportType = imageInfo.viewportType;
-        this.setViewports();
-      }
-      if (imageInfo.schema === RequestSchema.WadoRs) {
-        const imageIds = await this.imageIdService.wadoRsCreateImageIdsAndCacheMetaData(imageInfo);
-        const firstInstanceUID = imageInfo.sopInstanceUIDs![0] || '';
-        const volumeId = this.volumeIdRoot + firstInstanceUID;
-        if (imageInfo.viewportType === ViewportType.ORTHOGRAPHIC) {
-          const volume = await volumeLoader.createAndCacheVolume(volumeId, {
-            imageIds,
-          });
-          volume['load']();
-          await setVolumesForViewports(
-            this.renderingEngine,
-            [
-              {
-                volumeId,
-                callback: setCtTransferFunctionForVolumeActor,
-              },
-            ],
-            [this.viewportId],
-          );
-          this.renderingEngine.renderViewports([this.viewportId]);
-        } else if (imageInfo.viewportType === ViewportType.STACK) {
-          await setStacksForViewports(this.renderingEngine, [this.viewportId], imageIds, 0);
-        }
-      }
-    });
     this.cornerStoneInitService.ready$
       .pipe(
+        startWith(this.cornerStoneInitService.ready),
         filter((ready) => ready),
         first(),
       )
       .subscribe(() => {
         this.renderingEngine = new RenderingEngine(this.renderingEngineId);
-        this.setViewports();
-        this.readySubject.next(true);
+        combineLatest([this.viewportIdsSubject, this.volumeRefreshSubject]).subscribe(
+          async ([viewportIds, imageInfo]) => {
+            if (imageInfo.viewportType !== this.viewportType) {
+              this.viewportType = imageInfo.viewportType;
+              return;
+            }
+            if (imageInfo.schema === RequestSchema.WadoRs) {
+              const imageIds = await this.imageIdService.wadoRsCreateImageIdsAndCacheMetaData(imageInfo);
+              const firstInstanceUID = imageInfo.sopInstanceUIDs![0] || '';
+              const volumeId = this.volumeIdRoot + firstInstanceUID;
+              if (imageInfo.viewportType === ViewportType.ORTHOGRAPHIC) {
+                const volume = await volumeLoader.createAndCacheVolume(volumeId, {
+                  imageIds,
+                });
+                volume['load']();
+                await setVolumesForViewports(
+                  this.renderingEngine,
+                  [
+                    {
+                      volumeId,
+                      callback: setCtTransferFunctionForVolumeActor,
+                    },
+                  ],
+                  viewportIds,
+                );
+                if (!this.renderingEngine.hasBeenDestroyed) {
+                  this.renderingEngine.render();
+                  this.renderingEngine.renderViewports(viewportIds);
+                }
+              } else if (imageInfo.viewportType === ViewportType.STACK) {
+                await setStacksForViewports(this.renderingEngine, viewportIds, imageIds, 0);
+              }
+            }
+          },
+        );
       });
   }
 
-  private setViewports() {
-    const viewports: PublicViewportInput[] = [];
-    if (this.viewportType === ViewportType.STACK) {
-      const viewportInput: PublicViewportInput = {
-        element: this.viewportElementRef?.nativeElement as HTMLDivElement,
-        viewportId: this.viewportId,
-        type: ViewportType.STACK,
-        defaultOptions: {
-          background: <Types.Point3>[0, 0, 0],
-        },
-      };
-      viewports.push(viewportInput);
-    } else if (this.viewportType === ViewportType.ORTHOGRAPHIC) {
-      const viewportInput: PublicViewportInput = {
-        element: this.viewportElementRef?.nativeElement as HTMLDivElement,
-        viewportId: this.viewportId,
-        type: ViewportType.ORTHOGRAPHIC,
-        defaultOptions: {
-          orientation: OrientationAxis.AXIAL,
-          background: <Types.Point3>[0, 0, 0],
-        },
-      };
-      viewports.push(viewportInput);
-    }
-    this.renderingEngine.setViewports(viewports);
-    this.toolBarComponent?.updateViewport();
+  ngAfterViewInit(): void {
+    const imageBoxChange$ = this.imageBoxComponentList.changes.pipe(
+      startWith(this.imageBoxComponentList),
+      takeUntil(this.destroy$),
+      filter((value) => !!value),
+    );
+
+    merge(
+      imageBoxChange$,
+      imageBoxChange$.pipe(
+        switchMap((imageBoxComponents) => zip(imageBoxComponents.map((imageBox) => imageBox.viewportEvent))),
+      ),
+    ).subscribe(() => {
+      const viewportInputs = this.imageBoxComponentList.map((component) => component.viewportInput!);
+      this.viewportIds = viewportInputs.map((viewportInput) => viewportInput.viewportId);
+      this.renderingEngine.setViewports(viewportInputs);
+      this.toolBarComponent?.setViewport(this.viewportIds);
+      this.viewportIdsSubject.next(this.viewportIds);
+    });
+  }
+
+  ngOnDestroy(): void {
+    console.log('viewport destroyed');
+    this.viewportIds?.forEach((id) => {
+      this.renderingEngine.disableElement(id);
+    });
+    eventTarget.reset();
+    cache.purgeCache();
+    this.renderingEngine.destroy();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

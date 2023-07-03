@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 import { TOOL_CONFIG_MAP } from './tool.config';
-import { addTool, Enums as ToolsEnums, ToolGroupManager } from '@cornerstonejs/tools';
+import { addTool, destroy, Enums as ToolsEnums, init, state, ToolGroupManager } from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
 import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
 import { ToolConfig, ToolEnum } from './tool.types';
@@ -15,22 +15,23 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   private destroy$ = new Subject<void>();
   private toolGroupId = 'TOOL_GROUP_ID';
   private toolGroup!: IToolGroup;
-  registerToolSet = new Set<ToolEnum>();
 
   @Input()
   toolList: ToolEnum[] = [];
   @Input()
-  viewportType: ViewportType = ViewportType.ORTHOGRAPHIC;
-  @Input()
-  viewportId: string = '';
+  viewportType?: ViewportType;
   @Input()
   renderingEngineId: string = '';
+  @Input()
+  activeViewportId!: string;
 
   toolConfigList: ToolConfig[] = [];
   cameraList: ToolConfig[] = [];
   currentTool?: ToolConfig;
 
-  constructor() {}
+  constructor() {
+    init();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     const { viewportType, toolList } = changes;
@@ -44,29 +45,31 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
     this.updateToolList();
   }
 
-  updateViewport() {
-    // this.initToolGroup();
-    this.toolGroup.addViewport(this.viewportId, this.renderingEngineId);
+  setViewport(viewportIds: string[]) {
+    console.log('toolGroup setViewport');
+    const oriViewportIds = this.toolGroup.getViewportIds();
+    oriViewportIds?.forEach((id) => this.toolGroup.removeViewports(this.renderingEngineId, id));
+    viewportIds?.forEach((viewportId) => this.toolGroup.addViewport(viewportId, this.renderingEngineId));
   }
 
   updateToolList() {
-    if (!this.toolGroup) {
+    if (!this.toolGroup || !this.viewportType || this.toolList.length === 0) {
       return;
     }
+    console.log('toolGroup updateToolList');
     const toolConfigList: ToolConfig[] = [];
     const cameraList: ToolConfig[] = [];
     this.toolList.forEach((toolEnum) => {
       const config = TOOL_CONFIG_MAP[toolEnum];
-      if (config && config.types.indexOf(this.viewportType) > -1) {
-        if (!this.registerToolSet.has(toolEnum)) {
-          if (config.tool) {
-            addTool(config.tool);
-            this.toolGroup.addTool(config.name);
-          }
-          this.registerToolSet.add(toolEnum);
-        }
+      if (config && config.types.indexOf(this.viewportType!) > -1) {
         if (config.tool) {
           toolConfigList.push(config);
+          const toolName = config.tool.toolName;
+          const toolAlreadyAdded = state.tools[toolName] !== undefined;
+          if (!toolAlreadyAdded) {
+            addTool(config.tool);
+          }
+          this.toolGroup.addTool(config.name);
         } else if (config.callback) {
           cameraList.push(config);
         }
@@ -108,11 +111,13 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
     }
     const cameraTool = this.cameraList.find((toolConfig) => toolConfig.name === name);
     if (cameraTool?.callback) {
-      cameraTool.callback(this.renderingEngineId, this.viewportId, cameraTool.options);
+      cameraTool.callback(this.renderingEngineId, this.activeViewportId, cameraTool.options);
     }
   }
 
   ngOnDestroy(): void {
+    destroy();
+    ToolGroupManager.destroyToolGroup(this.toolGroupId);
     this.destroy$.next();
     this.destroy$.complete();
   }

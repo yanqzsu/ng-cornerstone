@@ -1,3 +1,12 @@
+## [0.0.7](https://github.com/yanqzsu/ng-corner/compare/0.0.6...0.0.7) (2023-07-03)
+
+
+### Features
+
+* **life-cycle:** add destroy method, optimize init hook ([bde15e4](https://github.com/yanqzsu/ng-corner/commit/bde15e449d44175892b3fa80ea7eff030eee1376))
+
+
+
 ## [0.0.6](https://github.com/yanqzsu/ng-corner/compare/0.0.5...0.0.6) (2023-06-08)
 
 

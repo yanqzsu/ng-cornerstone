@@ -3,7 +3,6 @@ import { ToolBarComponent } from './tool-bar.component';
 import { ICONFONT_URL, IconService } from '../components/icon/icon.service';
 import { ButtonModule } from '../components/button/button.module';
 import { CommonModule } from '@angular/common';
-import { init } from '@cornerstonejs/tools';
 
 @NgModule({
   declarations: [ToolBarComponent],
@@ -32,7 +31,5 @@ export class ToolModule {
     if (parent) {
       throw new Error('ToolBarModule should be imported only once!');
     }
-    init();
-    console.log('Tool init');
   }
 }

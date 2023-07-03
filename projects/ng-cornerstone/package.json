@@ -1,15 +1,15 @@
 {
   "name": "ng-cornerstone",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "repository": "https://github.com/yanqzsu/ng-corner",
   "homepage": "https://github.com/yanqzsu/ng-corner#readme.md",
   "peerDependencies": {
     "@angular/common": ">=13",
     "@angular/core": ">=13",
     "@cornerstonejs/core": "~1.1.6",
+    "@cornerstonejs/dicom-image-loader": "~1.1.6",
     "@cornerstonejs/streaming-image-volume-loader": "~1.1.6",
-    "@cornerstonejs/tools": "~1.1.6",
-    "@cornerstonejs/dicom-image-loader": "~1.1.6"
+    "@cornerstonejs/tools": "~1.1.6"
   },
   "dependencies": {
     "tslib": "^2.3.0",
