@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "tslib": "^2.3.0",
-    "@angular/cdk": "^14.0.4",
+    "@angular/cdk": "^15.2.9",
     "dcmjs": "^0.24.4",
     "dicomweb-client": "^0.8.4",
     "@cornerstonejs/calculate-suv": "1.0.3"
