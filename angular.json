@@ -1,7 +1,9 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "cli": {
-    "schematicCollections": ["@angular-eslint/schematics"]
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   },
   "version": 1,
   "newProjectRoot": "projects",
@@ -44,7 +46,9 @@
                 "output": "/"
               }
             ],
-            "styles": ["projects/playground/src/styles.scss"],
+            "styles": [
+              "projects/playground/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -117,15 +121,23 @@
             "tsConfig": "projects/playground/tsconfig.spec.json",
             "karmaConfig": "projects/playground/karma.conf.js",
             "inlineStyleLanguage": "scss",
-            "assets": ["projects/playground/src/favicon.ico", "projects/playground/src/assets"],
-            "styles": ["projects/playground/src/styles.scss"],
+            "assets": [
+              "projects/playground/src/favicon.ico",
+              "projects/playground/src/assets"
+            ],
+            "styles": [
+              "projects/playground/src/styles.scss"
+            ],
             "scripts": []
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/playground/**/*.ts", "projects/playground/**/*.html"]
+            "lintFilePatterns": [
+              "projects/playground/**/*.ts",
+              "projects/playground/**/*.html"
+            ]
           }
         }
       }
@@ -162,7 +174,10 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/ng-cornerstone/**/*.ts", "projects/ng-cornerstone/**/*.html"]
+            "lintFilePatterns": [
+              "projects/ng-cornerstone/**/*.ts",
+              "projects/ng-cornerstone/**/*.html"
+            ]
           }
         }
       }
@@ -210,7 +225,9 @@
                 "output": "/"
               }
             ],
-            "styles": ["projects/ncv-example/src/styles.scss"],
+            "styles": [
+              "projects/ncv-example/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -280,18 +297,34 @@
             "tsConfig": "projects/ncv-example/tsconfig.spec.json",
             "karmaConfig": "projects/ncv-example/karma.conf.js",
             "inlineStyleLanguage": "scss",
-            "assets": ["projects/ncv-example/src/favicon.ico", "projects/ncv-example/src/assets"],
-            "styles": ["projects/ncv-example/src/styles.scss"],
+            "assets": [
+              "projects/ncv-example/src/favicon.ico",
+              "projects/ncv-example/src/assets"
+            ],
+            "styles": [
+              "projects/ncv-example/src/styles.scss"
+            ],
             "scripts": []
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/ncv-example/**/*.ts", "projects/ncv-example/**/*.html"]
+            "lintFilePatterns": [
+              "projects/ncv-example/**/*.ts",
+              "projects/ncv-example/**/*.html"
+            ]
           }
         }
       }
+    }
+  },
+  "schematics": {
+    "@angular-eslint/schematics:application": {
+      "setParserOptionsProject": true
+    },
+    "@angular-eslint/schematics:library": {
+      "setParserOptionsProject": true
     }
   }
 }
