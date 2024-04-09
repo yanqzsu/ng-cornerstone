@@ -10,12 +10,11 @@
  * @param immediateRender - If true, the volumes will be rendered immediately
  * @returns A promise that resolves when all volumes have been added
  */
-import { IRenderingEngine, IStackViewport } from '@cornerstonejs/core/dist/esm/types';
-import { StackViewport } from '@cornerstonejs/core';
+import { StackViewport, Types } from '@cornerstonejs/core';
 import { ctVoiRange } from './setCtTransferFunctionForVolumeActor';
 
 async function setStacksForViewports(
-  renderingEngine: IRenderingEngine,
+  renderingEngine: Types.IRenderingEngine,
   viewportIds: Array<string>,
   imageIds: Array<string>,
   currentImageIdIndex?: number,
@@ -33,7 +32,7 @@ async function setStacksForViewports(
   });
 
   const setStackPromises = viewportIds.map(async (viewportId) => {
-    const viewport = renderingEngine.getViewport(viewportId) as IStackViewport;
+    const viewport = renderingEngine.getViewport(viewportId) as Types.IStackViewport;
     await viewport.setStack(imageIds, currentImageIdIndex);
     // Set the VOI of the stack
     viewport.setProperties({ voiRange: ctVoiRange });

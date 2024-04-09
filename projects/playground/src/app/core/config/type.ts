@@ -1,11 +1,11 @@
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
+import { Enums } from '@cornerstonejs/core';
 
 export interface ImageInfo {
   studyInstanceUID?: string;
   seriesInstanceUID?: string;
   sopInstanceUID?: string;
   wadoRsRoot: string;
-  viewportType: ViewportType;
+  viewportType: Enums.ViewportType;
   volumeId?: string;
 }
 

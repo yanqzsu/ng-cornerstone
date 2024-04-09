@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { TOOL_CONFIG_MAP } from './tool.config';
 import { addTool, destroy, Enums as ToolsEnums, init, state, ToolGroupManager } from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
+import { Enums } from '@cornerstonejs/core';
 import { ToolConfig, ToolEnum } from './tool.types';
 
 @Component({
@@ -19,7 +19,7 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
   toolList: ToolEnum[] = [];
   @Input()
-  viewportType?: ViewportType;
+  viewportType?: Enums.ViewportType;
   @Input()
   renderingEngineId: string = '';
   @Input()

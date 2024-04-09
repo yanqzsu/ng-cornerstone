@@ -1,4 +1,4 @@
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
+import { Enums } from '@cornerstonejs/core';
 
 export enum ToolEnum {
   Reset,
@@ -46,5 +46,5 @@ export interface ToolConfig {
   tool?: any;
   callback?: (renderingEngineId: string, viewportId: string, options?: any) => void;
   options?: any;
-  types: ViewportType[];
+  types: Enums.ViewportType[];
 }

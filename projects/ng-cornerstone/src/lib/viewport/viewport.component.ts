@@ -10,8 +10,17 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
-import { cache, eventTarget, RenderingEngine, setVolumesForViewports, volumeLoader } from '@cornerstonejs/core';
+import {
+  cache,
+  eventTarget,
+  RenderingEngine,
+  setVolumesForViewports,
+  volumeLoader,
+  Enums,
+  CONSTANTS,
+  Types,
+  utilities,
+} from '@cornerstonejs/core';
 
 import { BehaviorSubject, combineLatest, filter, first, merge, ReplaySubject, startWith, Subject, zip } from 'rxjs';
 
@@ -36,7 +45,7 @@ import { switchMap, takeUntil } from 'rxjs/operators';
 export class ViewportComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   activatedViewportId = 'VIEWPORT_ID';
   renderingEngineId = 'RENDERING_ENGINE_ID';
-  viewportType?: ViewportType;
+  viewportType?: Enums.ViewportType;
   private defaultVolumeLoaderScheme = 'cornerstoneStreamingImageVolume'; // Loader id which defines which volume loader to use
   private volumeIdRoot = `${this.defaultVolumeLoaderScheme}:VOLUME_ID:`; // VolumeId with loader id + volume id + instance uid
   private renderingEngine!: RenderingEngine;
@@ -86,7 +95,7 @@ export class ViewportComponent implements OnInit, AfterViewInit, OnChanges, OnDe
               const imageIds = await this.imageIdService.wadoRsCreateImageIdsAndCacheMetaData(imageInfo);
               const firstInstanceUID = imageInfo.sopInstanceUIDs![0] || '';
               const volumeId = this.volumeIdRoot + firstInstanceUID;
-              if (imageInfo.viewportType === ViewportType.ORTHOGRAPHIC) {
+              if (imageInfo.viewportType === Enums.ViewportType.ORTHOGRAPHIC) {
                 const volume = await volumeLoader.createAndCacheVolume(volumeId, {
                   imageIds,
                 });
@@ -105,8 +114,26 @@ export class ViewportComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                   this.renderingEngine.render();
                   this.renderingEngine.renderViewports(viewportIds);
                 }
-              } else if (imageInfo.viewportType === ViewportType.STACK) {
+              } else if (imageInfo.viewportType === Enums.ViewportType.STACK) {
                 await setStacksForViewports(this.renderingEngine, viewportIds, imageIds, 0);
+              } else if (imageInfo.viewportType === Enums.ViewportType.VOLUME_3D) {
+                const volume = await volumeLoader.createAndCacheVolume(volumeId, {
+                  imageIds,
+                });
+                volume['load']();
+                await setVolumesForViewports(this.renderingEngine, [{ volumeId }], viewportIds);
+                viewportIds.forEach((viewportId) => {
+                  const volumeActor = this.renderingEngine.getViewport(viewportId).getDefaultActor()
+                    .actor as Types.VolumeActor;
+                  utilities.applyPreset(
+                    volumeActor,
+                    CONSTANTS.VIEWPORT_PRESETS.find((preset) => preset.name === 'CT-Chest-Contrast-Enhanced')!,
+                  );
+                });
+                if (!this.renderingEngine.hasBeenDestroyed) {
+                  this.renderingEngine.render();
+                  this.renderingEngine.renderViewports(viewportIds);
+                }
               }
             }
           },
@@ -124,10 +151,12 @@ export class ViewportComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     merge(
       imageBoxChange$,
       imageBoxChange$.pipe(
-        switchMap((imageBoxComponents) => zip(imageBoxComponents.map((imageBox) => imageBox.viewportEvent))),
+        switchMap((imageBoxComponents: QueryList<ImageBoxComponent>) =>
+          zip(imageBoxComponents.map((imageBox) => imageBox.viewportEvent)),
+        ),
       ),
     ).subscribe(() => {
-      const viewportInputs = this.imageBoxComponentList.map((component) => component.viewportInput!);
+      const viewportInputs = this.imageBoxComponentList.map((component) => component?.viewportInput!) || [];
       this.viewportIds = viewportInputs.map((viewportInput) => viewportInput.viewportId);
       this.renderingEngine.setViewports(viewportInputs);
       this.toolBarComponent?.setViewport(this.viewportIds);

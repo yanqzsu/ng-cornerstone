@@ -5,5 +5,14 @@
     "entryFile": "src/public-api.ts"
   },
   "assets": ["src/assets", "src/styles", "LICENSE.txt"],
-  "allowedNonPeerDependencies": ["@angular/cdk", "dcmjs", "dicomweb-client", "@cornerstonejs/calculate-suv"]
+  "allowedNonPeerDependencies": [
+    "@angular/cdk",
+    "dcmjs",
+    "dicomweb-client",
+    "@cornerstonejs/calculate-suv",
+    "@cornerstonejs/core",
+    "@cornerstonejs/dicom-image-loader",
+    "@cornerstonejs/streaming-image-volume-loader",
+    "@cornerstonejs/tools"
+  ]
 }

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { metaData } from '@cornerstonejs/core';
-import { calibratedPixelSpacingMetadataProvider } from '@cornerstonejs/core/dist/esm/utilities';
+import { metaData, utilities } from '@cornerstonejs/core';
 import { api } from 'dicomweb-client';
 import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 import dcmjs from 'dcmjs';
@@ -146,7 +145,7 @@ export class ImageIdService {
         const pixelSpacing = getPixelSpacingInformation(metadata);
 
         if (pixelSpacing) {
-          calibratedPixelSpacingMetadataProvider.add(
+          utilities.calibratedPixelSpacingMetadataProvider.add(
             imageId,
             pixelSpacing.map((s) => parseFloat(s)),
           );
