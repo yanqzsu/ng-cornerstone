@@ -1,3 +1,13 @@
+## [1.45.1](https://github.com/yanqzsu/ng-corner/compare/0.0.7...1.45.1) (2024-04-09)
+
+
+### Features
+
+* **angular:** update to angular 16 ([0763b55](https://github.com/yanqzsu/ng-corner/commit/0763b5526652d8481756d6b40a2dcef896affded))
+* **volume3d:** support volume3d, update cornerstone to 1.45.1 ([d1d54c6](https://github.com/yanqzsu/ng-corner/commit/d1d54c619636f56674bc3e082db366bcedf04a05))
+
+
+
 ## [0.0.7](https://github.com/yanqzsu/ng-corner/compare/0.0.6...0.0.7) (2023-07-03)
 
 

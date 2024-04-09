@@ -2,6 +2,7 @@
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
 This library is an angular project for [CornerStone3D](https://www.cornerstonejs.org/)
 It can be used as a viewport of DICOM images.
 
@@ -69,15 +70,22 @@ Rotate, Next, Previous, Coronal, Axial, Sagittal
 
 ImageInfo should provide studyInstanceUID, seriesInstanceUID, urlRoot, viewportType, schema
 like:
-
+### Orthographic
 ```
 {
   studyInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
   seriesInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561',
   urlRoot: 'https://d1qmxk7r72ysft.cloudfront.net/dicomweb',
-  viewportType: ViewportType.ORTHOGRAPHIC,
+  viewportType: Enums.ViewportType.ORTHOGRAPHIC,
   schema: RequestSchema.WadoRs,
   volumeLoaderScheme: VolumeLoaderSchema.stream,
+}
+```
+
+### Volume3D
+```json
+{
+  viewportType: Enums.ViewportType.VOLUME_3D,
 }
 ```
 
