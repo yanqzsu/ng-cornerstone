@@ -1,35 +1,19 @@
-import { ENVIRONMENT_INITIALIZER, inject, NgModule, Optional, SkipSelf } from '@angular/core';
+import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { ToolBarComponent } from './tool-bar.component';
-import { ICONFONT_URL, IconService } from '../components/icon/icon.service';
+import { NcIconService } from '../components/icon';
 import { ButtonModule } from '../components/button/button.module';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [ToolBarComponent],
-  imports: [
-    CommonModule,
-    {
-      ngModule: ButtonModule,
-      providers: [
-        {
-          provide: ICONFONT_URL,
-          multi: true,
-          useValue: ['./assets/font/iconfont.js'],
-        },
-        {
-          provide: ENVIRONMENT_INITIALIZER,
-          multi: true,
-          useValue: () => inject(IconService).init(),
-        },
-      ],
-    },
-  ],
+  imports: [CommonModule, ButtonModule],
   exports: [ToolBarComponent],
 })
 export class ToolModule {
-  constructor(@SkipSelf() @Optional() parent?: ToolModule) {
+  constructor(iconService: NcIconService, @SkipSelf() @Optional() parent?: ToolModule) {
     if (parent) {
       throw new Error('ToolBarModule should be imported only once!');
     }
+    iconService.init('./assets/font/iconfont.js');
   }
 }

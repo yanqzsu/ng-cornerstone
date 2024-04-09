@@ -1,8 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
-import { OrientationAxis } from '@cornerstonejs/core/dist/esm/enums';
-import { Types } from '@cornerstonejs/core';
-import { PublicViewportInput } from '@cornerstonejs/core/dist/esm/types';
+import { Types, Enums } from '@cornerstonejs/core';
 
 @Component({
   selector: 'nc-image-box',
@@ -15,15 +12,15 @@ export class ImageBoxComponent implements OnChanges {
   viewportId!: string;
 
   @Input()
-  viewportType?: ViewportType;
+  viewportType?: Enums.ViewportType;
 
   @ViewChild('imageBox', { read: ElementRef, static: true })
   viewportElementRef?: ElementRef<HTMLElement>;
 
   @Output()
-  viewportEvent = new EventEmitter<PublicViewportInput>();
+  viewportEvent = new EventEmitter<Types.PublicViewportInput>();
 
-  viewportInput?: PublicViewportInput;
+  viewportInput?: Types.PublicViewportInput;
 
   constructor() {}
 
@@ -35,25 +32,37 @@ export class ImageBoxComponent implements OnChanges {
   }
 
   private updateViewport() {
-    if (this.viewportType === ViewportType.STACK) {
+    if (this.viewportType === Enums.ViewportType.STACK) {
       this.viewportInput = {
         element: this.viewportElementRef?.nativeElement as HTMLDivElement,
         viewportId: this.viewportId,
-        type: ViewportType.STACK,
+        type: Enums.ViewportType.STACK,
         defaultOptions: {
           background: <Types.Point3>[0, 0, 0],
         },
       };
       console.log('viewport init');
       this.viewportEvent.emit(this.viewportInput);
-    } else if (this.viewportType === ViewportType.ORTHOGRAPHIC) {
+    } else if (this.viewportType === Enums.ViewportType.ORTHOGRAPHIC) {
       this.viewportInput = {
         element: this.viewportElementRef?.nativeElement as HTMLDivElement,
         viewportId: this.viewportId,
-        type: ViewportType.ORTHOGRAPHIC,
+        type: Enums.ViewportType.ORTHOGRAPHIC,
         defaultOptions: {
-          orientation: OrientationAxis.AXIAL,
+          orientation: Enums.OrientationAxis.AXIAL,
           background: <Types.Point3>[0, 0, 0],
+        },
+      };
+      console.log('viewport init');
+      this.viewportEvent.emit(this.viewportInput);
+    } else if (this.viewportType === Enums.ViewportType.VOLUME_3D) {
+      this.viewportInput = {
+        element: this.viewportElementRef?.nativeElement as HTMLDivElement,
+        viewportId: this.viewportId,
+        type: Enums.ViewportType.VOLUME_3D,
+        defaultOptions: {
+          orientation: Enums.OrientationAxis.CORONAL,
+          background: <Types.Point3>[0.2, 0, 0.2],
         },
       };
       console.log('viewport init');

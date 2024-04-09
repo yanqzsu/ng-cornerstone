@@ -1,22 +1,22 @@
 {
   "name": "ng-cornerstone",
-  "version": "0.0.7",
+  "version": "1.45.0",
   "repository": "https://github.com/yanqzsu/ng-corner",
   "homepage": "https://github.com/yanqzsu/ng-corner#readme.md",
   "peerDependencies": {
     "@angular/common": ">=13",
-    "@angular/core": ">=13",
-    "@cornerstonejs/core": "~1.1.6",
-    "@cornerstonejs/dicom-image-loader": "~1.1.6",
-    "@cornerstonejs/streaming-image-volume-loader": "~1.1.6",
-    "@cornerstonejs/tools": "~1.1.6"
+    "@angular/core": ">=13"
   },
   "dependencies": {
     "tslib": "^2.3.0",
     "@angular/cdk": "^15.2.9",
-    "dcmjs": "^0.24.4",
+    "dcmjs": "^0.29.8",
     "dicomweb-client": "^0.8.4",
-    "@cornerstonejs/calculate-suv": "1.0.3"
+    "@cornerstonejs/calculate-suv": "1.0.3",
+    "@cornerstonejs/core": "^1.45.1",
+    "@cornerstonejs/dicom-image-loader": "^1.45.1",
+    "@cornerstonejs/streaming-image-volume-loader": "^1.45.1",
+    "@cornerstonejs/tools": "^1.45.1"
   },
   "license": "MIT",
   "keywords": [

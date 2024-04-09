@@ -1,24 +1,16 @@
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, InjectionToken, Optional, RendererFactory2 } from '@angular/core';
-
-export const ICONFONT_URL = new InjectionToken<string>('IconfontUrl');
+import { Inject, Injectable, RendererFactory2 } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
-export class IconService {
-  constructor(
-    @Inject(DOCUMENT) private doc: any,
-    private rendererFactory2: RendererFactory2,
-    @Inject(ICONFONT_URL) @Optional() private iconfontUrls?: string[],
-  ) {}
+export class NcIconService {
+  constructor(@Inject(DOCUMENT) private doc: any, private rendererFactory2: RendererFactory2) {}
 
-  init() {
-    if (this.iconfontUrls) {
+  init(iconfontUrl?: string) {
+    if (iconfontUrl) {
       console.log('Icon init');
-      for (const url of this.iconfontUrls) {
-        this.fetchIconfont(url);
-      }
+      this.fetchIconfont(iconfontUrl);
     }
   }
 

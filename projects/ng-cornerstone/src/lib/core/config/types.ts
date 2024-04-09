@@ -1,4 +1,4 @@
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
+import { Enums } from '@cornerstonejs/core';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type SafeAny = any;
@@ -20,6 +20,6 @@ export interface ImageInfo {
   sopInstanceUIDs?: string[];
   urlRoot: string;
   schema: RequestSchema;
-  viewportType: ViewportType;
+  viewportType: Enums.ViewportType;
   volumeLoaderScheme?: VolumeLoaderSchema; // Loader id which defines which volume loader to use
 }

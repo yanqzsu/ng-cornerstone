@@ -10,8 +10,7 @@ import {
   WindowLevelTool,
   ZoomTool,
 } from '@cornerstonejs/tools';
-import { getRenderingEngine, Types } from '@cornerstonejs/core';
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
+import { getRenderingEngine, Types, Enums } from '@cornerstonejs/core';
 
 export enum ToolEnum {
   Reset,
@@ -56,7 +55,7 @@ export interface ToolConfig {
   name: string;
   tool?: any;
   callback?: (renderingEngineId: string, viewportId: string) => void;
-  types: ViewportType[];
+  types: Enums.ViewportType[];
 }
 
 function reset(renderingEngineId: string, viewportId: string): void {
@@ -135,111 +134,111 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     label: '复位',
     name: 'Reset',
     callback: reset,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.FlipV]: {
     icon: 'dmv-fliph',
     label: '水平翻转',
     name: 'fliph',
     callback: flipH,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.FlipH]: {
     icon: 'dmv-flipv',
     label: '垂直翻转',
     name: 'flipV',
     callback: flipV,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.Rotate]: {
     icon: 'dmv-rotate',
     label: '旋转',
     name: 'rotate',
     callback: rotate,
-    types: [ViewportType.STACK],
+    types: [Enums.ViewportType.STACK],
   },
   [ToolEnum.Next]: {
     icon: 'dmv-right',
     label: '下一张',
     name: 'next',
     callback: next,
-    types: [ViewportType.STACK],
+    types: [Enums.ViewportType.STACK],
   },
   [ToolEnum.Previous]: {
     icon: 'dmv-left',
     label: '上一张',
     name: 'previous',
     callback: previous,
-    types: [ViewportType.STACK],
+    types: [Enums.ViewportType.STACK],
   },
   [ToolEnum.ArrowAnnotateTool]: {
     icon: 'dmv-annotation',
     label: '标注',
     tool: ArrowAnnotateTool,
     name: ArrowAnnotateTool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.AngleTool]: {
     icon: 'dmv-angle',
     label: '角度',
     tool: AngleTool,
     name: AngleTool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.LengthTool]: {
     icon: 'dmv-ruler',
     label: '长度',
     tool: LengthTool,
     name: LengthTool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.RectangleROITool]: {
     icon: 'dmv-rectangle',
     label: '矩形',
     tool: RectangleROITool,
     name: RectangleROITool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.EllipticalROITool]: {
     icon: 'dmv-ellipse',
     label: '椭圆',
     tool: EllipticalROITool,
     name: EllipticalROITool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.TrackballRotateTool]: {
     icon: 'dmv-rotate',
     label: '3D旋转',
     tool: TrackballRotateTool,
     name: TrackballRotateTool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.ZoomTool]: {
     icon: 'dmv-zoom',
     label: '缩放',
     tool: ZoomTool,
     name: ZoomTool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.PanTool]: {
     icon: 'dmv-pan',
     label: '移动',
     tool: PanTool,
     name: PanTool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.WindowLevelTool]: {
     icon: 'dmv-window-level',
     label: '窗位',
     tool: WindowLevelTool,
     name: WindowLevelTool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
   [ToolEnum.StackScrollTool]: {
     icon: 'dmv-layer',
     label: '浏览',
     tool: StackScrollTool,
     name: StackScrollTool.toolName,
-    types: [ViewportType.STACK, ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
   },
 };

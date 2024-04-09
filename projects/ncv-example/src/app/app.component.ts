@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ToolEnum, ImageInfo, RequestSchema, VolumeLoaderSchema } from 'ng-cornerstone';
-import ViewportType from '@cornerstonejs/core/dist/esm/enums/ViewportType';
+import { Enums } from '@cornerstonejs/core';
 
 @Component({
   selector: 'app-root',
@@ -59,22 +59,22 @@ export class AppComponent implements OnInit {
     //   schema: RequestSchema.WadoRs,
     //   volumeLoaderScheme: VolumeLoaderSchema.stream,
     // },
+    {
+      studyInstanceUID: '1.2.392.200055.5.4.80861305518.20150928153455671288',
+      seriesInstanceUID: '1.2.392.200036.9142.10002202.1020869001.2.20150928174647.30151',
+      urlRoot: 'http://10.81.20.156:8080/dicom-web',
+      viewportType: Enums.ViewportType.VOLUME_3D,
+      schema: RequestSchema.WadoRs,
+      volumeLoaderScheme: VolumeLoaderSchema.stream,
+    },
     // {
-    //   studyInstanceUID: '1.2.392.200055.5.4.80861305518.20150928153455671288',
-    //   seriesInstanceUID: '1.2.392.200036.9142.10002202.1020869001.2.20150928174647.30151',
-    //   urlRoot: 'http://10.81.20.156:8080/dicom-web',
+    //   studyInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
+    //   seriesInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561',
+    //   urlRoot: 'https://d1qmxk7r72ysft.cloudfront.net/dicomweb',
     //   viewportType: ViewportType.ORTHOGRAPHIC,
     //   schema: RequestSchema.WadoRs,
     //   volumeLoaderScheme: VolumeLoaderSchema.stream,
     // },
-    {
-      studyInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
-      seriesInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561',
-      urlRoot: 'https://d1qmxk7r72ysft.cloudfront.net/dicomweb',
-      viewportType: ViewportType.ORTHOGRAPHIC,
-      schema: RequestSchema.WadoRs,
-      volumeLoaderScheme: VolumeLoaderSchema.stream,
-    },
   ];
 
   imageIndex: number = 0;
