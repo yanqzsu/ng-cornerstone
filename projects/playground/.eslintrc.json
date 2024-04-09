@@ -1,11 +1,18 @@
 {
   "extends": "../../.eslintrc.json",
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": [
+    "!**/*"
+  ],
   "overrides": [
     {
-      "files": ["*.ts"],
+      "files": [
+        "*.ts"
+      ],
       "parserOptions": {
-        "project": ["projects/playground/tsconfig.app.json", "projects/playground/tsconfig.spec.json"],
+        "project": [
+          "projects/playground/tsconfig.app.json",
+          "projects/playground/tsconfig.spec.json"
+        ],
         "createDefaultProgram": true
       },
       "rules": {
@@ -28,7 +35,9 @@
       }
     },
     {
-      "files": ["*.html"],
+      "files": [
+        "*.html"
+      ],
       "rules": {}
     }
   ]
