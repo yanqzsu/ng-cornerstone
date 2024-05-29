@@ -1,3 +1,10 @@
+# [1.77.0](https://github.com/yanqzsu/ng-corner/compare/0.0.7...1.77.0) (2024-05-29)
+
+
+### Features
+* **nifti:** support nifti loader ([8c4316c](https://github.com/yanqzsu/ng-corner/commit/8c4316c3eba9383810ca9a41936bde7617249a0d))
+
+
 ## [1.45.1](https://github.com/yanqzsu/ng-corner/compare/0.0.7...1.45.1) (2024-04-09)
 
 
