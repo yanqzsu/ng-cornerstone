@@ -12,27 +12,20 @@ import {
 } from '@angular/core';
 import {
   cache,
+  CONSTANTS,
+  Enums,
   eventTarget,
   RenderingEngine,
   setVolumesForViewports,
-  volumeLoader,
-  Enums,
-  CONSTANTS,
   Types,
   utilities,
+  volumeLoader,
 } from '@cornerstonejs/core';
 
 import { BehaviorSubject, combineLatest, filter, first, merge, ReplaySubject, startWith, Subject, zip } from 'rxjs';
 
 import { ToolBarComponent, ToolEnum } from '../tool';
-import {
-  CornerstoneInitService,
-  ImageIdService,
-  ImageInfo,
-  RequestSchema,
-  setCtTransferFunctionForVolumeActor,
-  setStacksForViewports,
-} from '../core';
+import { CornerstoneInitService, ImageIdService, ImageInfo, RequestSchema, setStacksForViewports } from '../core';
 import { ImageBoxComponent } from '../image-box/image-box.component';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
@@ -91,7 +84,7 @@ export class ViewportComponent implements OnInit, AfterViewInit, OnChanges, OnDe
               this.viewportType = imageInfo.viewportType;
               return;
             }
-            if (imageInfo.schema === RequestSchema.WadoRs) {
+            if (imageInfo.schema === RequestSchema.wadoRs) {
               const imageIds = await this.imageIdService.wadoRsCreateImageIdsAndCacheMetaData(imageInfo);
               const firstInstanceUID = imageInfo.sopInstanceUIDs![0] || '';
               const volumeId = this.volumeIdRoot + firstInstanceUID;
@@ -105,7 +98,6 @@ export class ViewportComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                   [
                     {
                       volumeId,
-                      callback: setCtTransferFunctionForVolumeActor,
                     },
                   ],
                   viewportIds,
@@ -121,6 +113,41 @@ export class ViewportComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                   imageIds,
                 });
                 volume['load']();
+                await setVolumesForViewports(this.renderingEngine, [{ volumeId }], viewportIds);
+                viewportIds.forEach((viewportId) => {
+                  const volumeActor = this.renderingEngine.getViewport(viewportId).getDefaultActor()
+                    .actor as Types.VolumeActor;
+                  utilities.applyPreset(
+                    volumeActor,
+                    CONSTANTS.VIEWPORT_PRESETS.find((preset) => preset.name === 'CT-Chest-Contrast-Enhanced')!,
+                  );
+                });
+                if (!this.renderingEngine.hasBeenDestroyed) {
+                  this.renderingEngine.render();
+                  this.renderingEngine.renderViewports(viewportIds);
+                }
+              }
+            } else if (imageInfo.schema === RequestSchema.nifti) {
+              const volumeId = RequestSchema.nifti + imageInfo.urlRoot;
+              const volume = await volumeLoader.createAndCacheVolume(volumeId);
+              volume['load']();
+              if (imageInfo.viewportType === Enums.ViewportType.ORTHOGRAPHIC) {
+                await setVolumesForViewports(
+                  this.renderingEngine,
+                  [
+                    {
+                      volumeId,
+                    },
+                  ],
+                  viewportIds,
+                );
+                if (!this.renderingEngine.hasBeenDestroyed) {
+                  this.renderingEngine.render();
+                  this.renderingEngine.renderViewports(viewportIds);
+                }
+              } else if (imageInfo.viewportType === Enums.ViewportType.STACK) {
+                // await setStacksForViewports(this.renderingEngine, viewportIds, imageIds, 0);
+              } else if (imageInfo.viewportType === Enums.ViewportType.VOLUME_3D) {
                 await setVolumesForViewports(this.renderingEngine, [{ volumeId }], viewportIds);
                 viewportIds.forEach((viewportId) => {
                   const volumeActor = this.renderingEngine.getViewport(viewportId).getDefaultActor()

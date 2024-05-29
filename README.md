@@ -70,7 +70,7 @@ Rotate, Next, Previous, Coronal, Axial, Sagittal
 
 ImageInfo should provide studyInstanceUID, seriesInstanceUID, urlRoot, viewportType, schema
 like:
-### Orthographic
+### Orthographic and WADO-RS
 ```
 {
   studyInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
@@ -83,10 +83,24 @@ like:
 ```
 
 ### Volume3D
-```json
+```js
 {
-  viewportType: Enums.ViewportType.VOLUME_3D,
+  viewportType: Enums.ViewportType.VOLUME_3D
 }
+```
+
+### Nifti 
+```ts
+    imageInfos = [{
+      studyInstanceUID: '1.2.392.200055.5.4.80861305518.20150928153455671288',
+      seriesInstanceUID: '1.2.392.200036.9142.10002202.1020869001.2.20150928174647.30151',
+      urlRoot: 'http://example.com/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii',
+      // urlRoot: 'http://example.com/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
+      viewportType: Enums.ViewportType.VOLUME_3D,
+      // viewportType: Enums.ViewportType.ORTHOGRAPHIC,
+      schema: RequestSchema.nifti,
+      volumeLoaderScheme: VolumeLoaderSchema.nifti,
+    }]
 ```
 
 ## Code structure

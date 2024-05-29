@@ -60,9 +60,9 @@ export class ImageIdService {
   }
 
   static createImageIds(imageInfo: ImageInfo) {
-    if (imageInfo?.schema === RequestSchema.WadoRs) {
+    if (imageInfo?.schema === RequestSchema.wadoRs) {
       return ImageIdService.wadoRsCreateImageIds(imageInfo);
-    } else if (imageInfo?.schema === RequestSchema.WadoUri) {
+    } else if (imageInfo?.schema === RequestSchema.wadoUri) {
       return ImageIdService.wadoURICreateImageIds(imageInfo);
     }
     return [];
@@ -74,7 +74,7 @@ export class ImageIdService {
       return [];
     }
     const { urlRoot, studyInstanceUID, seriesInstanceUID, sopInstanceUIDs } = imageInfo;
-    const wadoURIRoot = `${RequestSchema.WadoUri}${urlRoot}?requestType=WADO&studyUID=${studyInstanceUID}&seriesUID=${seriesInstanceUID}&contentType=application%2Fdicom`;
+    const wadoURIRoot = `${RequestSchema.wadoUri}${urlRoot}?requestType=WADO&studyUID=${studyInstanceUID}&seriesUID=${seriesInstanceUID}&contentType=application%2Fdicom`;
     return sopInstanceUIDs!.map((uid) => {
       return `${wadoURIRoot}&objectUID=${uid}`;
     });
@@ -86,7 +86,7 @@ export class ImageIdService {
       return [];
     }
     const { urlRoot, studyInstanceUID, seriesInstanceUID, sopInstanceUIDs } = imageInfo;
-    const wadoURIRoot = `${RequestSchema.WadoRs}${urlRoot}/studies/${studyInstanceUID}/series/${seriesInstanceUID}`;
+    const wadoURIRoot = `${RequestSchema.wadoRs}${urlRoot}/studies/${studyInstanceUID}/series/${seriesInstanceUID}`;
     return sopInstanceUIDs!.map((uid) => {
       return `${wadoURIRoot}/instances/${uid}/frames/1`;
     });

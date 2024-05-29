@@ -1,22 +1,23 @@
 import { Enums } from '@cornerstonejs/core';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type SafeAny = any;
 export type FunctionProp<T> = (...args: SafeAny[]) => T;
 
 export enum RequestSchema {
-  WadoRs = 'wadors:',
-  WadoUri = 'wadouri:',
+  wadoRs = 'wadors:',
+  wadoUri = 'wadouri:',
+  nifti = 'nifti:',
 }
 
 export enum VolumeLoaderSchema {
   stream = 'cornerstoneStreamingImageVolume',
   dynamicStream = 'cornerstoneStreamingDynamicImageVolume',
+  nifti = 'nifti',
 }
 
 export interface ImageInfo {
-  studyInstanceUID: string;
-  seriesInstanceUID: string;
+  studyInstanceUID?: string;
+  seriesInstanceUID?: string;
   sopInstanceUIDs?: string[];
   urlRoot: string;
   schema: RequestSchema;
