@@ -6,10 +6,8 @@ import dcmjs from 'dcmjs';
 import getPixelSpacingInformation from './getPixelSpacingInformation';
 import { calculateSUVScalingFactors, InstanceMetadata } from '@cornerstonejs/calculate-suv';
 import { ImageInfo, RequestSchema } from '../config/types';
-
 import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import ptScalingMetaDataProvider from './ptScalingMetaDataProvider';
-
 const { DicomMetaDictionary } = dcmjs.data;
 @Injectable({
   providedIn: 'root',

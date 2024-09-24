@@ -1,9 +1,26 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { TOOL_CONFIG_MAP } from './tool.config';
-import { addTool, destroy, Enums as ToolsEnums, init, state, ToolGroupManager } from '@cornerstonejs/tools';
+import {
+  addTool,
+  destroy,
+  Enums as csToolsEnums,
+  state,
+  ToolGroupManager,
+  SegmentationDisplayTool,
+  segmentation,
+} from '@cornerstonejs/tools';
 import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
-import { Enums } from '@cornerstonejs/core';
 import { ToolConfig, ToolEnum } from './tool.types';
 
 @Component({
@@ -19,49 +36,90 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
   toolList: ToolEnum[] = [];
   @Input()
-  viewportType?: Enums.ViewportType;
-  @Input()
   renderingEngineId: string = '';
   @Input()
-  activeViewportId!: string;
+  activeViewportId: string | undefined;
+  @Input()
+  viewportIds: string[] = [];
+
+  segmentationRepresentationUIDs: string[] | undefined;
 
   toolConfigList: ToolConfig[] = [];
   cameraList: ToolConfig[] = [];
   currentTool?: ToolConfig;
 
-  constructor() {
-    init();
-  }
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    const { viewportType, toolList } = changes;
-    if (viewportType || toolList) {
+    const { toolList, viewportIds } = changes;
+    if (toolList && !toolList.firstChange) {
       this.updateToolList();
+    }
+    if (viewportIds && !viewportIds.firstChange) {
+      this.updateViewport();
     }
   }
 
   ngOnInit(): void {
     this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;
     this.updateToolList();
+    this.updateViewport();
+    this.enableSegmentTool();
   }
 
-  setViewport(viewportIds: string[]) {
-    console.log('toolGroup setViewport');
-    const oriViewportIds = this.toolGroup.getViewportIds();
-    oriViewportIds?.forEach((id) => this.toolGroup.removeViewports(this.renderingEngineId, id));
-    viewportIds?.forEach((viewportId) => this.toolGroup.addViewport(viewportId, this.renderingEngineId));
+  updateViewport() {
+    if (!this.toolGroup || this.viewportIds?.length === 0) {
+      return;
+    }
+    const oriViewportIds = this.toolGroup.getViewportIds() || [];
+    const newViewportIds = this.viewportIds || [];
+    let viewportChanged = false;
+    oriViewportIds?.forEach((id) => {
+      if (!newViewportIds.includes(id)) {
+        this.toolGroup.removeViewports(this.renderingEngineId, id);
+        viewportChanged = true;
+      }
+    });
+
+    newViewportIds.forEach((viewportId) => {
+      if (!oriViewportIds?.includes(viewportId)) {
+        this.toolGroup.addViewport(viewportId, this.renderingEngineId);
+        viewportChanged = true;
+      }
+    });
+    if (viewportChanged && newViewportIds.length > 0) {
+      this.activeViewportId = newViewportIds[0];
+    }
+  }
+
+  async addSegmentationRepresentations(
+    segmentationId: string,
+    segRepresentations: csToolsEnums.SegmentationRepresentations,
+  ) {
+    this.segmentationRepresentationUIDs = await segmentation.addSegmentationRepresentations(this.toolGroupId, [
+      {
+        segmentationId,
+        type: segRepresentations,
+        options: {
+          // TODO: Seg worker import failed
+          // polySeg: {
+          //   enabled: true,
+          // },
+        },
+      },
+    ]);
   }
 
   updateToolList() {
-    if (!this.toolGroup || !this.viewportType || this.toolList.length === 0) {
+    if (!this.toolGroup || this.toolList.length === 0) {
       return;
     }
-    console.log('toolGroup updateToolList');
+    console.debug('toolGroup updateToolList');
     const toolConfigList: ToolConfig[] = [];
     const cameraList: ToolConfig[] = [];
     this.toolList.forEach((toolEnum) => {
       const config = TOOL_CONFIG_MAP[toolEnum];
-      if (config && config.types.indexOf(this.viewportType!) > -1) {
+      if (config) {
         if (config.tool) {
           toolConfigList.push(config);
           const toolName = config.tool.toolName;
@@ -85,6 +143,17 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
     this.cameraList = cameraList;
   }
 
+  enableSegmentTool() {
+    const toolAlreadyAdded = state.tools[SegmentationDisplayTool.toolName] !== undefined;
+    if (!toolAlreadyAdded) {
+      addTool(SegmentationDisplayTool);
+    }
+    if (!this.toolGroup.hasTool(SegmentationDisplayTool.toolName)) {
+      this.toolGroup.addTool(SegmentationDisplayTool.toolName);
+      this.toolGroup.setToolEnabled(SegmentationDisplayTool.toolName);
+    }
+  }
+
   activeTool(names: any[]) {
     if (!names || names.length === 0) {
       return;
@@ -99,7 +168,7 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
       }
       this.currentTool = pressedTool;
       this.toolGroup.setToolActive(pressedTool.name, {
-        bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
+        bindings: [{ mouseButton: csToolsEnums.MouseBindings.Primary }],
       });
       this.toolGroup.setViewportsCursorByToolName(pressedTool.name);
     }
@@ -111,7 +180,7 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
     }
     const cameraTool = this.cameraList.find((toolConfig) => toolConfig.name === name);
     if (cameraTool?.callback) {
-      cameraTool.callback(this.renderingEngineId, this.activeViewportId, cameraTool.options);
+      cameraTool.callback(this.renderingEngineId, this.activeViewportId!, cameraTool.options);
     }
   }
 

@@ -1,4 +1,5 @@
 import { Enums } from '@cornerstonejs/core';
+import { Enums as ToolEnum } from '@cornerstonejs/tools';
 
 export type SafeAny = any;
 export type FunctionProp<T> = (...args: SafeAny[]) => T;
@@ -23,4 +24,5 @@ export interface ImageInfo {
   schema: RequestSchema;
   viewportType: Enums.ViewportType;
   volumeLoaderScheme?: VolumeLoaderSchema; // Loader id which defines which volume loader to use
+  segmentType?: ToolEnum.SegmentationRepresentations;
 }

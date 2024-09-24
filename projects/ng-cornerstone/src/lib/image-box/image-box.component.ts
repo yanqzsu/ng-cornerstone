@@ -1,11 +1,22 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { Types, Enums } from '@cornerstonejs/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import { Enums, Types } from '@cornerstonejs/core';
 
 @Component({
   selector: 'nc-image-box',
   exportAs: 'ncImageBox',
   templateUrl: './image-box.component.html',
   styleUrls: ['./image-box.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageBoxComponent implements OnChanges {
   @Input()
@@ -61,7 +72,7 @@ export class ImageBoxComponent implements OnChanges {
         viewportId: this.viewportId,
         type: Enums.ViewportType.VOLUME_3D,
         defaultOptions: {
-          orientation: Enums.OrientationAxis.CORONAL,
+          // background: CONSTANTS.BACKGROUND_COLORS.slicer3D as Types.RGB,
           background: <Types.Point3>[0.2, 0, 0.2],
         },
       };

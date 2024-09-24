@@ -1,8 +1,9 @@
 <nc-tool-bar
   class="tool"
   [toolList]="toolList"
-  [activeViewportId]="activatedViewportId"
-  [viewportType]="viewportType"
+  [activeViewportId]="viewportId"
+  [viewportIds]="viewportIds"
   [renderingEngineId]="renderingEngineId"
 ></nc-tool-bar>
-<nc-image-box class="image-box" [viewportId]="activatedViewportId" [viewportType]="viewportType"></nc-image-box>
+<!--<nc-image-box class="image-box" [viewportId]="viewportId" [viewportType]="viewportType"></nc-image-box>-->
+<div #imageBox class="image-box"></div>
