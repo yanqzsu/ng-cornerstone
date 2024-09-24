@@ -3,29 +3,19 @@ import initCornerstoneDICOMImageLoader from './initCornerstoneDICOMImageLoader';
 import initVolumeLoader from './initVolumeLoader';
 import { imageLoader, init as csRenderInit, metaData } from '@cornerstonejs/core';
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-
+import { init as csToolInit } from '@cornerstonejs/tools';
 @Injectable({
   providedIn: 'root',
 })
 export class CornerstoneInitService implements OnDestroy {
-  private readySubject = new BehaviorSubject<boolean>(false);
-  ready$: Observable<boolean>;
+  constructor() {}
 
-  get ready(): boolean {
-    return this.readySubject.value;
-  }
-  constructor() {
-    this.ready$ = this.readySubject.asObservable();
-  }
-
-  init() {
+  async init() {
     initProviders();
     initCornerstoneDICOMImageLoader();
     initVolumeLoader();
-    csRenderInit().then((value) => {
-      this.readySubject.next(true);
-    });
+    await Promise.all([csRenderInit(), csToolInit()]);
+    console.debug('CornerstoneInitService');
   }
 
   ngOnDestroy(): void {

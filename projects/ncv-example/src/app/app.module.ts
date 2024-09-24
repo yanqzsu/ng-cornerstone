@@ -6,7 +6,7 @@ import { ViewportModule } from 'ng-cornerstone';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, ViewportModule],
+  imports: [BrowserModule, ViewportModule.forRoot()],
   providers: [],
   bootstrap: [AppComponent],
 })

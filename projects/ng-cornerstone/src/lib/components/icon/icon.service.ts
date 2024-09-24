@@ -1,24 +1,29 @@
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, RendererFactory2 } from '@angular/core';
+import { Inject, Injectable, Optional, RendererFactory2 } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NcIconService {
-  constructor(@Inject(DOCUMENT) private doc: any, private rendererFactory2: RendererFactory2) {}
+  private initialized = false;
 
-  init(iconfontUrl?: string) {
-    if (iconfontUrl) {
-      console.log('Icon init');
-      this.fetchIconfont(iconfontUrl);
-    }
+  constructor(
+    private rendererFactory2: RendererFactory2,
+    @Inject(DOCUMENT) private doc: any,
+    @Optional() @Inject('ICON_URL') iconfontUrl: string,
+  ) {
+    console.debug('NcIconService init');
+    this.init(iconfontUrl);
   }
 
-  fetchIconfont(url: string): void {
-    const renderer = this.rendererFactory2.createRenderer(null, null);
-    const script = renderer.createElement('script');
-    renderer.setAttribute(script, 'src', url);
-    renderer.setAttribute(script, 'data-namespace', url);
-    renderer.appendChild(this.doc.body, script);
+  init(iconfontUrl?: string) {
+    if (iconfontUrl && !this.initialized) {
+      const renderer = this.rendererFactory2.createRenderer(null, null);
+      const script = renderer.createElement('script');
+      renderer.setAttribute(script, 'src', iconfontUrl);
+      renderer.setAttribute(script, 'data-namespace', iconfontUrl);
+      renderer.appendChild(this.doc.body, script);
+      this.initialized = true;
+    }
   }
 }
