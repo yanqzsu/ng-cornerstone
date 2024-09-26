@@ -47,4 +47,5 @@ export interface ToolConfig {
   callback?: (renderingEngineId: string, viewportId: string, options?: any) => void;
   options?: any;
   types: Enums.ViewportType[];
+  disabled?: boolean;
 }

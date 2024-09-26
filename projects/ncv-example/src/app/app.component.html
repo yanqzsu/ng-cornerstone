@@ -5,17 +5,17 @@
   </select>
   <select (change)="changeSegment($event)">
     <option
-      *ngFor="let value of segmentInfo; index as i"
+      *ngFor="let value of segmentInfos; index as i"
       [value]="i"
       [label]="i"
       [selected]="segmentIndex === i"
     ></option>
   </select>
 
-  <nc-viewport
+  <nc-viewer
     class="container"
     [toolList]="toolList"
     [imageInfo]="imageInfos[imageIndex]"
-    [segmentInfo]="segmentInfo[segmentIndex]"
-  ></nc-viewport>
+    [segmentInfo]="segmentInfos[segmentIndex]"
+  ></nc-viewer>
 </ng-container>

@@ -8,6 +8,7 @@ import { calculateSUVScalingFactors, InstanceMetadata } from '@cornerstonejs/cal
 import { ImageInfo, RequestSchema } from '../config/types';
 import { getPTImageIdInstanceMetadata } from './getPTImageIdInstanceMetadata';
 import ptScalingMetaDataProvider from './ptScalingMetaDataProvider';
+
 const { DicomMetaDictionary } = dcmjs.data;
 @Injectable({
   providedIn: 'root',

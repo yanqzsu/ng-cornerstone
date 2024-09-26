@@ -64,8 +64,10 @@ $border-radius: 2px;
   font-size: 16px;
   line-height: 20px;
 
-  &.disabled {
-    cursor: default;
+  &:disabled {
+    // pointer-events: none;
+    cursor: not-allowed;
+    color: variables.$disable-color; /* 可选：使元素看起来更透明 */
   }
 
   &.transition {
@@ -81,19 +83,19 @@ $border-radius: 2px;
   color: variables.$normal-color;
   background-color: variables.$primary-color;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: color.adjust(variables.$primary-color, $lightness: 20%);
   }
 
-  &:focus {
+  &:focus:not(:disabled) {
     // border-color: variables.$border-color;
   }
 
-  &:active {
+  &:active:not(:disabled) {
     background-color: variables.$primary-color;
   }
 
-  &.pressed {
+  &.pressed:not(:disabled) {
     background-color: color.adjust(variables.$primary-color, $lightness: 20%);
   }
 }
@@ -103,21 +105,21 @@ $border-radius: 2px;
   color: variables.$normal-color;
   background-color: transparent;
 
-  &:hover {
+  &:hover:not(:disabled) {
     border: 1px transparent solid !important;
     color: variables.$active-color;
   }
 
-  &:focus {
+  &:focus:not(:disabled) {
     border: 1px variables.$border-color solid;
   }
 
-  &:active {
+  &:active:not(:disabled) {
     border: 1px transparent solid !important;
     color: variables.$active-color;
   }
 
-  &.pressed {
+  &.pressed:not(:disabled) {
     border: 1px transparent solid !important;
     color: variables.$active-color;
   }

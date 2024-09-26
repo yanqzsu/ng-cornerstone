@@ -7,5 +7,5 @@ export * from './lib/components/button/button-group.component';
 export * from './lib/components/button/button.module';
 export * from './lib/components/icon';
 export * from './lib/tool';
-export * from './lib/viewport/viewport.component';
-export * from './lib/viewport/viewport.module';
+export * from './lib/viewer/viewer.component';
+export * from './lib/viewer/viewer.module';

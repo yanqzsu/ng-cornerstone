@@ -1,0 +1,49 @@
+@use '../../styles/variables';
+
+:host {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+}
+
+.tool {
+  flex: 0 0 auto;
+}
+
+.container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.layout-stack {
+  flex-wrap: nowrap;
+
+  .viewport {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.layout-mpr {
+  flex-wrap: nowrap;
+  min-height: 400px;
+
+  .viewport {
+    width: 33.33%;
+    height: 100%;
+  }
+}
+
+.layout-volume {
+  flex-wrap: wrap;
+  min-height: 700px;
+
+  .viewport {
+    width: 50%;
+    height: 50%;
+  }
+}

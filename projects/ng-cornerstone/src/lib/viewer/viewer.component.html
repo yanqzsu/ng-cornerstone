@@ -1,0 +1,18 @@
+<nc-tool-bar class="tool" [toolList]="toolList" [activeViewportId]="activeViewportId"></nc-tool-bar>
+
+<div
+  class="container"
+  [ngClass]="{
+    'layout-stack': viewportType === VIEWPORT_TYPE_ENUM.STACK,
+    'layout-mpr': viewportType === VIEWPORT_TYPE_ENUM.ORTHOGRAPHIC,
+    'layout-volume': viewportType === VIEWPORT_TYPE_ENUM.VOLUME_3D
+  }"
+>
+  <nc-viewport
+    class="viewport"
+    *ngFor="let viewportInput of viewportInputs"
+    [viewportInput]="viewportInput"
+    [active]="viewportInput.viewportId === activeViewportId"
+    (click)="onViewportClick(viewportInput.viewportId)"
+  ></nc-viewport>
+</div>

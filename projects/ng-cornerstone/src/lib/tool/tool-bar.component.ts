@@ -1,46 +1,33 @@
 import {
-  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
-  Output,
   SimpleChanges,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { TOOL_CONFIG_MAP } from './tool.config';
-import {
-  addTool,
-  destroy,
-  Enums as csToolsEnums,
-  state,
-  ToolGroupManager,
-  SegmentationDisplayTool,
-  segmentation,
-} from '@cornerstonejs/tools';
-import { IToolGroup } from '@cornerstonejs/tools/dist/esm/types';
+import { addTool, Enums as csToolsEnums, segmentation, SegmentationDisplayTool, state } from '@cornerstonejs/tools';
 import { ToolConfig, ToolEnum } from './tool.types';
+import { CornerstoneService } from '../core';
 
 @Component({
   selector: 'nc-tool-bar',
   exportAs: 'ncToolBar',
   templateUrl: './tool-bar.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   private destroy$ = new Subject<void>();
-  private toolGroupId = 'TOOL_GROUP_ID';
-  private toolGroup!: IToolGroup;
 
   @Input()
   toolList: ToolEnum[] = [];
-  @Input()
-  renderingEngineId: string = '';
+
   @Input()
   activeViewportId: string | undefined;
-  @Input()
-  viewportIds: string[] = [];
 
   segmentationRepresentationUIDs: string[] | undefined;
 
@@ -48,47 +35,107 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   cameraList: ToolConfig[] = [];
   currentTool?: ToolConfig;
 
-  constructor() {}
+  constructor(private csService: CornerstoneService, private cdr: ChangeDetectorRef) {}
+
+  get toolGroup() {
+    return this.csService.getToolGroup();
+  }
+  get toolGroupId() {
+    return this.csService.getToolGroupId();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const { toolList, viewportIds } = changes;
-    if (toolList && !toolList.firstChange) {
+    const { toolList, activeViewportId } = changes;
+    if (toolList) {
       this.updateToolList();
     }
-    if (viewportIds && !viewportIds.firstChange) {
-      this.updateViewport();
+    if (activeViewportId && !activeViewportId.firstChange) {
+      this.updateActiveViewport(this.activeViewportId);
     }
   }
 
   ngOnInit(): void {
-    this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;
-    this.updateToolList();
-    this.updateViewport();
     this.enableSegmentTool();
   }
 
-  updateViewport() {
-    if (!this.toolGroup || this.viewportIds?.length === 0) {
+  get renderingEngineId() {
+    return this.csService.getRenderingEngineId();
+  }
+
+  get renderingEngine() {
+    return this.csService.getRenderingEngine();
+  }
+
+  updateToolList() {
+    if (!this.toolGroup) {
       return;
     }
-    const oriViewportIds = this.toolGroup.getViewportIds() || [];
-    const newViewportIds = this.viewportIds || [];
-    let viewportChanged = false;
-    oriViewportIds?.forEach((id) => {
-      if (!newViewportIds.includes(id)) {
-        this.toolGroup.removeViewports(this.renderingEngineId, id);
-        viewportChanged = true;
+    const toolConfigList: ToolConfig[] = [];
+    const cameraList: ToolConfig[] = [];
+    this.toolList.forEach((toolEnum) => {
+      const config = TOOL_CONFIG_MAP[toolEnum]!;
+      config.disabled = false;
+      if (config.tool) {
+        toolConfigList.push(config);
+        const toolName = config.tool.toolName;
+        const toolAlreadyAdded = state.tools[toolName] !== undefined;
+        if (!toolAlreadyAdded) {
+          addTool(config.tool);
+        }
+        if (!this.toolGroup.hasTool(config.name)) {
+          this.toolGroup.addTool(config.name);
+        }
+      } else if (config.callback) {
+        cameraList.push(config);
       }
     });
+    for (let i = 0; i < toolConfigList.length; i++) {
+      const toolConfig = toolConfigList[i];
+      if (toolConfig.name) {
+        this.toolGroup.setToolPassive(toolConfig.name);
+      }
+    }
+    this.toolConfigList = toolConfigList;
+    this.cameraList = cameraList;
+    console.debug('toolGroup updateToolList');
+  }
 
-    newViewportIds.forEach((viewportId) => {
-      if (!oriViewportIds?.includes(viewportId)) {
-        this.toolGroup.addViewport(viewportId, this.renderingEngineId);
-        viewportChanged = true;
-      }
-    });
-    if (viewportChanged && newViewportIds.length > 0) {
-      this.activeViewportId = newViewportIds[0];
+  updateActiveViewport(inputActiveViewportId?: string) {
+    const activeViewportId = inputActiveViewportId;
+    if (!activeViewportId) {
+      return;
+    }
+    this.activeViewportId = activeViewportId;
+
+    const viewport = this.renderingEngine.getViewport(this.activeViewportId!);
+    if (viewport) {
+      const viewportType = viewport.type;
+      this.toolConfigList.forEach((toolConfig) => {
+        if (toolConfig.types.includes(viewportType)) {
+          toolConfig.disabled = false;
+        } else {
+          toolConfig.disabled = true;
+        }
+      });
+      this.cameraList.map((cameraConfig) => {
+        if (cameraConfig.types.includes(viewportType)) {
+          cameraConfig.disabled = false;
+        } else {
+          cameraConfig.disabled = true;
+        }
+      });
+      this.cdr.detectChanges();
+    }
+  }
+
+  enableSegmentTool() {
+    const toolAlreadyAdded = state.tools[SegmentationDisplayTool.toolName] !== undefined;
+    if (!toolAlreadyAdded) {
+      addTool(SegmentationDisplayTool);
+    }
+    if (!this.toolGroup.hasTool(SegmentationDisplayTool.toolName)) {
+      this.toolGroup.addTool(SegmentationDisplayTool.toolName);
+      this.toolGroup.setToolEnabled(SegmentationDisplayTool.toolName);
     }
   }
 
@@ -108,50 +155,6 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
         },
       },
     ]);
-  }
-
-  updateToolList() {
-    if (!this.toolGroup || this.toolList.length === 0) {
-      return;
-    }
-    console.debug('toolGroup updateToolList');
-    const toolConfigList: ToolConfig[] = [];
-    const cameraList: ToolConfig[] = [];
-    this.toolList.forEach((toolEnum) => {
-      const config = TOOL_CONFIG_MAP[toolEnum];
-      if (config) {
-        if (config.tool) {
-          toolConfigList.push(config);
-          const toolName = config.tool.toolName;
-          const toolAlreadyAdded = state.tools[toolName] !== undefined;
-          if (!toolAlreadyAdded) {
-            addTool(config.tool);
-          }
-          this.toolGroup.addTool(config.name);
-        } else if (config.callback) {
-          cameraList.push(config);
-        }
-      }
-    });
-    for (let i = 0; i < toolConfigList.length; i++) {
-      const toolConfig = toolConfigList[i];
-      if (toolConfig.name) {
-        this.toolGroup.setToolPassive(toolConfig.name);
-      }
-    }
-    this.toolConfigList = toolConfigList;
-    this.cameraList = cameraList;
-  }
-
-  enableSegmentTool() {
-    const toolAlreadyAdded = state.tools[SegmentationDisplayTool.toolName] !== undefined;
-    if (!toolAlreadyAdded) {
-      addTool(SegmentationDisplayTool);
-    }
-    if (!this.toolGroup.hasTool(SegmentationDisplayTool.toolName)) {
-      this.toolGroup.addTool(SegmentationDisplayTool.toolName);
-      this.toolGroup.setToolEnabled(SegmentationDisplayTool.toolName);
-    }
   }
 
   activeTool(names: any[]) {
@@ -185,8 +188,6 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    destroy();
-    ToolGroupManager.destroyToolGroup(this.toolGroupId);
     this.destroy$.next();
     this.destroy$.complete();
   }

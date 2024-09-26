@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ImageInfo, RequestSchema, ToolEnum, VolumeLoaderSchema } from 'ng-cornerstone';
+import { ImageInfo, RequestSchema, ToolEnum } from 'ng-cornerstone';
 import { Enums } from '@cornerstonejs/core';
 import { Enums as csToolEnums } from '@cornerstonejs/tools';
 
@@ -44,13 +44,12 @@ export class AppComponent implements OnInit {
     ToolEnum.Coronal,
   ];
 
-  segmentInfo: ImageInfo[] = [
+  segmentInfos: ImageInfo[] = [
     {
       urlRoot:
         'http://10.81.20.156:8081/segment/MED_LYMPH_089/ec0976c5-4926-4434-87bc-7b591f8f4b63/Labels/20231211-035627/MED_LYMPH_089.nii.gz',
       viewportType: Enums.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.nifti,
-      volumeLoaderScheme: VolumeLoaderSchema.nifti,
       segmentType: csToolEnums.SegmentationRepresentations.Labelmap,
     },
     {
@@ -58,7 +57,6 @@ export class AppComponent implements OnInit {
         'http://10.81.20.156:8081/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Labels/20231211-035637/ABD_LYMPH_006.nii.gz',
       viewportType: Enums.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.nifti,
-      volumeLoaderScheme: VolumeLoaderSchema.nifti,
       segmentType: csToolEnums.SegmentationRepresentations.Labelmap,
     },
   ];
@@ -77,7 +75,6 @@ export class AppComponent implements OnInit {
       urlRoot: 'http://10.81.20.156:8080/dicom-web',
       viewportType: Enums.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.wadoRs,
-      volumeLoaderScheme: VolumeLoaderSchema.stream,
     },
     {
       studyInstanceUID: '1.2.392.200055.5.4.80861305518.20150928153455671288',
@@ -85,7 +82,6 @@ export class AppComponent implements OnInit {
       urlRoot: 'http://10.81.20.156:8080/dicom-web',
       viewportType: Enums.ViewportType.VOLUME_3D,
       schema: RequestSchema.wadoRs,
-      volumeLoaderScheme: VolumeLoaderSchema.stream,
     },
     {
       studyInstanceUID: '1.2.392.200036.9116.2.238.1.2016.4.19.11.44.35',
@@ -93,7 +89,6 @@ export class AppComponent implements OnInit {
       urlRoot: 'http://10.81.20.156:8080/dicom-web',
       viewportType: Enums.ViewportType.VOLUME_3D,
       schema: RequestSchema.wadoRs,
-      volumeLoaderScheme: VolumeLoaderSchema.stream,
     },
     {
       studyInstanceUID: '1.2.276.0.7230010.3.1.2.2005493247.19620.1725863961.819',
@@ -101,7 +96,6 @@ export class AppComponent implements OnInit {
       urlRoot: 'http://10.81.20.156:8080/dicom-web',
       viewportType: Enums.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.wadoRs,
-      volumeLoaderScheme: VolumeLoaderSchema.stream,
     },
     {
       studyInstanceUID: '1.2.276.0.7230010.3.1.2.2005493247.19620.1725863961.819',
@@ -109,21 +103,18 @@ export class AppComponent implements OnInit {
       urlRoot: 'http://10.81.20.156:8080/dicom-web',
       viewportType: Enums.ViewportType.VOLUME_3D,
       schema: RequestSchema.wadoRs,
-      volumeLoaderScheme: VolumeLoaderSchema.stream,
     },
     {
       urlRoot:
         'http://10.81.20.156:8081/segment/MED_LYMPH_089/ec0976c5-4926-4434-87bc-7b591f8f4b63/Images/MED_LYMPH_089.nii.gz',
       viewportType: Enums.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.nifti,
-      volumeLoaderScheme: VolumeLoaderSchema.nifti,
     },
     {
       urlRoot:
         'http://10.81.20.156:8081/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
       viewportType: Enums.ViewportType.VOLUME_3D,
       schema: RequestSchema.nifti,
-      volumeLoaderScheme: VolumeLoaderSchema.nifti,
     },
   ];
 

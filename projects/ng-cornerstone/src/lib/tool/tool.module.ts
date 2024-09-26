@@ -1,4 +1,4 @@
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { ToolBarComponent } from './tool-bar.component';
 import { IconModule, NcIconService } from '../components/icon';
 import { ButtonModule } from '../components/button/button.module';

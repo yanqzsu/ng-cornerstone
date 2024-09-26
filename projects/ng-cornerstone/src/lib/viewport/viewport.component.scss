@@ -1,20 +1,18 @@
 @use '../../styles/variables';
 
-:host {
+.container {
+  display: block;
   height: 100%;
   width: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-  background-color: black;
 }
 
-.tool {
-  flex: 0;
-}
-
-.image-box {
-  min-width: 100px;
-  min-height: 100px;
-  flex: 1;
+:host {
   border: 1px solid variables.$border-color;
+  box-sizing: border-box;
+}
+
+:host:focus,
+:host:active,
+:host.active {
+  border: 1px solid green;
 }

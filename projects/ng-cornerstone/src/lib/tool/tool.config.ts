@@ -10,7 +10,7 @@ import {
   WindowLevelTool,
   ZoomTool,
 } from '@cornerstonejs/tools';
-import { getRenderingEngine, Types, Enums } from '@cornerstonejs/core';
+import { Enums, getRenderingEngine, Types } from '@cornerstonejs/core';
 import { ToolConfig, ToolEnum } from './tool.types';
 
 function reset(renderingEngineId: string, viewportId: string): void {
@@ -99,7 +99,7 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     label: 'Reset',
     name: 'reset',
     callback: reset,
-    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC, Enums.ViewportType.VOLUME_3D],
   },
   [ToolEnum.FlipV]: {
     icon: 'dmv-fliph',
@@ -120,7 +120,7 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     label: 'Rotate',
     name: 'rotate',
     callback: rotate,
-    types: [Enums.ViewportType.STACK],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC, Enums.ViewportType.VOLUME_3D],
   },
   [ToolEnum.Sagittal]: {
     icon: 'dmv-sagittal',
@@ -207,21 +207,21 @@ export const TOOL_CONFIG_MAP: { [key in ToolEnum]?: ToolConfig } = {
     label: 'Zoom',
     tool: ZoomTool,
     name: ZoomTool.toolName,
-    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC, Enums.ViewportType.VOLUME_3D],
   },
   [ToolEnum.PanTool]: {
     icon: 'dmv-pan',
     label: 'Pan',
     tool: PanTool,
     name: PanTool.toolName,
-    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC, Enums.ViewportType.VOLUME_3D],
   },
   [ToolEnum.WindowLevelTool]: {
     icon: 'dmv-window-level',
     label: 'WL',
     tool: WindowLevelTool,
     name: WindowLevelTool.toolName,
-    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC],
+    types: [Enums.ViewportType.STACK, Enums.ViewportType.ORTHOGRAPHIC, Enums.ViewportType.VOLUME_3D],
   },
   [ToolEnum.StackScrollTool]: {
     icon: 'dmv-layer',
