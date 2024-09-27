@@ -23,7 +23,6 @@ export interface ImageInfo {
   urlRoot: string;
   schema: RequestSchema;
   viewportType: csCoreEnum.ViewportType;
-  volumeLoaderScheme?: VolumeLoaderSchema; // Loader id which defines which volume loader to use
   segmentType?: csToolEnum.SegmentationRepresentations;
 }
 

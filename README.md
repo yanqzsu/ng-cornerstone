@@ -6,29 +6,13 @@
 This library is an angular project for [CornerStone3D](https://www.cornerstonejs.org/)
 It can be used as a viewport of DICOM images.
 
-## Prepare
-
-For Npm Run
-
-> npm install @cornerstonejs/core  
-> npm install @cornerstonejs/tools  
-> npm install @cornerstonejs/streaming-image-volume-loader  
-> npm install @cornerstonejs/dicom-image-loader
-
-Or Yarn
-
-> yarn add @cornerstonejs/core  
-> yarn add @cornerstonejs/tools  
-> yarn add @cornerstonejs/streaming-image-volume-loader  
-> yarn add @cornerstonejs/dicom-image-loader
-
 ## Install
 
 Run `ng add ng-cornerstone`
 
 ## Import Assets
 
-Edit `angular.json`
+Edit `angular.json` to import icon sprites files
 
 ```
 ...
@@ -48,11 +32,17 @@ Edit `angular.json`
 ## Usage
 
 ```ts
-imports: [ViewportModule];
+@NgModule({
+    imports: [ViewerModule.forRoot()]
+})
 ```
 
 ```html
-<nc-viewport [toolList]="toolList" [imageInfo]="imageInfo"></nc-viewport>
+<nc-viewer
+  [toolList]="toolList"
+  [imageInfo]="imageInfo"
+  [segmentInfo]="segmentInfo"
+></nc-viewer>
 ```
 
 ToolList support follow tools:  
@@ -78,7 +68,6 @@ like:
   urlRoot: 'https://d1qmxk7r72ysft.cloudfront.net/dicomweb',
   viewportType: Enums.ViewportType.ORTHOGRAPHIC,
   schema: RequestSchema.WadoRs,
-  volumeLoaderScheme: VolumeLoaderSchema.stream,
 }
 ```
 
@@ -99,7 +88,18 @@ like:
       viewportType: Enums.ViewportType.VOLUME_3D,
       // viewportType: Enums.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.nifti,
-      volumeLoaderScheme: VolumeLoaderSchema.nifti,
+    }]
+```
+
+### Segment
+Segment is same type with ImageInfo but segmentType.
+
+segmentType only support labelMap now
+
+Surface and Contour is in develop
+```ts
+    imageInfos = [{
+        segmentType: csToolEnum.SegmentationRepresentations.Labelmap,
     }]
 ```
 
