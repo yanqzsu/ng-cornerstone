@@ -1,6 +1,6 @@
 {
   "name": "ng-corner",
-  "version": "1.84.0",
+  "version": "1.84.1",
   "private": true,
   "scripts": {
     "prepare": "husky install",

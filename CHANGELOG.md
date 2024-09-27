@@ -1,3 +1,23 @@
+## [1.84.1](https://github.com/yanqzsu/ng-corner/compare/1.84.0...1.84.1) (2024-09-27)
+
+
+### BREAKING CHANGES
+
+* **version-up:** volumeLoaderScheme not used any more
+
+
+
+# [1.84.0](https://github.com/yanqzsu/ng-corner/compare/1.77.0...1.84.0) (2024-09-27)
+
+
+### Features
+
+* **segment:** init support segment ([b138921](https://github.com/yanqzsu/ng-corner/commit/b138921269ee7862e6744703fa0a2696b9b62985))
+* **version:** update cs to 1.84.4 ([eeff675](https://github.com/yanqzsu/ng-corner/commit/eeff675c9beb21a3b3c5ba818e205c8114006167))
+* **viewport:** add viewer component and optimzie initialize logical ([70e9b3f](https://github.com/yanqzsu/ng-corner/commit/70e9b3f40a6aff58309c5d402f17eb1539ab218c))
+
+
+
 # [1.77.0](https://github.com/yanqzsu/ng-corner/compare/0.0.7...1.77.0) (2024-05-29)
 
 
