@@ -14,7 +14,7 @@ It can be used as a viewer of DICOM images and NIFTI images.
 - Support segment display
 - Tool list is configurable
 
-Integration is need only 3 steps.
+Integration needs only 3 steps.
 
 
 ## Preview
