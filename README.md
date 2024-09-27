@@ -3,17 +3,31 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-This library is an angular project for [CornerStone3D](https://www.cornerstonejs.org/)
-It can be used as a viewport of DICOM images.
+This is an angular component for [CornerStone3D](https://www.cornerstonejs.org/)
 
-## Install
+It can be used as a viewer of DICOM images and NIFTI images.
+- Support WADO-RS
+- Support Nifti
+- Support stack view
+- Support MPR view
+- Support Volume3D view
+- Support segment display
+- Tool list is configurable
 
-Run `ng add ng-cornerstone`
+Integration is need only 3 steps.
 
-## Import Assets
 
-Edit `angular.json` to import icon sprites files
+## Preview
+###stack view
+![Stack view](./docs/stack.png)
+###MPR view
+![MPR view](./docs/mpr.png)
+###Volume3D and mpr view
+![Volume3D and mpr view](./docs/volume.png)
 
+## Integration
+1. Run `ng add ng-cornerstone`
+2. Edit `angular.json` to import icon sprites files
 ```
 ...
 "architect": {
@@ -28,12 +42,11 @@ Edit `angular.json` to import icon sprites files
         }
 ...
 ```
-
-## Usage
+3. Import ViewerModule and nc-viewer
 
 ```ts
 @NgModule({
-    imports: [ViewerModule.forRoot()]
+  imports: [ViewerModule.forRoot()]
 })
 ```
 
@@ -45,22 +58,32 @@ Edit `angular.json` to import icon sprites files
 ></nc-viewer>
 ```
 
-ToolList support follow tools:  
-AngleTool,
-ArrowAnnotateTool,
-EllipticalROITool,
-LengthTool,
-PanTool,
-RectangleROITool,
-StackScrollTool,
-TrackballRotateTool,
-WindowLevelTool,
-ZoomTool, FlipV, FlipH,
-Rotate, Next, Previous, Coronal, Axial, Sagittal
+## Configuration
 
-ImageInfo should provide studyInstanceUID, seriesInstanceUID, urlRoot, viewportType, schema
+### ToolList support follow tools:  
+- AngleTool,
+- ArrowAnnotateTool,
+- EllipticalROITool,
+- LengthTool,
+- PanTool,
+- RectangleROITool,
+- StackScrollTool,
+- TrackballRotateTool,
+- WindowLevelTool,
+- ZoomTool
+- FlipV
+- FlipH, 
+- Rotate
+- Next
+- Previous
+- Coronal
+- Axial
+- Sagittal
+
+### ImageInfo 
+should provide studyInstanceUID, seriesInstanceUID, urlRoot, viewportType, schema
 like:
-### Orthographic and WADO-RS
+#### Orthographic and WADO-RS
 ```
 {
   studyInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
@@ -71,14 +94,14 @@ like:
 }
 ```
 
-### Volume3D
+#### Volume3D
 ```js
 {
   viewportType: Enums.ViewportType.VOLUME_3D
 }
 ```
 
-### Nifti 
+#### Nifti 
 ```ts
     imageInfos = [{
       studyInstanceUID: '1.2.392.200055.5.4.80861305518.20150928153455671288',
@@ -91,11 +114,10 @@ like:
     }]
 ```
 
-### Segment
+#### Segment
+
 Segment is same type with ImageInfo but segmentType.
-
-segmentType only support labelMap now
-
+segmentType only support labelMap now.
 Surface and Contour is in develop
 ```ts
     imageInfos = [{
@@ -103,13 +125,19 @@ Surface and Contour is in develop
     }]
 ```
 
-## Code structure
+## Troubleshooting
 
-1. ng-cornerstone is the library.
-2. ncv-example is an example app of ng-cornerstone
-3. ng-playground is an angular app depends on @cornerstonejs directly.
+### ng serve failed, try to edit tsconfig.json
 
-## Optional: Enable WASM
+```json
+{
+  "compilerOptions": {
+    "skipLibCheck": true
+  }
+}
+```
+
+### Enable WASM
 
 To enable dynamic-import cornerstoneWADOImageLoader, you can use `@angular-builders/custom-webpack`.
 The angular json should like:
@@ -157,7 +185,7 @@ module.exports = {
 
 For more detail, refer to [here](https://github.com/cornerstonejs/cornerstoneWADOImageLoader#upgrade-to-cwil-v4x)
 
-## Enable SharedBufferArray
+### Enable SharedBufferArray
 
 Edit `angular.json` add two headers:
 
@@ -179,14 +207,8 @@ Edit `angular.json` add two headers:
 
 You should also add the two header when deploy your app as a product.
 
-## Troubleshooting
 
-If ng serve failed, try to edit tsconfig.json
-
-```json
-{
-  "compilerOptions": {
-    "skipLibCheck": true
-  }
-}
-```
+## Contribution
+1. ng-cornerstone is the library.
+2. ncv-example is an example app of ng-cornerstone
+3. ng-playground is an angular app depends on @cornerstonejs directly.
