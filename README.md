@@ -18,11 +18,13 @@ Integration needs only 3 steps.
 
 
 ## Preview
-###stack view
+### stack view
 ![Stack view](./docs/stack.png)
-###MPR view
+
+### MPR view
 ![MPR view](./docs/mpr.png)
-###Volume3D and mpr view
+
+### Volume3D and mpr view
 ![Volume3D and mpr view](./docs/volume.png)
 
 ## Integration
