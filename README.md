@@ -19,15 +19,17 @@ It can be used as a viewer of DICOM images and NIFTI images.
 - Support segment display
 - Tool list is configurable
 
-Integration is need only 3 steps.
+Integration needs only 3 steps.
 
 
 ## Preview
-###stack view
+### stack view
 ![Stack view](./docs/stack.png)
-###MPR view
+
+### MPR view
 ![MPR view](./docs/mpr.png)
-###Volume3D and mpr view
+
+### Volume3D and mpr view
 ![Volume3D and mpr view](./docs/volume.png)
 
 ## Integration
