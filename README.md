@@ -2,8 +2,13 @@
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a29854b3-a874-476f-8f3a-1590103d5d8c/deploy-status)](https://app.netlify.com/sites/angular-cornerstone-demo/deploys)
 
 This is an angular component for [CornerStone3D](https://www.cornerstonejs.org/)
+
+
+[Netlify Online DEMO](https://angular-cornerstone-demo.netlify.app/)
+
 
 It can be used as a viewer of DICOM images and NIFTI images.
 - Support WADO-RS
