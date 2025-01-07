@@ -62,6 +62,7 @@ Integration needs only 3 steps.
   [toolList]="toolList"
   [imageInfo]="imageInfo"
   [segmentInfo]="segmentInfo"
+  [layout]="layout"
 ></nc-viewer>
 ```
 
@@ -121,16 +122,17 @@ like:
     }]
 ```
 
-#### Segment
+### Layout
 
-Segment is same type with ImageInfo but segmentType.
-segmentType only support labelMap now.
-Surface and Contour is in develop
+Layout support 4 types: 
 ```ts
-    imageInfos = [{
-        segmentType: csToolEnum.SegmentationRepresentations.Labelmap,
-    }]
+    LayoutEnum.STACK, //1x1
+    LayoutEnum.SAGITTAL = 1, //1x1
+    LayoutEnum.ORTHOGRAPHIC = 2, //1x3 including AXIAL, SAGITTAL, CORONAL
+    LayoutEnum.VOLUME = 3 //2x2 including VOLUME_3d
 ```
+
+### ToolList support follow tools:  
 
 ## Troubleshooting
 

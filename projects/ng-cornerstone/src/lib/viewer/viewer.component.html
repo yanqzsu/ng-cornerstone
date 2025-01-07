@@ -1,18 +1,26 @@
-<nc-tool-bar class="tool" [toolList]="toolList" [activeViewportId]="activeViewportId"></nc-tool-bar>
+<nc-tool-bar
+  class="dicom-viewer-tool"
+  [toolGroupId]="toolGroupId"
+  [toolList]="toolList"
+  [activeViewportId]="activeViewportId"
+  (toolbarInit)="onToolbarInit()"
+></nc-tool-bar>
 
 <div
-  class="container"
+  class="dicom-viewer-container"
   [ngClass]="{
-    'layout-stack': viewportType === VIEWPORT_TYPE_ENUM.STACK,
-    'layout-mpr': viewportType === VIEWPORT_TYPE_ENUM.ORTHOGRAPHIC,
-    'layout-volume': viewportType === VIEWPORT_TYPE_ENUM.VOLUME_3D
+    'layout-11': layout === Layout.STACK || layout === Layout.SAGITTAL,
+    'layout-13': layout === Layout.ORTHOGRAPHIC,
+    'layout-22': layout === Layout.VOLUME
   }"
 >
   <nc-viewport
-    class="viewport"
+    class="dicom-viewer-viewport"
     *ngFor="let viewportInput of viewportInputs"
     [viewportInput]="viewportInput"
     [active]="viewportInput.viewportId === activeViewportId"
     (click)="onViewportClick(viewportInput.viewportId)"
+    (viewportDestroy)="onViewportDestroy($event)"
+    (viewportInit)="onViewportInit($event)"
   ></nc-viewport>
 </div>
