@@ -1,3 +1,17 @@
+## [1.85.0](https://github.com/yanqzsu/ng-corner/compare/1.84.1...1.85.0) (2025-01-07)
+
+### Bug Fixes
+
+* **toolbar:** toolbar lifestyles handles incorrectly ([7d7005c](https://github.com/yanqzsu/ng-corner/commit/7d7005c346d133805ebaabd0361ff479da58a3c0)), closes [#17](https://github.com/yanqzsu/ng-corner/issues/17))
+* **viewport:** resize event is not working properly ([7d7005c](https://github.com/yanqzsu/ng-corner/commit/7d7005c346d133805ebaabd0361ff479da58a3c0)), closes [#3](https://github.com/yanqzsu/ng-corner/issues/3)
+
+
+### Features
+
+* **layout:** nc-viewer support a new input: layout ([c05e7c3](https://github.com/yanqzsu/ng-corner/commit/c05e7c3de3a51d41e2e81a72a74c41576e664381)), closes [#16](https://github.com/yanqzsu/ng-corner/issues/16)
+
+
+
 ## [1.84.1](https://github.com/yanqzsu/ng-corner/compare/1.84.0...1.84.1) (2024-09-27)
 
 
@@ -7,7 +21,7 @@
 
 
 
-# [1.84.0](https://github.com/yanqzsu/ng-corner/compare/1.77.0...1.84.0) (2024-09-27)
+## [1.84.0](https://github.com/yanqzsu/ng-corner/compare/1.77.0...1.84.0) (2024-09-27)
 
 
 ### Features
@@ -18,7 +32,7 @@
 
 
 
-# [1.77.0](https://github.com/yanqzsu/ng-corner/compare/0.0.7...1.77.0) (2024-05-29)
+## [1.77.0](https://github.com/yanqzsu/ng-corner/compare/0.0.7...1.77.0) (2024-05-29)
 
 
 ### Features
@@ -64,21 +78,6 @@
 ### Features
 
 * **devtools:** add some dev tools, version up ([69e1529](https://github.com/yanqzsu/ng-corner/commit/69e15299b0e6d076cfde8d00b51cc75b807d8b65)), closes [#4](https://github.com/yanqzsu/ng-corner/issues/4)
-
-
-
-## 0.0.5 (2023-06-08)
-
-
-### Bug Fixes
-
-* **core:** remove useless code ([c9abb6e](https://github.com/yanqzsu/ng-corner/commit/c9abb6e463917de7cb440b582db445ffabf48afc))
-
-
-### Features
-
-* **devtools:** add some dev tools, version up ([69e1529](https://github.com/yanqzsu/ng-corner/commit/69e15299b0e6d076cfde8d00b51cc75b807d8b65)), closes [#4](https://github.com/yanqzsu/ng-corner/issues/4)
-
 
 
 ## 0.0.3 (2023-06-2)
