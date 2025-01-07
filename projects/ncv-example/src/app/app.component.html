@@ -1,21 +1,24 @@
 <button (click)="onClick()" style="color: black">show/hide</button>
-<ng-container *ngIf="showImageViewer">
-  <select (change)="changeImage($event)">
-    <option *ngFor="let value of imageInfos; index as i" [value]="i" [label]="i" [selected]="imageIndex === i"></option>
-  </select>
-  <select (change)="changeSegment($event)">
-    <option
-      *ngFor="let value of segmentInfos; index as i"
-      [value]="i"
-      [label]="i"
-      [selected]="segmentIndex === i"
-    ></option>
-  </select>
 
-  <nc-viewer
-    class="container"
-    [toolList]="toolList"
-    [imageInfo]="imageInfos[imageIndex]"
-    [segmentInfo]="segmentInfos[segmentIndex]"
-  ></nc-viewer>
-</ng-container>
+<select (change)="changeImage($event)">
+  <option *ngFor="let value of imageInfos; index as i" [value]="i" [label]="i" [selected]="imageIndex === i"></option>
+</select>
+<select (change)="changeSegment($event)">
+  <option
+    *ngFor="let value of segmentInfos; index as i"
+    [value]="i"
+    [label]="i"
+    [selected]="segmentIndex === i"
+  ></option>
+</select>
+
+<button (click)="openDialog()">Open dialog</button>
+
+<nc-viewer
+  *ngIf="showImageViewer"
+  id="12345"
+  class="container"
+  [toolList]="toolList"
+  [layout]="layout"
+  [imageInfo]="imageInfo"
+></nc-viewer>

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   Input,
   OnChanges,
   OnDestroy,
@@ -10,6 +11,9 @@ import {
   SimpleChanges,
   ViewChild,
   ViewChildren,
+  ViewEncapsulation,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import {
   CONSTANTS,
@@ -21,10 +25,20 @@ import {
 } from '@cornerstonejs/core';
 import { Enums as csToolEnum, segmentation } from '@cornerstonejs/tools';
 
-import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, Subject } from 'rxjs';
 
 import { ToolBarComponent, ToolEnum } from '../tool';
-import { CornerstoneService, ctVoiRange, ImageIdService, ImageInfo, imageInfoToVolumeId, RequestSchema } from '../core';
+import {
+  CornerstoneService,
+  ctVoiRange,
+  generateRandomString,
+  generateViewportInputs,
+  ImageIdService,
+  ImageInfo,
+  imageInfoToVolumeId,
+  LayoutEnum,
+  RequestSchema,
+} from '../core';
 import { takeUntil } from 'rxjs/operators';
 import { ViewportComponent } from '../viewport/viewport.component';
 import { SegmentationPublicInput } from '@cornerstonejs/tools/dist/types/types/SegmentationStateTypes';
@@ -35,82 +49,18 @@ import { SegmentationPublicInput } from '@cornerstonejs/tools/dist/types/types/S
   templateUrl: './viewer.component.html',
   styleUrls: ['./viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
-  static readonly ORTHOGRAPHIC_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
-    {
-      viewportId: 'viewport-mpr-1',
-      type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-      defaultOptions: {
-        background: <Types.Point3>[0, 0, 0],
-        orientation: csCoreEnum.OrientationAxis.CORONAL,
-      },
-    },
-    {
-      viewportId: 'viewport-mpr-2',
-      type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-      defaultOptions: {
-        background: <Types.Point3>[0, 0, 0],
-        orientation: csCoreEnum.OrientationAxis.AXIAL,
-      },
-    },
-    {
-      viewportId: 'viewport-mpr-3',
-      type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-      defaultOptions: {
-        background: <Types.Point3>[0, 0, 0],
-        orientation: csCoreEnum.OrientationAxis.SAGITTAL,
-      },
-    },
-  ];
-  static readonly VOLUME_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
-    {
-      viewportId: 'viewport-volume-1',
-      type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-      defaultOptions: {
-        background: <Types.Point3>[0, 0, 0],
-        orientation: csCoreEnum.OrientationAxis.CORONAL,
-      },
-    },
-    {
-      viewportId: 'viewport-volume-2',
-      type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-      defaultOptions: {
-        background: <Types.Point3>[0, 0, 0],
-        orientation: csCoreEnum.OrientationAxis.AXIAL,
-      },
-    },
-    {
-      viewportId: 'viewport-volume-3',
-      type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-      defaultOptions: {
-        background: <Types.Point3>[0, 0, 0],
-        orientation: csCoreEnum.OrientationAxis.SAGITTAL,
-      },
-    },
-    {
-      viewportId: 'viewport--volume-3d',
-      type: csCoreEnum.ViewportType.VOLUME_3D,
-      defaultOptions: {
-        // background: CONSTANTS.BACKGROUND_COLORS.slicer3D as Types.RGB,
-        background: <Types.Point3>[0.2, 0, 0.2],
-      },
-    },
-  ];
-  static readonly STACK_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
-    {
-      viewportId: 'viewport-stack',
-      type: csCoreEnum.ViewportType.STACK,
-      defaultOptions: {
-        background: <Types.Point3>[0, 0, 0],
-      },
-    },
-  ];
-  VIEWPORT_TYPE_ENUM = csCoreEnum.ViewportType;
+  static readonly TOOL_GROUP_ID = 'TOOL_GROUP_ID';
+
+  Layout = LayoutEnum;
 
   private volumeRefreshSubject = new BehaviorSubject<ImageInfo | undefined>(undefined);
   private segmentRefreshSubject = new BehaviorSubject<ImageInfo | undefined>(undefined);
   private destroy$ = new Subject();
+
+  toolGroupId = '';
 
   viewportType?: csCoreEnum.ViewportType;
   viewportInputs: Partial<Types.PublicViewportInput>[] = [];
@@ -119,6 +69,13 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
 
   volumeId?: string;
   segmentId?: string;
+  resizeObserver!: ResizeObserver;
+  private resizeSubject = new Subject<void>();
+  private suffix: string = '';
+  private toolInitialized = false;
+
+  @Input()
+  layout?: LayoutEnum;
 
   @Input()
   imageInfo?: ImageInfo;
@@ -135,6 +92,9 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
   toolList: ToolEnum[] = [];
 
+  @Output() viewportActivated = new EventEmitter<string>();
+  @Output() volumeLoaded = new EventEmitter<void>();
+
   get renderingEngine() {
     return this.csService.getRenderingEngine();
   }
@@ -144,28 +104,43 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   constructor(
+    private elementRef: ElementRef,
     private imageIdService: ImageIdService,
     private csService: CornerstoneService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.csService.viewportReady$.pipe(takeUntil(this.destroy$)).subscribe(async (viewportId: string) => {
-      this.viewportReadySet.add(viewportId);
-      if (this.viewportIds.every((id) => this.viewportReadySet.has(id))) {
-        console.log('All viewports are ready');
-        this.activeViewportId = this.viewportIds?.[0] ?? '';
-        await this.renderAll();
-        this.cdr.detectChanges();
+    this.suffix = generateRandomString();
+    this.toolGroupId = ViewerComponent.TOOL_GROUP_ID + this.suffix;
+    this.generateViewports();
+    this.resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        this.resizeSubject.next();
       }
     });
+    this.resizeObserver.observe(this.elementRef.nativeElement);
+    // 使用 debounceTime 添加防抖
+    this.resizeSubject
+      .pipe(
+        debounceTime(300), // 防抖时间设置为 300ms
+        takeUntil(this.destroy$), // 组件销毁时取消订阅
+      )
+      .subscribe(() => {
+        const renderingEngine = this.csService.getRenderingEngine();
+        if (renderingEngine) {
+          // const presentations = viewports.map((viewport) => viewport.getViewPresentation());
+          renderingEngine.resize(true, false);
+          // viewports.forEach((viewport, idx) => {
+          //   viewport.setViewPresentation(presentations[idx]);
+          // });
+        }
+      });
 
     combineLatest([this.volumeRefreshSubject, this.segmentRefreshSubject])
       .pipe(takeUntil(this.destroy$))
       .subscribe(async ([imageInfo, segmentInfo]) => {
-        if (imageInfo && imageInfo.viewportType !== this.viewportType) {
-          this.updateViewports(imageInfo.viewportType);
-        } else {
+        if (this.viewportReadySet?.size > 0) {
           await this.renderAll();
         }
       });
@@ -180,35 +155,64 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
       await this.retrieveImage(this.segmentInfo);
       await this.renderingSegment(this.segmentInfo);
     }
+    this.renderingEngine.renderViewports(this.viewportIds);
   }
 
-  updateViewports(viewportType: csCoreEnum.ViewportType) {
-    if (viewportType !== this.viewportType) {
-      this.viewportType = viewportType;
-      if (viewportType === csCoreEnum.ViewportType.STACK) {
-        this.viewportInputs = [...ViewerComponent.STACK_VIEWPORT_INPUTS];
-      } else if (viewportType === csCoreEnum.ViewportType.ORTHOGRAPHIC) {
-        this.viewportInputs = [...ViewerComponent.ORTHOGRAPHIC_VIEWPORT_INPUTS];
-      } else if (viewportType === csCoreEnum.ViewportType.VOLUME_3D) {
-        this.viewportInputs = [...ViewerComponent.VOLUME_VIEWPORT_INPUTS];
+  onToolbarInit() {
+    this.toolInitialized = true;
+    if (this.viewportIds?.length > 0 && this.viewportIds.every((id) => this.viewportReadySet.has(id))) {
+      this.viewportReadySet.forEach((viewportId) => {
+        this.toolBarComponent.registerViewport(viewportId);
+      });
+    }
+  }
+
+  onViewportInit(viewportId: string) {
+    this.viewportReadySet.add(viewportId);
+    if (this.viewportIds?.length > 0 && this.viewportIds.every((id) => this.viewportReadySet.has(id))) {
+      console.debug('All viewports are ready');
+      this.activeViewportId = this.viewportIds?.[0] ?? '';
+      if (this.toolInitialized) {
+        this.toolBarComponent.registerViewport(viewportId);
       }
+      this.renderAll();
+    }
+  }
+
+  onViewportDestroy(viewportId: string) {
+    this.viewportReadySet.delete(viewportId);
+    if (this.toolInitialized) {
+      this.toolBarComponent.unregisterViewport(viewportId);
+    }
+  }
+
+  generateViewports() {
+    if (this.layout) {
       this.viewportReadySet.clear();
+      this.viewportInputs = generateViewportInputs(this.layout, this.suffix);
+    } else {
+      this.viewportReadySet.clear();
+      this.viewportInputs = [];
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const { imageInfo, segmentInfo } = changes;
+    const { imageInfo, segmentInfo, layout } = changes;
     if (imageInfo && this.imageInfo) {
       this.volumeRefreshSubject.next(this.imageInfo);
     }
     if (segmentInfo && this.segmentInfo) {
       this.segmentRefreshSubject.next(this.segmentInfo);
     }
+    if (layout && !layout.isFirstChange) {
+      this.generateViewports();
+    }
   }
 
   onViewportClick(viewportId: string | undefined) {
     if (viewportId) {
       this.activeViewportId = viewportId;
+      this.viewportActivated.emit(viewportId);
     }
   }
 
@@ -229,7 +233,7 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
       }
     } else if (imageInfo.schema === RequestSchema.nifti) {
       if (imageInfo.viewportType === csCoreEnum.ViewportType.STACK) {
-        console.error('Nifti dont support stack view');
+        console.error("Nifti don't support stack view");
       } else if (
         imageInfo.viewportType === csCoreEnum.ViewportType.VOLUME_3D ||
         imageInfo.viewportType === csCoreEnum.ViewportType.ORTHOGRAPHIC
@@ -323,6 +327,8 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.resizeObserver.disconnect();
+    this.viewportReadySet.clear();
     this.destroy$.next(null);
     this.destroy$.complete();
     console.debug('viewer destroyed');

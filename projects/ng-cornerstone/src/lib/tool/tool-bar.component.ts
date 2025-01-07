@@ -1,16 +1,27 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { TOOL_CONFIG_MAP } from './tool.config';
-import { addTool, Enums as csToolsEnums, segmentation, SegmentationDisplayTool, state } from '@cornerstonejs/tools';
+import {
+  addTool,
+  Enums as csToolsEnums,
+  segmentation,
+  SegmentationDisplayTool,
+  state,
+  Types as csToolTypes,
+  destroy,
+  ToolGroupManager,
+} from '@cornerstonejs/tools';
 import { ToolConfig, ToolEnum } from './tool.types';
 import { CornerstoneService } from '../core';
 
@@ -20,14 +31,22 @@ import { CornerstoneService } from '../core';
   templateUrl: './tool-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
+export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy {
   private destroy$ = new Subject<void>();
+
+  @Input()
+  toolGroupId!: string;
 
   @Input()
   toolList: ToolEnum[] = [];
 
   @Input()
   activeViewportId: string | undefined;
+
+  @Output() toolbarInit = new EventEmitter<string>();
+  @Output() toolbarDestroy = new EventEmitter<string>();
+
+  private toolGroup!: csToolTypes.IToolGroup;
 
   segmentationRepresentationUIDs: string[] | undefined;
 
@@ -37,16 +56,9 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(private csService: CornerstoneService, private cdr: ChangeDetectorRef) {}
 
-  get toolGroup() {
-    return this.csService.getToolGroup();
-  }
-  get toolGroupId() {
-    return this.csService.getToolGroupId();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     const { toolList, activeViewportId } = changes;
-    if (toolList) {
+    if (toolList && !toolList.isFirstChange) {
       this.updateToolList();
     }
     if (activeViewportId && !activeViewportId.firstChange) {
@@ -55,7 +67,14 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
+    console.debug('Toolbar register: ', this.toolGroupId);
+    this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;
+    this.updateToolList();
     this.enableSegmentTool();
+  }
+
+  ngAfterViewInit(): void {
+    this.toolbarInit.emit();
   }
 
   get renderingEngineId() {
@@ -64,6 +83,16 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
 
   get renderingEngine() {
     return this.csService.getRenderingEngine();
+  }
+
+  registerViewport(viewportId: string) {
+    console.debug('Toolbar register:', viewportId);
+    this.toolGroup.addViewport(viewportId, this.renderingEngineId);
+  }
+
+  unregisterViewport(viewportId: string) {
+    console.debug('Toolbar unregister:', viewportId);
+    this.toolGroup.removeViewports(this.renderingEngineId, viewportId);
   }
 
   updateToolList() {
@@ -97,7 +126,6 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.toolConfigList = toolConfigList;
     this.cameraList = cameraList;
-    console.debug('toolGroup updateToolList');
   }
 
   updateActiveViewport(inputActiveViewportId?: string) {
@@ -188,6 +216,8 @@ export class ToolBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    console.debug('Toolbar destroy: ', this.toolGroupId);
+    ToolGroupManager.destroyToolGroup(this.toolGroupId);
     this.destroy$.next();
     this.destroy$.complete();
   }

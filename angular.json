@@ -182,14 +182,8 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "customWebpackConfig": {
-              "path": "./extra-webpack.config.js",
-              "mergeRules": {
-                "externals": "replace"
-              }
-            },
             "outputPath": "dist/ncv-example",
             "index": "projects/ncv-example/src/index.html",
             "main": "projects/ncv-example/src/main.ts",
@@ -247,7 +241,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
               "browserTarget": "ncv-example:build:production"
@@ -262,7 +256,7 @@
               "Cross-Origin-Embedder-Policy": "require-corp",
               "Cross-Origin-Opener-Policy": "same-origin"
             },
-            "browserTarget": "ncv-example:build",
+            "browserTarget": "ncv-example:build"
           },
           "defaultConfiguration": "development"
         },

@@ -8,10 +8,10 @@ import {
   init as csRenderInit,
   metaData,
   RenderingEngine,
-  Types as coCoreTypes,
+  Types as csCoreTypes,
 } from '@cornerstonejs/core';
 import { Injectable, OnDestroy } from '@angular/core';
-import { destroy, init as csToolInit, ToolGroupManager, Types as csToolTypes } from '@cornerstonejs/tools';
+import { init as csToolInit, Types as csToolTypes, destroy } from '@cornerstonejs/tools';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -22,6 +22,7 @@ export class CornerstoneService implements OnDestroy {
   private renderingEngine!: RenderingEngine;
   private toolGroupId = 'TOOL_GROUP_ID';
   private toolGroup!: csToolTypes.IToolGroup;
+  private initialized = false;
 
   private viewportManagerSubject = new Subject<string>();
   viewportReady$ = this.viewportManagerSubject.asObservable();
@@ -29,16 +30,34 @@ export class CornerstoneService implements OnDestroy {
   constructor() {}
 
   async init() {
-    initProviders();
-    initCornerstoneDICOMImageLoader();
-    initVolumeLoader();
-    await Promise.all([csRenderInit(), csToolInit()]);
-    console.debug('CornerstoneInitService');
-    this.renderingEngine = new RenderingEngine(this.renderingEngineId);
-    this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;
+    try {
+      if (this.initialized) {
+        return;
+      }
+
+      initProviders();
+      initCornerstoneDICOMImageLoader();
+      initVolumeLoader();
+      await Promise.all([csRenderInit(), csToolInit()]);
+
+      this.renderingEngine = new RenderingEngine(this.renderingEngineId);
+
+      this.initialized = true;
+      console.debug('CornerstoneService initialized');
+    } catch (error) {
+      console.error('Failed to initialize CornerstoneService:', error);
+      throw error;
+    }
+  }
+
+  private checkInitialized() {
+    if (!this.initialized) {
+      throw new Error('CornerstoneService not initialized');
+    }
   }
 
   getRenderingEngine() {
+    this.checkInitialized();
     return this.renderingEngine;
   }
 
@@ -54,7 +73,7 @@ export class CornerstoneService implements OnDestroy {
     return this.toolGroupId;
   }
 
-  registerViewport(viewportInput: coCoreTypes.PublicViewportInput) {
+  registerViewport(viewportInput: csCoreTypes.PublicViewportInput) {
     this.renderingEngine.enableElement(viewportInput);
     this.toolGroup.addViewport(viewportInput.viewportId, this.renderingEngineId);
     this.viewportManagerSubject.next(viewportInput.viewportId);
@@ -69,10 +88,9 @@ export class CornerstoneService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.renderingEngine.destroy();
-    ToolGroupManager.destroyToolGroup(this.toolGroupId);
-    destroy();
     eventTarget.reset();
     cache.purgeCache();
+    destroy();
     metaData.removeAllProviders();
     imageLoader.unregisterAllImageLoaders();
     console.debug('cs service destroyed');
