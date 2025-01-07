@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 16px;
+  animation: custom-dialog-enter 1s ease;
+}
+
+.container {
+  width: 100%;
+  height: 800px;
+}
+
+@keyframes custom-dialog-enter {
+  from {
+    transform: scale(0) rotate(360deg);
+  }
+
+  to {
+    transform: none;
+  }
+}

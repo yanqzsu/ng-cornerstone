@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   showImageViewer = true;
   imageInfo?: ImageInfo;
   segmentInfo?: ImageInfo;
-  layout = LayoutEnum.STACK;
+  layout = LayoutEnum.SAGITTAL;
 
   constructor(public dialog: Dialog) {}
 
