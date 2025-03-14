@@ -1,5 +1,4 @@
 import initProviders from './initProviders';
-import initCornerstoneDICOMImageLoader from './initCornerstoneDICOMImageLoader';
 import initVolumeLoader from './initVolumeLoader';
 import {
   cache,
@@ -36,7 +35,7 @@ export class CornerstoneService implements OnDestroy {
       }
 
       initProviders();
-      initCornerstoneDICOMImageLoader();
+      // cornerstoneDICOMImageLoader.init();
       initVolumeLoader();
       await Promise.all([csRenderInit(), csToolInit()]);
 

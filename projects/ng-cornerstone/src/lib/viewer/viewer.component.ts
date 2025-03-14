@@ -41,7 +41,8 @@ import {
 } from '../core';
 import { takeUntil } from 'rxjs/operators';
 import { ViewportComponent } from '../viewport/viewport.component';
-import { SegmentationPublicInput } from '@cornerstonejs/tools/dist/types/types/SegmentationStateTypes';
+import { SegmentationPublicInput } from '@cornerstonejs/tools/dist/esm/types';
+import { createNiftiImageIdsAndCacheMetadata } from '@cornerstonejs/nifti-volume-loader';
 
 @Component({
   selector: 'nc-viewer',
@@ -229,7 +230,7 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
         const volume = await volumeLoader.createAndCacheVolume(volumeId, {
           imageIds,
         });
-        volume['load']();
+        volume.load();
       }
     } else if (imageInfo.schema === RequestSchema.nifti) {
       if (imageInfo.viewportType === csCoreEnum.ViewportType.STACK) {
@@ -238,9 +239,13 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
         imageInfo.viewportType === csCoreEnum.ViewportType.VOLUME_3D ||
         imageInfo.viewportType === csCoreEnum.ViewportType.ORTHOGRAPHIC
       ) {
+        // similar to the rest of the cornerstone3D image loader
+        const imageIds = await createNiftiImageIdsAndCacheMetadata({ url: imageInfo.urlRoot });
+        // For stack viewports
+        // viewport.setStack(imageIds);
         const volumeId = imageInfoToVolumeId(imageInfo);
-        const volume = await volumeLoader.createAndCacheVolume(volumeId);
-        volume['load']();
+        const volume = await volumeLoader.createAndCacheVolume(volumeId, { imageIds });
+        await volume.load();
       }
     } else {
       console.error('Unsupported request schema');

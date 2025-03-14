@@ -30,7 +30,7 @@ export class DialogComponent implements OnInit {
   //   // urlRoot: 'http://10.81.20.156:8080/dicom-web',
   //   // urlRoot: 'http://localhost:5000/api/image?path=0000008839/image.nii.gz',
   //   urlRoot:
-  //     'http://10.81.20.156:8081/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
+  //     'http://127.0.0.1:8080/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
   //   // urlRoot:
   //   //   'http://10.81.20.156:8080/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
   //   // urlRoot: 'http://10.81.20.156:8080/referenceT1.nii',
@@ -46,7 +46,7 @@ export class DialogComponent implements OnInit {
     seriesInstanceUID: '1.2.392.200036.9142.10002202.1020869001.2.20150928174647.30151',
     // urlRoot: 'http://10.81.20.156:8080/dicom-web',
     urlRoot:
-      'http://10.81.20.156:8081/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Labels/20231211-035637/ABD_LYMPH_006.nii.gz',
+      'http://127.0.0.1:8080/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Labels/20231211-035637/ABD_LYMPH_006.nii.gz',
     // urlRoot:
     //   'http://10.81.20.156:8080/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
     // urlRoot: 'http://10.81.20.156:8080/referenceT1.nii',
@@ -72,7 +72,7 @@ export class DialogComponent implements OnInit {
     //   // urlRoot: 'http://10.81.20.156:8080/dicom-web',
     //   urlRoot: 'http://localhost:5000/api/image?path=0000008839/image.nii.gz',
     //   // urlRoot:
-    //   //   'http://10.81.20.156:8081/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
+    //   //   'http://127.0.0.1:8080/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
     //   // urlRoot:
     //   //   'http://10.81.20.156:8080/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
     //   // urlRoot: 'http://10.81.20.156:8080/referenceT1.nii',
@@ -89,7 +89,7 @@ export class DialogComponent implements OnInit {
         seriesInstanceUID: '1.2.392.200036.9142.10002202.1020869001.2.20150928174647.30151',
         // urlRoot: 'http://10.81.20.156:8080/dicom-web',
         urlRoot:
-          'http://10.81.20.156:8081/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
+          'http://127.0.0.1:8080/segment/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
         // urlRoot:
         //   'http://10.81.20.156:8080/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Images/ABD_LYMPH_006.nii.gz',
         // urlRoot: 'http://10.81.20.156:8080/referenceT1.nii',

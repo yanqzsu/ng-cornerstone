@@ -7,6 +7,7 @@ import {
   Input,
   OnChanges,
   OnDestroy,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -16,7 +17,6 @@ import {
   addTool,
   Enums as csToolsEnums,
   segmentation,
-  SegmentationDisplayTool,
   state,
   Types as csToolTypes,
   destroy,
@@ -31,7 +31,7 @@ import { CornerstoneService } from '../core';
   templateUrl: './tool-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
   private destroy$ = new Subject<void>();
 
   @Input()
@@ -70,7 +70,7 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy {
     console.debug('Toolbar register: ', this.toolGroupId);
     this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;
     this.updateToolList();
-    this.enableSegmentTool();
+    // this.enableSegmentTool();
   }
 
   ngAfterViewInit(): void {
@@ -156,26 +156,26 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  enableSegmentTool() {
-    const toolAlreadyAdded = state.tools[SegmentationDisplayTool.toolName] !== undefined;
-    if (!toolAlreadyAdded) {
-      addTool(SegmentationDisplayTool);
-    }
-    if (!this.toolGroup.hasTool(SegmentationDisplayTool.toolName)) {
-      this.toolGroup.addTool(SegmentationDisplayTool.toolName);
-      this.toolGroup.setToolEnabled(SegmentationDisplayTool.toolName);
-    }
-  }
+  // enableSegmentTool() {
+  //   const toolAlreadyAdded = state.tools[SegmentationDisplayTool.toolName] !== undefined;
+  //   if (!toolAlreadyAdded) {
+  //     addTool(SegmentationDisplayTool);
+  //   }
+  //   if (!this.toolGroup.hasTool(SegmentationDisplayTool.toolName)) {
+  //     this.toolGroup.addTool(SegmentationDisplayTool.toolName);
+  //     this.toolGroup.setToolEnabled(SegmentationDisplayTool.toolName);
+  //   }
+  // }
 
   async addSegmentationRepresentations(
     segmentationId: string,
     segRepresentations: csToolsEnums.SegmentationRepresentations,
   ) {
-    this.segmentationRepresentationUIDs = await segmentation.addSegmentationRepresentations(this.toolGroupId, [
+    await segmentation.addSegmentationRepresentations(this.toolGroupId, [
       {
         segmentationId,
         type: segRepresentations,
-        options: {
+        config: {
           // TODO: Seg worker import failed
           // polySeg: {
           //   enabled: true,

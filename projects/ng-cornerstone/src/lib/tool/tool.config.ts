@@ -48,8 +48,8 @@ function rotate(renderingEngineId: string, viewportId: string): void {
   const renderingEngine = getRenderingEngine(renderingEngineId);
   // Get the stack viewport
   const viewport = <Types.IStackViewport>renderingEngine?.getViewport(viewportId);
-  const rotation = viewport.getProperties()?.rotation || 0;
-  viewport.setProperties({ rotation: rotation + 15 });
+  const { rotation = 0 } = viewport.getViewPresentation();
+  viewport.setViewPresentation({ rotation: rotation + 15 });
   viewport.render();
 }
 
