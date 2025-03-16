@@ -195,6 +195,7 @@
             "main": "projects/ncv-example/src/main.ts",
             "polyfills": "projects/ncv-example/src/polyfills.ts",
             "tsConfig": "projects/ncv-example/tsconfig.app.json",
+            "webWorkerTsConfig": "projects/ncv-example/tsconfig.worker.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "projects/ncv-example/src/favicon.ico",
@@ -203,11 +204,6 @@
                 "glob": "**/*",
                 "input": "./dist/ng-cornerstone/src/assets",
                 "output": "/assets/"
-              },
-              {
-                "glob": "**/*",
-                "input": "./node_modules/@cornerstonejs/dicom-image-loader",
-                "output": "/"
               }
             ],
             "styles": ["projects/ncv-example/src/styles.scss"],
@@ -258,7 +254,12 @@
           },
           "options": {
             "host": "0.0.0.0",
-            "browserTarget": "ncv-example:build"
+            "browserTarget": "ncv-example:build",
+            "proxyConfig": "proxy.conf.json",
+            "headers": {
+              "Cross-Origin-Embedder-Policy": "require-corp",
+              "Cross-Origin-Opener-Policy": "same-origin"
+            }
           },
           "defaultConfiguration": "development"
         },

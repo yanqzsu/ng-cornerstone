@@ -12,6 +12,7 @@ import {
 import { Injectable, OnDestroy } from '@angular/core';
 import { init as csToolInit, Types as csToolTypes, destroy } from '@cornerstonejs/tools';
 import { Subject } from 'rxjs';
+import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +36,7 @@ export class CornerstoneService implements OnDestroy {
       }
 
       initProviders();
-      // cornerstoneDICOMImageLoader.init();
+      cornerstoneDICOMImageLoader.init();
       initVolumeLoader();
       await Promise.all([csRenderInit(), csToolInit()]);
 

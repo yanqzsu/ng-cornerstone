@@ -188,7 +188,7 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   generateViewports() {
-    if (this.layout) {
+    if (this.layout !== undefined) {
       this.viewportReadySet.clear();
       this.viewportInputs = generateViewportInputs(this.layout, this.suffix);
     } else {
