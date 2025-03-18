@@ -8,5 +8,12 @@ module.exports = {
     },
   },
   plugins: [],
-  module: {},
+  module: {
+    rules: [
+      {
+        test: /\.wasm/,
+        type: 'asset/resource',
+      },
+    ],
+  },
 };

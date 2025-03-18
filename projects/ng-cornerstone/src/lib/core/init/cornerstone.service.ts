@@ -9,6 +9,7 @@ import {
   RenderingEngine,
   Types as csCoreTypes,
 } from '@cornerstonejs/core';
+import * as polySeg from '@cornerstonejs/polymorphic-segmentation';
 import { Injectable, OnDestroy } from '@angular/core';
 import { init as csToolInit, Types as csToolTypes, destroy } from '@cornerstonejs/tools';
 import { Subject } from 'rxjs';
@@ -38,7 +39,14 @@ export class CornerstoneService implements OnDestroy {
       initProviders();
       cornerstoneDICOMImageLoader.init();
       initVolumeLoader();
-      await Promise.all([csRenderInit(), csToolInit()]);
+      await Promise.all([
+        csRenderInit(),
+        csToolInit({
+          addons: {
+            polySeg: polySeg as any,
+          },
+        }),
+      ]);
 
       this.renderingEngine = new RenderingEngine(this.renderingEngineId);
 

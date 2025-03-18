@@ -8,10 +8,11 @@
     "@angular/core": ">=13",
     "dcmjs": "^0.29.8",
     "@cornerstonejs/calculate-suv": "1.1.0",
-    "@cornerstonejs/core": "^2.19.16",
-    "@cornerstonejs/dicom-image-loader": "^2.19.16",
-    "@cornerstonejs/nifti-volume-loader": "^2.19.16",
-    "@cornerstonejs/tools": "^2.19.16"
+    "@cornerstonejs/core": "^3.4.0",
+    "@cornerstonejs/dicom-image-loader": "^3.4.0",
+    "@cornerstonejs/nifti-volume-loader": "^3.4.0",
+    "@cornerstonejs/tools": "^3.4.0",
+    "@cornerstonejs/polymorphic-segmentation": "^3.4.0"
   },
   "dependencies": {
     "tslib": "^2.3.0",
