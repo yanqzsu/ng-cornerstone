@@ -26,7 +26,7 @@ export class DialogComponent implements OnInit {
   ];
   segmentInfo?: ImageInfo;
 
-  layout = LayoutEnum.VOLUME;
+  layout = LayoutEnum.LAYOUT_2x2;
 
   constructor(@Inject(DIALOG_DATA) public data: any, public dialogRef: DialogRef<string>) {
     console.log(data);

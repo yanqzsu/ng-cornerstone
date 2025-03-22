@@ -4,23 +4,27 @@
   [toolList]="toolList"
   [activeViewportId]="activeViewportId"
   (toolbarInit)="onToolbarInit()"
-></nc-tool-bar>
+  (toolbarDestroy)="onToolbarDestroy()"
+>
+</nc-tool-bar>
 
 <div
   class="dicom-viewer-container"
   [ngClass]="{
-    'layout-11': layout === Layout.STACK || layout === Layout.SAGITTAL,
-    'layout-13': layout === Layout.ORTHOGRAPHIC,
-    'layout-22': layout === Layout.VOLUME
+    'layout-11': layout === Layout.LAYOUT_1x1,
+    'layout-12': layout === Layout.LAYOUT_1x2,
+    'layout-13': layout === Layout.LAYOUT_1x3,
+    'layout-22': layout === Layout.LAYOUT_2x2,
   }"
 >
   <nc-viewport
     class="dicom-viewer-viewport"
     *ngFor="let viewportInput of viewportInputs"
     [viewportInput]="viewportInput"
-    [active]="viewportInput.viewportId === activeViewportId"
-    (click)="onViewportClick(viewportInput.viewportId)"
-    (viewportDestroy)="onViewportDestroy($event)"
+    [active]="activeViewportId === viewportInput.viewportId"
     (viewportInit)="onViewportInit($event)"
-  ></nc-viewport>
+    (viewportDestroy)="onViewportDestroy($event)"
+    (click)="onViewportClick(viewportInput.viewportId)"
+  >
+  </nc-viewport>
 </div>

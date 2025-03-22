@@ -33,7 +33,7 @@ export function imageInfoToVolumeId(imageInfo: ImageInfo | undefined): string {
       imageInfo.viewportType === csCoreEnum.ViewportType.ORTHOGRAPHIC)
   ) {
     if (imageInfo.schema === RequestSchema.wadoRs) {
-      return RequestSchema.wadoRs + imageInfo?.studyInstanceUID ?? '' + imageInfo?.seriesInstanceUID ?? '';
+      return RequestSchema.wadoRs + imageInfo?.studyInstanceUID + imageInfo?.seriesInstanceUID;
     } else if (imageInfo.schema === RequestSchema.nifti) {
       return RequestSchema.nifti + imageInfo.urlRoot;
     }

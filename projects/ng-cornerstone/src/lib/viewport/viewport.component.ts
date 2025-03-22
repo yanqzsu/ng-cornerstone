@@ -47,6 +47,9 @@ export class ViewportComponent implements OnChanges, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.updateViewport();
+    if (this.viewportInput?.viewportId) {
+      this.viewportInit.emit(this.viewportInput.viewportId);
+    }
   }
 
   get renderingEngineId() {
@@ -80,7 +83,7 @@ export class ViewportComponent implements OnChanges, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     if (this.viewportInput?.viewportId) {
       this.renderingEngine.disableElement(this.viewportInput.viewportId);
+      this.viewportDestroy.emit(this.viewportInput.viewportId);
     }
-    this.viewportDestroy.emit(this.viewportInput?.viewportId);
   }
 }

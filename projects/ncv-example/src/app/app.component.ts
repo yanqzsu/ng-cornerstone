@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
   showImageViewer = true;
   imageInfo?: ImageInfo;
   segmentInfo?: ImageInfo;
-  layout = LayoutEnum.SAGITTAL;
+  layout = LayoutEnum.LAYOUT_1x1;
   imageConfigList = imageConfigs;
   segmentConfigList = segmentConfigs;
   imageInfos: ImageInfo[] = this.imageConfigList.map((config) => config.data);

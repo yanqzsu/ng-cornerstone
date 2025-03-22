@@ -16,6 +16,7 @@ export const segmentConfigs: ImageConfig[] = [
       seriesInstanceUID: '1.2.826.0.1.3680043.2.1125.1.60463690517428352499744744731254945',
       urlRoot: '/dicom-web',
       viewportType: csCoreEnum.ViewportType.ORTHOGRAPHIC,
+      segmentType: csToolEnum.SegmentationRepresentations.Labelmap,
       schema: RequestSchema.wadoRs,
     },
     alias: 'DICOM_TCGA-EJ-5495',
@@ -32,7 +33,7 @@ export const segmentConfigs: ImageConfig[] = [
   {
     data: {
       urlRoot:
-        'http://127.0.0.1:8080/nifti/MED_LYMPH_089/ec0976c5-4926-4434-87bc-7b591f8f4b63/Labels/MED_LYMPH_089.nii.gz',
+        'http://127.0.0.1:8080/nifti/MED_LYMPH_089/ec0976c5-4926-4434-87bc-7b591f8f4b63/Labels/20231211-035627/MED_LYMPH_089.nii.gz',
       viewportType: csCoreEnum.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.nifti,
       segmentType: csToolEnum.SegmentationRepresentations.Labelmap,
@@ -43,7 +44,7 @@ export const segmentConfigs: ImageConfig[] = [
     data: {
       urlRoot:
         'http://127.0.0.1:8080/nifti/ABD_LYMPH_006/fe0ace7a-b70a-43bc-9eb0-52359b4d2241/Labels/20231211-035637/ABD_LYMPH_006.nii.gz',
-      viewportType: csCoreEnum.ViewportType.ORTHOGRAPHIC,
+      viewportType: csCoreEnum.ViewportType.VOLUME_3D,
       schema: RequestSchema.nifti,
       segmentType: csToolEnum.SegmentationRepresentations.Labelmap,
     },

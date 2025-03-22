@@ -23,7 +23,7 @@ import {
   utilities,
   volumeLoader,
 } from '@cornerstonejs/core';
-import { Enums as csToolEnum, segmentation } from '@cornerstonejs/tools';
+import { Enums as csToolEnum, segmentation, utilities as csToolUtilities } from '@cornerstonejs/tools';
 
 import { BehaviorSubject, combineLatest, debounceTime, Subject } from 'rxjs';
 
@@ -153,8 +153,8 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
       await this.renderingVolume(this.imageInfo);
     }
     if (this.imageInfo && this.segmentInfo) {
-      await this.retrieveImage(this.segmentInfo);
-      await this.renderingSegment(this.segmentInfo);
+      await this.retrieveImage(this.segmentInfo, this.imageInfo);
+      await this.renderingSegment(this.segmentInfo, this.imageInfo);
     }
     this.renderingEngine.renderViewports(this.viewportIds);
   }
@@ -166,6 +166,15 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
         this.toolBarComponent.registerViewport(viewportId);
       });
     }
+  }
+
+  onToolbarDestroy() {
+    this.toolInitialized = false;
+    this.viewportIds.forEach((viewportId) => {
+      if (this.viewportReadySet.has(viewportId)) {
+        this.toolBarComponent.unregisterViewport(viewportId);
+      }
+    });
   }
 
   onViewportInit(viewportId: string) {
@@ -190,7 +199,7 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
   generateViewports() {
     if (this.layout !== undefined) {
       this.viewportReadySet.clear();
-      this.viewportInputs = generateViewportInputs(this.layout, this.suffix);
+      this.viewportInputs = generateViewportInputs(this.layout, this.suffix, this.imageInfo);
     } else {
       this.viewportReadySet.clear();
       this.viewportInputs = [];
@@ -199,14 +208,17 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     const { imageInfo, segmentInfo, layout } = changes;
+
+    // 当imageInfo变化时，重新生成视口布局以反映新的viewportType
+    if ((imageInfo && this.imageInfo) || (layout && !layout.isFirstChange)) {
+      this.generateViewports();
+    }
+
     if (imageInfo && this.imageInfo) {
       this.volumeRefreshSubject.next(this.imageInfo);
     }
     if (segmentInfo && this.segmentInfo) {
       this.segmentRefreshSubject.next(this.segmentInfo);
-    }
-    if (layout && !layout.isFirstChange) {
-      this.generateViewports();
     }
   }
 
@@ -217,7 +229,7 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  async retrieveImage(imageInfo: ImageInfo | undefined): Promise<void> {
+  async retrieveImage(imageInfo: ImageInfo | undefined, referenceImageInfo?: ImageInfo | undefined): Promise<void> {
     if (!imageInfo) {
       return;
     }
@@ -230,6 +242,9 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
         const volume = await volumeLoader.createAndCacheVolume(volumeId, {
           imageIds,
         });
+        if (referenceImageInfo) {
+          volume.referencedVolumeId = imageInfoToVolumeId(referenceImageInfo);
+        }
         volume.load();
       }
     } else if (imageInfo.schema === RequestSchema.nifti) {
@@ -298,7 +313,7 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  async renderingSegment(segmentInfo: ImageInfo | undefined) {
+  async renderingSegment(segmentInfo: ImageInfo | undefined, referenceImageInfo?: ImageInfo | undefined) {
     if (!segmentInfo) {
       return;
     }
@@ -320,9 +335,30 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
           } as SegmentationPublicInput,
         ]);
       }
+      const seg = [
+        {
+          segmentationId: segmentationId,
+          representation: {
+            // The type of segmentation
+            type: csToolEnum.SegmentationRepresentations.Labelmap,
+            // The actual segmentation data, in the case of labelmap this is a
+            // reference to the source volume of the segmentation.
+            data: {
+              volumeId: segmentationId,
+              referencedVolumeId: imageInfoToVolumeId(referenceImageInfo),
+              // referencedImageIds: imageIds,
+              // imageIds: labelIds,
+            },
+          },
+        },
+      ];
+
       // TODO: only labelmap now
       if (segmentInfo.segmentType === csToolEnum.SegmentationRepresentations.Labelmap) {
-        await this.toolBarComponent.addSegmentationRepresentations(segmentationId, segmentInfo!.segmentType!);
+        const map = {};
+        this.viewportIds.forEach((id) => (map[id] = seg));
+        segmentation.addLabelmapRepresentationToViewportMap(map);
+        // await this.toolBarComponent.addSegmentationRepresentations(segmentationId, segmentInfo!.segmentType!);
       } else {
         console.warn('Surface segment is not support yet');
       }

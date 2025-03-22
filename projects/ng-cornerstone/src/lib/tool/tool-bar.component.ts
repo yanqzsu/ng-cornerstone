@@ -167,23 +167,23 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy, On
   //   }
   // }
 
-  async addSegmentationRepresentations(
-    segmentationId: string,
-    segRepresentations: csToolsEnums.SegmentationRepresentations,
-  ) {
-    await segmentation.addSegmentationRepresentations(this.toolGroupId, [
-      {
-        segmentationId,
-        type: segRepresentations,
-        config: {
-          // TODO: Seg worker import failed
-          // polySeg: {
-          //   enabled: true,
-          // },
-        },
-      },
-    ]);
-  }
+  // async addSegmentationRepresentations(
+  //   segmentationId: string,
+  //   segRepresentations: csToolsEnums.SegmentationRepresentations,
+  // ) {
+  //   await segmentation.addSegmentationRepresentations(this.toolGroupId, [
+  //     {
+  //       segmentationId,
+  //       type: segRepresentations,
+  //       config: {
+  //         // TODO: Seg worker import failed
+  //         // polySeg: {
+  //         //   enabled: true,
+  //         // },
+  //       },
+  //     },
+  //   ]);
+  // }
 
   activeTool(names: any[]) {
     if (!names || names.length === 0) {
@@ -217,6 +217,7 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy, On
 
   ngOnDestroy(): void {
     console.debug('Toolbar destroy: ', this.toolGroupId);
+    this.toolbarDestroy.emit(this.toolGroupId);
     ToolGroupManager.destroyToolGroup(this.toolGroupId);
     this.destroy$.next();
     this.destroy$.complete();
