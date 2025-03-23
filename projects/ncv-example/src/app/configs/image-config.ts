@@ -76,16 +76,6 @@ export const imageConfigs: ImageConfig[] = [
   },
   {
     data: {
-      studyInstanceUID: '1.2.392.200055.5.4.80861305518.20150928153455671288',
-      seriesInstanceUID: '1.2.392.200036.9142.10002202.1020869001.2.20150928174647.30151',
-      urlRoot: '/dicom-web',
-      viewportType: csCoreEnum.ViewportType.VOLUME_3D,
-      schema: RequestSchema.wadoRs,
-    },
-    alias: 'DICOM_ORTHO_Breast CE+',
-  },
-  {
-    data: {
       studyInstanceUID: '1.2.392.200036.9116.4.2.105211.1467.20150907022356254.3.5',
       seriesInstanceUID: '1.2.392.200036.9116.4.2.105211.246.4001',
       urlRoot: '/dicom-web',
@@ -102,7 +92,15 @@ export const imageConfigs: ImageConfig[] = [
       viewportType: csCoreEnum.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.wadoRs,
     },
-    alias: 'DICOM_TCGA-EJ-5495',
+    alias: 'DICOM_ORTHO_TCGA-EJ-5495',
+  },
+  {
+    data: {
+      urlRoot: 'http://127.0.0.1:8080/nifti/TCGA-EJ-5359/image.nii.gz',
+      viewportType: csCoreEnum.ViewportType.VOLUME_3D,
+      schema: RequestSchema.nifti,
+    },
+    alias: 'NIFTI_VOLUME_TCGA-EJ-5495',
   },
   {
     data: {
@@ -110,7 +108,15 @@ export const imageConfigs: ImageConfig[] = [
       viewportType: csCoreEnum.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.nifti,
     },
-    alias: 'NIFTI_TCGA-EJ-5495',
+    alias: 'NIFTI_ORTHO_TCGA-EJ-5495',
+  },
+  {
+    data: {
+      urlRoot: 'http://127.0.0.1:8080/nifti/TCGA-EJ-5359/image.nii.gz',
+      viewportType: csCoreEnum.ViewportType.STACK,
+      schema: RequestSchema.nifti,
+    },
+    alias: 'NIFTI_STACK_TCGA-EJ-5495',
   },
   {
     data: {
@@ -119,7 +125,7 @@ export const imageConfigs: ImageConfig[] = [
       viewportType: csCoreEnum.ViewportType.ORTHOGRAPHIC,
       schema: RequestSchema.nifti,
     },
-    alias: 'NIFTI_MED_LYMPH_089',
+    alias: 'NIFTI_ORTHO_MED_LYMPH_089',
   },
   {
     data: {
@@ -128,6 +134,6 @@ export const imageConfigs: ImageConfig[] = [
       viewportType: csCoreEnum.ViewportType.VOLUME_3D,
       schema: RequestSchema.nifti,
     },
-    alias: 'NIFTI_ABD_LYMPH_006',
+    alias: 'NIFTI_VOLUME_ABD_LYMPH_006',
   },
 ];

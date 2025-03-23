@@ -15,33 +15,24 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import {
-  CONSTANTS,
-  Enums as csCoreEnum,
-  setVolumesForViewports,
-  Types,
-  utilities,
-  volumeLoader,
-} from '@cornerstonejs/core';
-import { Enums as csToolEnum, segmentation, utilities as csToolUtilities } from '@cornerstonejs/tools';
+import { Enums as csCoreEnum, imageLoader, Types, volumeLoader } from '@cornerstonejs/core';
+import { Enums as csToolEnum, segmentation } from '@cornerstonejs/tools';
 
-import { BehaviorSubject, combineLatest, debounceTime, Subject } from 'rxjs';
+import { debounceTime, Subject } from 'rxjs';
 
 import { ToolBarComponent, ToolEnum } from '../tool';
 import {
   CornerstoneService,
-  ctVoiRange,
   generateRandomString,
   generateViewportInputs,
   ImageIdService,
   ImageInfo,
-  imageInfoToVolumeId,
+  imageInfoToUniqueId,
   LayoutEnum,
   RequestSchema,
 } from '../core';
 import { takeUntil } from 'rxjs/operators';
-import { ViewportComponent } from '../viewport/viewport.component';
-import { SegmentationPublicInput } from '@cornerstonejs/tools/dist/esm/types';
+import { BaseViewportComponent } from '../viewport';
 import { createNiftiImageIdsAndCacheMetadata } from '@cornerstonejs/nifti-volume-loader';
 
 @Component({
@@ -57,15 +48,12 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
 
   Layout = LayoutEnum;
 
-  private volumeRefreshSubject = new BehaviorSubject<ImageInfo | undefined>(undefined);
-  private segmentRefreshSubject = new BehaviorSubject<ImageInfo | undefined>(undefined);
   private destroy$ = new Subject();
 
   toolGroupId = '';
 
   viewportType?: csCoreEnum.ViewportType;
   viewportInputs: Partial<Types.PublicViewportInput>[] = [];
-  viewportReadySet = new Set<string>();
   activeViewportId: string = '';
 
   volumeId?: string;
@@ -74,6 +62,7 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
   private resizeSubject = new Subject<void>();
   private suffix: string = '';
   private toolInitialized = false;
+  private initializedViewportIds = new Set<string>();
 
   @Input()
   layout?: LayoutEnum;
@@ -87,14 +76,14 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild(ToolBarComponent)
   toolBarComponent!: ToolBarComponent;
 
-  @ViewChildren(ViewportComponent)
-  imageBoxComponentList!: QueryList<ViewportComponent>;
+  @ViewChildren(BaseViewportComponent)
+  viewportComponentList!: QueryList<BaseViewportComponent>;
 
   @Input()
   toolList: ToolEnum[] = [];
 
   @Output() viewportActivated = new EventEmitter<string>();
-  @Output() volumeLoaded = new EventEmitter<void>();
+  @Output() imageLoaded = new EventEmitter<void>();
 
   get renderingEngine() {
     return this.csService.getRenderingEngine();
@@ -121,48 +110,25 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
     this.resizeObserver.observe(this.elementRef.nativeElement);
-    // 使用 debounceTime 添加防抖
+    // Add debounce time
     this.resizeSubject
       .pipe(
-        debounceTime(300), // 防抖时间设置为 300ms
-        takeUntil(this.destroy$), // 组件销毁时取消订阅
+        debounceTime(300), // Set debounce time to 300ms
+        takeUntil(this.destroy$), // Unsubscribe when component is destroyed
       )
       .subscribe(() => {
         const renderingEngine = this.csService.getRenderingEngine();
         if (renderingEngine) {
-          // const presentations = viewports.map((viewport) => viewport.getViewPresentation());
           renderingEngine.resize(true, false);
-          // viewports.forEach((viewport, idx) => {
-          //   viewport.setViewPresentation(presentations[idx]);
-          // });
         }
       });
-
-    combineLatest([this.volumeRefreshSubject, this.segmentRefreshSubject])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(async ([imageInfo, segmentInfo]) => {
-        if (this.viewportReadySet?.size > 0) {
-          await this.renderAll();
-        }
-      });
-  }
-
-  async renderAll() {
-    if (this.imageInfo) {
-      await this.retrieveImage(this.imageInfo);
-      await this.renderingVolume(this.imageInfo);
-    }
-    if (this.imageInfo && this.segmentInfo) {
-      await this.retrieveImage(this.segmentInfo, this.imageInfo);
-      await this.renderingSegment(this.segmentInfo, this.imageInfo);
-    }
-    this.renderingEngine.renderViewports(this.viewportIds);
   }
 
   onToolbarInit() {
     this.toolInitialized = true;
-    if (this.viewportIds?.length > 0 && this.viewportIds.every((id) => this.viewportReadySet.has(id))) {
-      this.viewportReadySet.forEach((viewportId) => {
+    // Register all initialized viewports
+    if (this.initializedViewportIds.size > 0) {
+      this.initializedViewportIds.forEach((viewportId) => {
         this.toolBarComponent.registerViewport(viewportId);
       });
     }
@@ -170,27 +136,39 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
 
   onToolbarDestroy() {
     this.toolInitialized = false;
-    this.viewportIds.forEach((viewportId) => {
-      if (this.viewportReadySet.has(viewportId)) {
-        this.toolBarComponent.unregisterViewport(viewportId);
-      }
+    // Unregister all viewports
+    this.initializedViewportIds.forEach((viewportId) => {
+      this.toolBarComponent.unregisterViewport(viewportId);
     });
   }
 
   onViewportInit(viewportId: string) {
-    this.viewportReadySet.add(viewportId);
-    if (this.viewportIds?.length > 0 && this.viewportIds.every((id) => this.viewportReadySet.has(id))) {
+    // Record viewport as initialized
+    this.initializedViewportIds.add(viewportId);
+
+    // Check if all viewports are initialized
+    const allViewportsReady = this.viewportIds.every((id) => this.initializedViewportIds.has(id));
+
+    if (this.viewportIds.length > 0 && allViewportsReady) {
       console.debug('All viewports are ready');
-      this.activeViewportId = this.viewportIds?.[0] ?? '';
+
+      // Set default active viewport
+      if (!this.activeViewportId) {
+        this.activeViewportId = this.viewportIds[0];
+      }
+
+      // Register viewport if toolbar is initialized
       if (this.toolInitialized) {
         this.toolBarComponent.registerViewport(viewportId);
       }
-      this.renderAll();
     }
   }
 
   onViewportDestroy(viewportId: string) {
-    this.viewportReadySet.delete(viewportId);
+    // Remove viewport from initialized set
+    this.initializedViewportIds.delete(viewportId);
+
+    // Unregister viewport if toolbar is initialized
     if (this.toolInitialized) {
       this.toolBarComponent.unregisterViewport(viewportId);
     }
@@ -198,28 +176,39 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
 
   generateViewports() {
     if (this.layout !== undefined) {
-      this.viewportReadySet.clear();
+      // Reset initialized viewport set
+      this.initializedViewportIds.clear();
       this.viewportInputs = generateViewportInputs(this.layout, this.suffix, this.imageInfo);
+      // Reset activeViewportId
+      this.activeViewportId = '';
     } else {
-      this.viewportReadySet.clear();
+      this.initializedViewportIds.clear();
       this.viewportInputs = [];
+      // Reset activeViewportId
+      this.activeViewportId = '';
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     const { imageInfo, segmentInfo, layout } = changes;
 
-    // 当imageInfo变化时，重新生成视口布局以反映新的viewportType
-    if ((imageInfo && this.imageInfo) || (layout && !layout.isFirstChange)) {
+    // When imageInfo changes, regenerate viewport layout to reflect new viewportType
+    if ((imageInfo && this.imageInfo) || (layout && !layout.isFirstChange())) {
       this.generateViewports();
     }
 
+    // If imageInfo or segmentInfo changes, retrieve image data again
     if (imageInfo && this.imageInfo) {
-      this.volumeRefreshSubject.next(this.imageInfo);
+      segmentation.state.removeAllSegmentations();
+      this.retrieveImage(false);
     }
     if (segmentInfo && this.segmentInfo) {
-      this.segmentRefreshSubject.next(this.segmentInfo);
+      segmentation.state.removeAllSegmentations();
+      this.retrieveImage(true);
     }
+
+    // Change detection - refresh view
+    this.cdr.detectChanges();
   }
 
   onViewportClick(viewportId: string | undefined) {
@@ -229,147 +218,104 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  async retrieveImage(imageInfo: ImageInfo | undefined, referenceImageInfo?: ImageInfo | undefined): Promise<void> {
+  /**
+   * Retrieve image data without rendering
+   * Rendering is handled by each viewport component
+   */
+  async retrieveImage(isSegment: boolean = false): Promise<void> {
+    const imageInfo = isSegment ? this.segmentInfo : this.imageInfo;
     if (!imageInfo) {
       return;
     }
+
+    let imageIds: string[] = [];
+
+    // 根据不同schema获取imageIds
     if (imageInfo.schema === RequestSchema.wadoRs) {
-      const imageIds = await this.imageIdService.wadoRsCreateImageIdsAndCacheMetaData(imageInfo);
-      if (imageInfo.viewportType === csCoreEnum.ViewportType.STACK) {
-        await this.retrieveAndRenderingStack(imageIds);
-      } else {
-        const volumeId = imageInfoToVolumeId(imageInfo);
-        const volume = await volumeLoader.createAndCacheVolume(volumeId, {
-          imageIds,
-        });
-        if (referenceImageInfo) {
-          volume.referencedVolumeId = imageInfoToVolumeId(referenceImageInfo);
-        }
-        volume.load();
-      }
+      imageIds = await this.imageIdService.wadoRsCreateImageIdsAndCacheMetaData(imageInfo);
     } else if (imageInfo.schema === RequestSchema.nifti) {
-      if (imageInfo.viewportType === csCoreEnum.ViewportType.STACK) {
-        console.error("Nifti don't support stack view");
-      } else if (
-        imageInfo.viewportType === csCoreEnum.ViewportType.VOLUME_3D ||
-        imageInfo.viewportType === csCoreEnum.ViewportType.ORTHOGRAPHIC
-      ) {
-        // similar to the rest of the cornerstone3D image loader
-        const imageIds = await createNiftiImageIdsAndCacheMetadata({ url: imageInfo.urlRoot });
-        // For stack viewports
-        // viewport.setStack(imageIds);
-        const volumeId = imageInfoToVolumeId(imageInfo);
-        const volume = await volumeLoader.createAndCacheVolume(volumeId, { imageIds });
-        await volume.load();
-      }
+      imageIds = await createNiftiImageIdsAndCacheMetadata({ url: imageInfo.urlRoot });
     } else {
       console.error('Unsupported request schema');
-    }
-  }
-
-  async retrieveAndRenderingStack(imageIds: string[]) {
-    const setStackPromises = this.viewportIds.map(async (viewportId) => {
-      const viewport = this.renderingEngine.getViewport(viewportId) as Types.IStackViewport;
-      await viewport.setStack(imageIds);
-      // Set the VOI of the stack
-      viewport.setProperties({ voiRange: ctVoiRange });
-    });
-    await Promise.all(setStackPromises);
-  }
-
-  async renderingVolume(imageInfo: ImageInfo | undefined) {
-    if (!imageInfo) {
       return;
     }
-    const volumeId = imageInfoToVolumeId(imageInfo);
-    if (!!volumeId) {
-      const volume3dViewportIds = this.viewportInputs
-        ?.filter((viewport) => viewport.type === csCoreEnum.ViewportType.VOLUME_3D)
-        .map((viewport) => viewport.viewportId!);
-      if (volume3dViewportIds && volume3dViewportIds?.length !== 0) {
-        await setVolumesForViewports(this.renderingEngine, [{ volumeId }], volume3dViewportIds as Array<string>);
-        volume3dViewportIds.forEach((viewportId) => {
-          const volumeActor = this.renderingEngine.getViewport(viewportId).getDefaultActor().actor as Types.VolumeActor;
-          utilities.applyPreset(
-            volumeActor,
-            CONSTANTS.VIEWPORT_PRESETS.find((preset) => preset.name === 'CT-Chest-Contrast-Enhanced')!,
-          );
-        });
-      }
-      const orthographicViewportIds = this.viewportInputs
-        ?.filter((viewport) => viewport.type === csCoreEnum.ViewportType.ORTHOGRAPHIC)
-        .map((viewport) => viewport.viewportId!);
-      if (orthographicViewportIds && orthographicViewportIds?.length !== 0) {
-        await setVolumesForViewports(
-          this.renderingEngine,
-          [
-            {
-              volumeId,
-            },
-          ],
-          orthographicViewportIds,
-        );
-      }
-    }
-  }
 
-  async renderingSegment(segmentInfo: ImageInfo | undefined, referenceImageInfo?: ImageInfo | undefined) {
-    if (!segmentInfo) {
-      return;
-    }
-    const segmentationId = imageInfoToVolumeId(segmentInfo);
-    if (segmentationId && !!segmentInfo?.segmentType) {
-      const existSegmentation = segmentation.state.getSegmentation(segmentationId);
-      if (existSegmentation) {
-        // existSegmentation.
-      } else {
-        segmentation.addSegmentations([
-          {
-            segmentationId: segmentationId,
-            representation: {
-              type: segmentInfo.segmentType,
-              data: {
-                volumeId: segmentationId,
-              },
-            },
-          } as SegmentationPublicInput,
-        ]);
+    // 准备分段和图像数据的处理函数
+    const processSegmentation = async (labelImages: any[], uniqueId: string) => {
+      const derivedSegmentationImages = await imageLoader.createAndCacheDerivedLabelmapImages(imageIds);
+      const derivedSegmentationImageIds = derivedSegmentationImages.map((image) => image.imageId);
+
+      // 处理标签数据
+      for (let i = 0; i < derivedSegmentationImages.length; i++) {
+        const voxelManager = derivedSegmentationImages[i].voxelManager!;
+        const scalarData = voxelManager.getScalarData();
+        const labelImage = labelImages[i];
+        if (labelImage) {
+          scalarData.set(labelImage.getPixelData());
+          voxelManager.setScalarData(scalarData);
+        }
       }
-      const seg = [
+
+      // Check if segmentation already exists and remove it
+      const existingSegmentation = segmentation.state.getSegmentation(uniqueId);
+      if (existingSegmentation && segmentation.removeSegmentation) {
+        segmentation.removeSegmentation(uniqueId);
+      }
+
+      // Add new segmentation
+      segmentation.addSegmentations([
         {
-          segmentationId: segmentationId,
+          segmentationId: uniqueId,
           representation: {
-            // The type of segmentation
             type: csToolEnum.SegmentationRepresentations.Labelmap,
-            // The actual segmentation data, in the case of labelmap this is a
-            // reference to the source volume of the segmentation.
             data: {
-              volumeId: segmentationId,
-              referencedVolumeId: imageInfoToVolumeId(referenceImageInfo),
-              // referencedImageIds: imageIds,
-              // imageIds: labelIds,
+              imageIds: derivedSegmentationImageIds,
             },
           },
         },
-      ];
+      ]);
 
-      // TODO: only labelmap now
-      if (segmentInfo.segmentType === csToolEnum.SegmentationRepresentations.Labelmap) {
-        const map = {};
-        this.viewportIds.forEach((id) => (map[id] = seg));
-        segmentation.addLabelmapRepresentationToViewportMap(map);
-        // await this.toolBarComponent.addSegmentationRepresentations(segmentationId, segmentInfo!.segmentType!);
-      } else {
-        console.warn('Surface segment is not support yet');
-      }
+      return derivedSegmentationImageIds;
+    };
+
+    // Process data based on viewport type
+    if (imageInfo.viewportType !== csCoreEnum.ViewportType.STACK) {
+      // Volume rendering processing
+      const volumeId = imageInfoToUniqueId(imageInfo);
+      const volume = await volumeLoader.createAndCacheVolume(volumeId, { imageIds });
+
+      await volume.load(async () => {
+        if (isSegment) {
+          const labelImages = volume.getCornerstoneImages();
+          const uniqueId = imageInfoToUniqueId(imageInfo);
+          const derivedSegmentationImageIds = await processSegmentation(labelImages, uniqueId);
+          this.segmentInfo = { ...imageInfo!, imageIds: derivedSegmentationImageIds };
+        } else {
+          this.imageInfo = { ...imageInfo!, volumeId, imageIds };
+        }
+        this.cdr.detectChanges();
+        this.imageLoaded.emit();
+      });
     } else {
-      console.error('Nifti dont support stack view');
+      // Plane image processing
+      const images = await imageLoader.loadAndCacheImages(imageIds);
+
+      if (isSegment) {
+        const uniqueId = imageInfoToUniqueId(imageInfo);
+        const derivedSegmentationImageIds = await processSegmentation(await Promise.all(images), uniqueId);
+        this.segmentInfo = { ...imageInfo!, imageIds: derivedSegmentationImageIds };
+      } else {
+        this.imageInfo = { ...imageInfo!, imageIds };
+      }
+
+      this.cdr.detectChanges();
+      this.imageLoaded.emit();
     }
   }
 
   ngOnDestroy(): void {
     this.resizeObserver.disconnect();
-    this.viewportReadySet.clear();
+    this.initializedViewportIds.clear();
     this.destroy$.next(null);
     this.destroy$.complete();
     console.debug('viewer destroyed');

@@ -1,19 +1,7 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostBinding,
-  Input,
-  OnChanges,
-  OnDestroy,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
-import { Types } from '@cornerstonejs/core';
-import { CornerstoneService } from '../core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { CornerstoneService, ImageIdService, ImageInfo } from '../core';
+import { BaseViewportComponent } from './base-viewport.component';
+import { NgZone } from '@angular/core';
 
 @Component({
   selector: 'nc-viewport',
@@ -22,68 +10,31 @@ import { CornerstoneService } from '../core';
   styleUrls: ['./viewport.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ViewportComponent implements OnChanges, OnDestroy, AfterViewInit {
-  @Input()
-  viewportInput?: Partial<Types.PublicViewportInput>;
+export class ViewportComponent extends BaseViewportComponent implements OnDestroy, AfterViewInit {
+  constructor(protected override csService: CornerstoneService, zone: NgZone) {
+    super(csService, zone);
+  }
 
-  @ViewChild('imageBox', { read: ElementRef, static: true })
-  viewportElementRef!: ElementRef<HTMLElement>;
-
-  @Input()
-  @HostBinding('class.active')
-  active: boolean = false;
-
-  @Output() viewportInit = new EventEmitter<string>();
-  @Output() viewportDestroy = new EventEmitter<string>();
-
-  constructor(private csService: CornerstoneService) {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const { viewportInput } = changes;
-    if (viewportInput && !viewportInput.isFirstChange() && this.viewportInput) {
-      this.updateViewport();
+  /**
+   * 基础渲染方法 - 默认实现只是显示一个警告
+   * 子类会重写这个方法提供特定的渲染逻辑
+   */
+  override renderImage(image: ImageInfo): void {
+    console.warn('Render method not implemented in base viewport component');
+    // 虽然默认组件没有特定的渲染逻辑，但我们可以记录一些调试信息
+    if (image) {
+      console.debug('Image info provided:', image.viewportType);
     }
   }
 
-  ngAfterViewInit(): void {
-    this.updateViewport();
-    if (this.viewportInput?.viewportId) {
-      this.viewportInit.emit(this.viewportInput.viewportId);
+  override renderSegment(image: ImageInfo, segment: ImageInfo): void {
+    console.warn('Render method not implemented in base viewport component');
+    // 虽然默认组件没有特定的渲染逻辑，但我们可以记录一些调试信息
+    if (image) {
+      console.debug('Image info provided:', image.viewportType);
     }
-  }
-
-  get renderingEngineId() {
-    return this.csService.getRenderingEngineId();
-  }
-
-  get renderingEngine() {
-    return this.csService.getRenderingEngine();
-  }
-
-  private updateViewport() {
-    if (!this.viewportInput) {
-      console.warn('No viewport input provided');
-      return;
-    }
-
-    try {
-      const viewportInput = {
-        viewportId: this.viewportInput.viewportId!,
-        type: this.viewportInput.type!,
-        element: this.viewportElementRef.nativeElement as HTMLDivElement,
-        defaultOptions: this.viewportInput.defaultOptions,
-      };
-      this.renderingEngine.enableElement(viewportInput);
-      this.viewportInit.emit(this.viewportInput?.viewportId);
-    } catch (error) {
-      console.error('Failed to update viewport:', error);
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.viewportInput?.viewportId) {
-      this.renderingEngine.disableElement(this.viewportInput.viewportId);
-      this.viewportDestroy.emit(this.viewportInput.viewportId);
+    if (segment) {
+      console.debug('Segment info provided:', segment.segmentType);
     }
   }
 }

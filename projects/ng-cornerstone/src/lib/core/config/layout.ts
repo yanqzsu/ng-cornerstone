@@ -2,10 +2,10 @@ import { Enums as csCoreEnum, Types } from '@cornerstonejs/core';
 import { ImageInfo } from './types';
 
 export enum LayoutEnum {
-  LAYOUT_1x1, // 单视口布局
-  LAYOUT_1x2, // 1行2列布局
-  LAYOUT_1x3, // 1行3列布局
-  LAYOUT_2x2, // 2行2列布局
+  LAYOUT_1x1, // Single viewport layout
+  LAYOUT_1x2, // 1 row 2 columns layout
+  LAYOUT_1x3, // 1 row 3 columns layout
+  LAYOUT_2x2, // 2 rows 2 columns layout
 }
 
 export const STACK_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
@@ -29,73 +29,36 @@ export const SAGITTAL_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
   },
 ];
 
-export const ORTHOGRAPHIC_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
+export const CORONAL_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
   {
-    viewportId: 'viewport-mpr-1',
+    viewportId: 'viewport-mpr-coronal',
     type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
     defaultOptions: {
       background: <Types.Point3>[0, 0, 0],
       orientation: csCoreEnum.OrientationAxis.CORONAL,
-    },
-  },
-  {
-    viewportId: 'viewport-mpr-2',
-    type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-    defaultOptions: {
-      background: <Types.Point3>[0, 0, 0],
-      orientation: csCoreEnum.OrientationAxis.AXIAL,
-    },
-  },
-  {
-    viewportId: 'viewport-mpr-3',
-    type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-    defaultOptions: {
-      background: <Types.Point3>[0, 0, 0],
-      orientation: csCoreEnum.OrientationAxis.SAGITTAL,
     },
   },
 ];
 
-export const VOLUME_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
+export const AXIAL_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
   {
-    viewportId: 'viewport-volume-1',
-    type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-    defaultOptions: {
-      background: <Types.Point3>[0, 0, 0],
-      orientation: csCoreEnum.OrientationAxis.CORONAL,
-    },
-  },
-  {
-    viewportId: 'viewport-volume-2',
+    viewportId: 'viewport-mpr-axial',
     type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
     defaultOptions: {
       background: <Types.Point3>[0, 0, 0],
       orientation: csCoreEnum.OrientationAxis.AXIAL,
     },
   },
+];
+
+export const VOLUME_3D_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
   {
-    viewportId: 'viewport-volume-3',
-    type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-    defaultOptions: {
-      background: <Types.Point3>[0, 0, 0],
-      orientation: csCoreEnum.OrientationAxis.SAGITTAL,
-    },
-  },
-  {
-    viewportId: 'viewport-volume-3d',
+    viewportId: 'viewport-volume',
     type: csCoreEnum.ViewportType.VOLUME_3D,
     defaultOptions: {
-      // background: CONSTANTS.BACKGROUND_COLORS.slicer3D as Types.RGB,
       background: <Types.Point3>[0.2, 0, 0.2],
     },
   },
-];
-
-// 不同方向的预设
-export const ORIENTATION_PRESETS = [
-  csCoreEnum.OrientationAxis.AXIAL,
-  csCoreEnum.OrientationAxis.CORONAL,
-  csCoreEnum.OrientationAxis.SAGITTAL,
 ];
 
 export function generateViewportInputs(
@@ -104,61 +67,95 @@ export function generateViewportInputs(
   imageInfo?: ImageInfo,
 ): Partial<Types.PublicViewportInput>[] {
   const viewportType = imageInfo?.viewportType || csCoreEnum.ViewportType.STACK;
-  const isOrthographic = viewportType === csCoreEnum.ViewportType.ORTHOGRAPHIC;
+  const isStack = viewportType === csCoreEnum.ViewportType.STACK;
   const result: Partial<Types.PublicViewportInput>[] = [];
 
-  let count = 1;
   switch (layout) {
     case LayoutEnum.LAYOUT_1x1:
-      count = 1;
+      // 1x1 layout: set viewportType according to imageType
+      if (viewportType === csCoreEnum.ViewportType.STACK) {
+        const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
+        viewportInput.viewportId = `viewport-1${suffix}`;
+        result.push(viewportInput);
+      } else if (viewportType === csCoreEnum.ViewportType.VOLUME_3D) {
+        const viewportInput = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
+        viewportInput.viewportId = `viewport-1${suffix}`;
+        result.push(viewportInput);
+      } else {
+        const viewportInput = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
+        viewportInput.viewportId = `viewport-1${suffix}`;
+        result.push(viewportInput);
+      }
       break;
+
     case LayoutEnum.LAYOUT_1x2:
-      count = 2;
+      // 1x2 layout: all stack when imageType is stack, otherwise one volume3D one sagittal
+      if (isStack) {
+        for (let i = 0; i < 2; i++) {
+          const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
+          viewportInput.viewportId = `viewport-${i + 1}${suffix}`;
+          result.push(viewportInput);
+        }
+      } else {
+        const sagittalViewport = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
+        sagittalViewport.viewportId = `viewport-1${suffix}`;
+        result.push(sagittalViewport);
+
+        const volumeViewport = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
+        volumeViewport.viewportId = `viewport-2${suffix}`;
+        result.push(volumeViewport);
+      }
       break;
+
     case LayoutEnum.LAYOUT_1x3:
-      count = 3;
+      // 1x3 layout: all stack when imageType is stack, otherwise one volume3D one sagittal one axial
+      if (isStack) {
+        for (let i = 0; i < 3; i++) {
+          const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
+          viewportInput.viewportId = `viewport-${i + 1}${suffix}`;
+          result.push(viewportInput);
+        }
+      } else {
+        const sagittalViewport = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
+        sagittalViewport.viewportId = `viewport-1${suffix}`;
+        result.push(sagittalViewport);
+
+        const axialViewport = structuredClone(AXIAL_VIEWPORT_INPUTS[0]);
+        axialViewport.viewportId = `viewport-2${suffix}`;
+        result.push(axialViewport);
+
+        const volumeViewport = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
+        volumeViewport.viewportId = `viewport-3${suffix}`;
+        result.push(volumeViewport);
+      }
       break;
+
     case LayoutEnum.LAYOUT_2x2:
-      count = 4;
+      // 2x2 layout: all stack when imageType is stack, otherwise one volume3D one sagittal one axial one coronal
+      if (isStack) {
+        for (let i = 0; i < 4; i++) {
+          const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
+          viewportInput.viewportId = `viewport-${i + 1}${suffix}`;
+          result.push(viewportInput);
+        }
+      } else {
+        const sagittalViewport = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
+        sagittalViewport.viewportId = `viewport-1${suffix}`;
+        result.push(sagittalViewport);
+
+        const axialViewport = structuredClone(AXIAL_VIEWPORT_INPUTS[0]);
+        axialViewport.viewportId = `viewport-2${suffix}`;
+        result.push(axialViewport);
+
+        const coronalViewport = structuredClone(CORONAL_VIEWPORT_INPUTS[0]);
+        coronalViewport.viewportId = `viewport-3${suffix}`;
+        result.push(coronalViewport);
+
+        const volumeViewport = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
+        volumeViewport.viewportId = `viewport-4${suffix}`;
+        result.push(volumeViewport);
+      }
       break;
-  }
-
-  for (let i = 0; i < count; i++) {
-    const viewport: Partial<Types.PublicViewportInput> = {
-      viewportId: `viewport-${i + 1}${suffix}`,
-      type: viewportType,
-      defaultOptions: {
-        background: <Types.Point3>[0, 0, 0],
-      },
-    };
-
-    // 对于ORTHOGRAPHIC类型且多视口布局，自动设置不同的orientation
-    if (isOrthographic && count > 1) {
-      // 使用数组中的索引，确保不会超出范围
-      const orientationIndex = i % ORIENTATION_PRESETS.length;
-      const orientation = ORIENTATION_PRESETS[orientationIndex];
-
-      if (!viewport.defaultOptions) {
-        viewport.defaultOptions = {};
-      }
-      viewport.defaultOptions.orientation = orientation;
-    }
-
-    // 如果是3D体积渲染视图并且是最后一个视口，设置为VOLUME_3D类型
-    if (
-      viewportType === csCoreEnum.ViewportType.ORTHOGRAPHIC &&
-      count > 1 &&
-      i === count - 1 &&
-      layout === LayoutEnum.LAYOUT_2x2
-    ) {
-      viewport.type = csCoreEnum.ViewportType.VOLUME_3D;
-      if (!viewport.defaultOptions) {
-        viewport.defaultOptions = {};
-      }
-      viewport.defaultOptions.background = <Types.Point3>[0.2, 0, 0.2];
-    }
-
-    result.push(viewport);
   }
 
   return result;

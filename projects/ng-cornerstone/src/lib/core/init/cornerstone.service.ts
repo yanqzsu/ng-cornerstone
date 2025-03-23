@@ -25,9 +25,6 @@ export class CornerstoneService implements OnDestroy {
   private toolGroup!: csToolTypes.IToolGroup;
   private initialized = false;
 
-  private viewportManagerSubject = new Subject<string>();
-  viewportReady$ = this.viewportManagerSubject.asObservable();
-
   constructor() {}
 
   async init() {
@@ -79,19 +76,6 @@ export class CornerstoneService implements OnDestroy {
 
   getToolGroupId() {
     return this.toolGroupId;
-  }
-
-  registerViewport(viewportInput: csCoreTypes.PublicViewportInput) {
-    this.renderingEngine.enableElement(viewportInput);
-    this.toolGroup.addViewport(viewportInput.viewportId, this.renderingEngineId);
-    this.viewportManagerSubject.next(viewportInput.viewportId);
-    console.debug('Viewport register:', viewportInput.viewportId);
-  }
-
-  unregisterViewport(viewportId: string) {
-    this.renderingEngine.disableElement(viewportId);
-    this.toolGroup.removeViewports(this.renderingEngineId, viewportId);
-    console.debug('Viewport unregister:', viewportId);
   }
 
   ngOnDestroy(): void {
