@@ -4,23 +4,77 @@
   [toolList]="toolList"
   [activeViewportId]="activeViewportId"
   (toolbarInit)="onToolbarInit()"
-></nc-tool-bar>
+  (toolbarDestroy)="onToolbarDestroy()"
+>
+</nc-tool-bar>
 
 <div
   class="dicom-viewer-container"
   [ngClass]="{
-    'layout-11': layout === Layout.STACK || layout === Layout.SAGITTAL,
-    'layout-13': layout === Layout.ORTHOGRAPHIC,
-    'layout-22': layout === Layout.VOLUME
+    'layout-11': layout === Layout.LAYOUT_1x1,
+    'layout-12': layout === Layout.LAYOUT_1x2,
+    'layout-13': layout === Layout.LAYOUT_1x3,
+    'layout-22': layout === Layout.LAYOUT_2x2,
   }"
 >
-  <nc-viewport
-    class="dicom-viewer-viewport"
-    *ngFor="let viewportInput of viewportInputs"
-    [viewportInput]="viewportInput"
-    [active]="viewportInput.viewportId === activeViewportId"
-    (click)="onViewportClick(viewportInput.viewportId)"
-    (viewportDestroy)="onViewportDestroy($event)"
-    (viewportInit)="onViewportInit($event)"
-  ></nc-viewport>
+  <!-- 动态选择合适的视口组件类型 -->
+  <ng-container *ngFor="let viewport of viewportInputs">
+    <ng-container [ngSwitch]="viewport.type">
+      <!-- Stack视口 -->
+      <nc-stack-viewport
+        class="dicom-viewer-viewport"
+        *ngSwitchCase="'stack'"
+        [viewportInput]="viewport"
+        [active]="viewport.viewportId === activeViewportId"
+        [imageInfo]="imageInfo"
+        [segmentInfo]="segmentInfo"
+        (viewportInit)="onViewportInit($event)"
+        (viewportDestroy)="onViewportDestroy($event)"
+        (click)="onViewportClick(viewport.viewportId)"
+      >
+      </nc-stack-viewport>
+
+      <!-- Volume3D视口 -->
+      <nc-volume3d-viewport
+        class="dicom-viewer-viewport"
+        *ngSwitchCase="'volume3d'"
+        [viewportInput]="viewport"
+        [active]="viewport.viewportId === activeViewportId"
+        [imageInfo]="imageInfo"
+        [segmentInfo]="segmentInfo"
+        (viewportInit)="onViewportInit($event)"
+        (viewportDestroy)="onViewportDestroy($event)"
+        (click)="onViewportClick(viewport.viewportId)"
+      >
+      </nc-volume3d-viewport>
+
+      <!-- Orthographic视口 -->
+      <nc-orthographic-viewport
+        class="dicom-viewer-viewport"
+        *ngSwitchCase="'orthographic'"
+        [viewportInput]="viewport"
+        [active]="viewport.viewportId === activeViewportId"
+        [imageInfo]="imageInfo"
+        [segmentInfo]="segmentInfo"
+        (viewportInit)="onViewportInit($event)"
+        (viewportDestroy)="onViewportDestroy($event)"
+        (click)="onViewportClick(viewport.viewportId)"
+      >
+      </nc-orthographic-viewport>
+
+      <!-- 默认视口（兼容性保障） -->
+      <nc-viewport
+        class="dicom-viewer-viewport"
+        *ngSwitchDefault
+        [viewportInput]="viewport"
+        [active]="viewport.viewportId === activeViewportId"
+        [imageInfo]="imageInfo"
+        [segmentInfo]="segmentInfo"
+        (viewportInit)="onViewportInit($event)"
+        (viewportDestroy)="onViewportDestroy($event)"
+        (click)="onViewportClick(viewport.viewportId)"
+      >
+      </nc-viewport>
+    </ng-container>
+  </ng-container>
 </div>

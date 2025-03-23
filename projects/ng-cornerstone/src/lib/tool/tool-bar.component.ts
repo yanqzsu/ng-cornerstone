@@ -7,21 +7,13 @@ import {
   Input,
   OnChanges,
   OnDestroy,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { TOOL_CONFIG_MAP } from './tool.config';
-import {
-  addTool,
-  Enums as csToolsEnums,
-  segmentation,
-  SegmentationDisplayTool,
-  state,
-  Types as csToolTypes,
-  destroy,
-  ToolGroupManager,
-} from '@cornerstonejs/tools';
+import { addTool, Enums as csToolsEnums, state, Types as csToolTypes, ToolGroupManager } from '@cornerstonejs/tools';
 import { ToolConfig, ToolEnum } from './tool.types';
 import { CornerstoneService } from '../core';
 
@@ -31,7 +23,7 @@ import { CornerstoneService } from '../core';
   templateUrl: './tool-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
   private destroy$ = new Subject<void>();
 
   @Input()
@@ -70,7 +62,6 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy {
     console.debug('Toolbar register: ', this.toolGroupId);
     this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;
     this.updateToolList();
-    this.enableSegmentTool();
   }
 
   ngAfterViewInit(): void {
@@ -133,6 +124,11 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (!activeViewportId) {
       return;
     }
+
+    // 保存旧的activeViewportId
+    const previousViewportId = this.activeViewportId;
+
+    // 更新当前的activeViewportId
     this.activeViewportId = activeViewportId;
 
     const viewport = this.renderingEngine.getViewport(this.activeViewportId!);
@@ -152,37 +148,33 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy {
           cameraConfig.disabled = true;
         }
       });
+
+      // 确保新的viewport已添加到toolGroup中
+      if (!this.toolGroup.getViewportIds().includes(this.activeViewportId)) {
+        this.registerViewport(this.activeViewportId);
+      }
+
+      // 重新激活当前工具，确保它能在新的viewport上操作
+      if (previousViewportId !== this.activeViewportId && this.currentTool) {
+        // 先移除其他绑定，以确保工具干净地应用于新viewport
+        const toolNames = this.toolConfigList.map((config) => config.name);
+        toolNames.forEach((name) => {
+          if (name !== this.currentTool?.name) {
+            this.toolGroup.setToolPassive(name);
+          }
+        });
+
+        // 重新激活当前工具
+        this.toolGroup.setToolActive(this.currentTool.name, {
+          bindings: [{ mouseButton: csToolsEnums.MouseBindings.Primary }],
+        });
+
+        // 确保工具应用于当前viewport
+        this.toolGroup.setViewportsCursorByToolName(this.currentTool.name);
+      }
+
       this.cdr.detectChanges();
     }
-  }
-
-  enableSegmentTool() {
-    const toolAlreadyAdded = state.tools[SegmentationDisplayTool.toolName] !== undefined;
-    if (!toolAlreadyAdded) {
-      addTool(SegmentationDisplayTool);
-    }
-    if (!this.toolGroup.hasTool(SegmentationDisplayTool.toolName)) {
-      this.toolGroup.addTool(SegmentationDisplayTool.toolName);
-      this.toolGroup.setToolEnabled(SegmentationDisplayTool.toolName);
-    }
-  }
-
-  async addSegmentationRepresentations(
-    segmentationId: string,
-    segRepresentations: csToolsEnums.SegmentationRepresentations,
-  ) {
-    this.segmentationRepresentationUIDs = await segmentation.addSegmentationRepresentations(this.toolGroupId, [
-      {
-        segmentationId,
-        type: segRepresentations,
-        options: {
-          // TODO: Seg worker import failed
-          // polySeg: {
-          //   enabled: true,
-          // },
-        },
-      },
-    ]);
   }
 
   activeTool(names: any[]) {
@@ -217,6 +209,7 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     console.debug('Toolbar destroy: ', this.toolGroupId);
+    this.toolbarDestroy.emit(this.toolGroupId);
     ToolGroupManager.destroyToolGroup(this.toolGroupId);
     this.destroy$.next();
     this.destroy$.complete();

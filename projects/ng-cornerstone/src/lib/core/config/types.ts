@@ -17,6 +17,8 @@ export enum VolumeLoaderSchema {
 }
 
 export interface ImageInfo {
+  imageIds?: string[]; // Auto-filled property, used for stack viewport
+  volumeId?: string; // Auto-filled property, used for volume3d viewport
   studyInstanceUID?: string;
   seriesInstanceUID?: string;
   sopInstanceUIDs?: string[];
@@ -26,16 +28,15 @@ export interface ImageInfo {
   segmentType?: csToolEnum.SegmentationRepresentations;
 }
 
-export function imageInfoToVolumeId(imageInfo: ImageInfo | undefined): string {
-  if (
-    imageInfo &&
-    (imageInfo.viewportType === csCoreEnum.ViewportType.VOLUME_3D ||
-      imageInfo.viewportType === csCoreEnum.ViewportType.ORTHOGRAPHIC)
-  ) {
+export function imageInfoToUniqueId(imageInfo: ImageInfo): string {
+  if (imageInfo) {
     if (imageInfo.schema === RequestSchema.wadoRs) {
-      return RequestSchema.wadoRs + imageInfo?.studyInstanceUID ?? '' + imageInfo?.seriesInstanceUID ?? '';
+      return RequestSchema.wadoRs + imageInfo?.studyInstanceUID + imageInfo?.seriesInstanceUID;
     } else if (imageInfo.schema === RequestSchema.nifti) {
       return RequestSchema.nifti + imageInfo.urlRoot;
+    } else {
+      console.error('Unsupported request schema');
+      return '';
     }
   }
   return '';

@@ -182,13 +182,20 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js",
+              "mergeRules": {
+                "externals": "replace"
+              }
+            },
             "outputPath": "dist/ncv-example",
             "index": "projects/ncv-example/src/index.html",
             "main": "projects/ncv-example/src/main.ts",
             "polyfills": "projects/ncv-example/src/polyfills.ts",
             "tsConfig": "projects/ncv-example/tsconfig.app.json",
+            "webWorkerTsConfig": "projects/ncv-example/tsconfig.worker.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "projects/ncv-example/src/favicon.ico",
@@ -197,11 +204,6 @@
                 "glob": "**/*",
                 "input": "./dist/ng-cornerstone/src/assets",
                 "output": "/assets/"
-              },
-              {
-                "glob": "**/*",
-                "input": "./node_modules/@cornerstonejs/dicom-image-loader/dist/dynamic-import",
-                "output": "/"
               }
             ],
             "styles": ["projects/ncv-example/src/styles.scss"],
@@ -241,7 +243,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
               "browserTarget": "ncv-example:build:production"
@@ -252,11 +254,12 @@
           },
           "options": {
             "host": "0.0.0.0",
+            "browserTarget": "ncv-example:build",
+            "proxyConfig": "proxy.conf.json",
             "headers": {
               "Cross-Origin-Embedder-Policy": "require-corp",
               "Cross-Origin-Opener-Policy": "same-origin"
-            },
-            "browserTarget": "ncv-example:build"
+            }
           },
           "defaultConfiguration": "development"
         },

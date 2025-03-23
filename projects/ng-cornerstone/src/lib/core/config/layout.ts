@@ -1,10 +1,11 @@
 import { Enums as csCoreEnum, Types } from '@cornerstonejs/core';
+import { ImageInfo } from './types';
 
 export enum LayoutEnum {
-  STACK,
-  SAGITTAL,
-  ORTHOGRAPHIC,
-  VOLUME,
+  LAYOUT_1x1, // Single viewport layout
+  LAYOUT_1x2, // 1 row 2 columns layout
+  LAYOUT_1x3, // 1 row 3 columns layout
+  LAYOUT_2x2, // 2 rows 2 columns layout
 }
 
 export const STACK_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
@@ -28,95 +29,136 @@ export const SAGITTAL_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
   },
 ];
 
-export const ORTHOGRAPHIC_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
+export const CORONAL_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
   {
-    viewportId: 'viewport-mpr-1',
+    viewportId: 'viewport-mpr-coronal',
     type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
     defaultOptions: {
       background: <Types.Point3>[0, 0, 0],
       orientation: csCoreEnum.OrientationAxis.CORONAL,
-    },
-  },
-  {
-    viewportId: 'viewport-mpr-2',
-    type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-    defaultOptions: {
-      background: <Types.Point3>[0, 0, 0],
-      orientation: csCoreEnum.OrientationAxis.AXIAL,
-    },
-  },
-  {
-    viewportId: 'viewport-mpr-3',
-    type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-    defaultOptions: {
-      background: <Types.Point3>[0, 0, 0],
-      orientation: csCoreEnum.OrientationAxis.SAGITTAL,
     },
   },
 ];
 
-export const VOLUME_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
+export const AXIAL_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
   {
-    viewportId: 'viewport-volume-1',
-    type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-    defaultOptions: {
-      background: <Types.Point3>[0, 0, 0],
-      orientation: csCoreEnum.OrientationAxis.CORONAL,
-    },
-  },
-  {
-    viewportId: 'viewport-volume-2',
+    viewportId: 'viewport-mpr-axial',
     type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
     defaultOptions: {
       background: <Types.Point3>[0, 0, 0],
       orientation: csCoreEnum.OrientationAxis.AXIAL,
     },
   },
+];
+
+export const VOLUME_3D_VIEWPORT_INPUTS: Partial<Types.PublicViewportInput>[] = [
   {
-    viewportId: 'viewport-volume-3',
-    type: csCoreEnum.ViewportType.ORTHOGRAPHIC,
-    defaultOptions: {
-      background: <Types.Point3>[0, 0, 0],
-      orientation: csCoreEnum.OrientationAxis.SAGITTAL,
-    },
-  },
-  {
-    viewportId: 'viewport-volume-3d',
+    viewportId: 'viewport-volume',
     type: csCoreEnum.ViewportType.VOLUME_3D,
     defaultOptions: {
-      // background: CONSTANTS.BACKGROUND_COLORS.slicer3D as Types.RGB,
       background: <Types.Point3>[0.2, 0, 0.2],
     },
   },
 ];
 
-export function generateViewportInputs(layout: LayoutEnum, suffix: string): Partial<Types.PublicViewportInput>[] {
-  if (layout === LayoutEnum.STACK) {
-    return STACK_VIEWPORT_INPUTS.map((input) => {
-      const value = { ...input };
-      value.viewportId = value.viewportId + suffix;
-      return value;
-    });
-  } else if (layout === LayoutEnum.ORTHOGRAPHIC) {
-    return ORTHOGRAPHIC_VIEWPORT_INPUTS.map((input) => {
-      const value = { ...input };
-      value.viewportId = value.viewportId + suffix;
-      return value;
-    });
-  } else if (layout === LayoutEnum.VOLUME) {
-    return VOLUME_VIEWPORT_INPUTS.map((input) => {
-      const value = { ...input };
-      value.viewportId = value.viewportId + suffix;
-      return value;
-    });
-  } else if (layout === LayoutEnum.SAGITTAL) {
-    return SAGITTAL_VIEWPORT_INPUTS.map((input) => {
-      const value = { ...input };
-      value.viewportId = value.viewportId + suffix;
-      return value;
-    });
+export function generateViewportInputs(
+  layout: LayoutEnum,
+  suffix: string,
+  imageInfo?: ImageInfo,
+): Partial<Types.PublicViewportInput>[] {
+  const viewportType = imageInfo?.viewportType || csCoreEnum.ViewportType.STACK;
+  const isStack = viewportType === csCoreEnum.ViewportType.STACK;
+  const result: Partial<Types.PublicViewportInput>[] = [];
+
+  switch (layout) {
+    case LayoutEnum.LAYOUT_1x1:
+      // 1x1 layout: set viewportType according to imageType
+      if (viewportType === csCoreEnum.ViewportType.STACK) {
+        const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
+        viewportInput.viewportId = `viewport-1${suffix}`;
+        result.push(viewportInput);
+      } else if (viewportType === csCoreEnum.ViewportType.VOLUME_3D) {
+        const viewportInput = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
+        viewportInput.viewportId = `viewport-1${suffix}`;
+        result.push(viewportInput);
+      } else {
+        const viewportInput = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
+        viewportInput.viewportId = `viewport-1${suffix}`;
+        result.push(viewportInput);
+      }
+      break;
+
+    case LayoutEnum.LAYOUT_1x2:
+      // 1x2 layout: all stack when imageType is stack, otherwise one volume3D one sagittal
+      if (isStack) {
+        for (let i = 0; i < 2; i++) {
+          const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
+          viewportInput.viewportId = `viewport-${i + 1}${suffix}`;
+          result.push(viewportInput);
+        }
+      } else {
+        const sagittalViewport = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
+        sagittalViewport.viewportId = `viewport-1${suffix}`;
+        result.push(sagittalViewport);
+
+        const volumeViewport = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
+        volumeViewport.viewportId = `viewport-2${suffix}`;
+        result.push(volumeViewport);
+      }
+      break;
+
+    case LayoutEnum.LAYOUT_1x3:
+      // 1x3 layout: all stack when imageType is stack, otherwise one volume3D one sagittal one axial
+      if (isStack) {
+        for (let i = 0; i < 3; i++) {
+          const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
+          viewportInput.viewportId = `viewport-${i + 1}${suffix}`;
+          result.push(viewportInput);
+        }
+      } else {
+        const sagittalViewport = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
+        sagittalViewport.viewportId = `viewport-1${suffix}`;
+        result.push(sagittalViewport);
+
+        const axialViewport = structuredClone(AXIAL_VIEWPORT_INPUTS[0]);
+        axialViewport.viewportId = `viewport-2${suffix}`;
+        result.push(axialViewport);
+
+        const volumeViewport = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
+        volumeViewport.viewportId = `viewport-3${suffix}`;
+        result.push(volumeViewport);
+      }
+      break;
+
+    case LayoutEnum.LAYOUT_2x2:
+      // 2x2 layout: all stack when imageType is stack, otherwise one volume3D one sagittal one axial one coronal
+      if (isStack) {
+        for (let i = 0; i < 4; i++) {
+          const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
+          viewportInput.viewportId = `viewport-${i + 1}${suffix}`;
+          result.push(viewportInput);
+        }
+      } else {
+        const sagittalViewport = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
+        sagittalViewport.viewportId = `viewport-1${suffix}`;
+        result.push(sagittalViewport);
+
+        const axialViewport = structuredClone(AXIAL_VIEWPORT_INPUTS[0]);
+        axialViewport.viewportId = `viewport-2${suffix}`;
+        result.push(axialViewport);
+
+        const coronalViewport = structuredClone(CORONAL_VIEWPORT_INPUTS[0]);
+        coronalViewport.viewportId = `viewport-3${suffix}`;
+        result.push(coronalViewport);
+
+        const volumeViewport = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
+        volumeViewport.viewportId = `viewport-4${suffix}`;
+        result.push(volumeViewport);
+      }
+      break;
   }
-  return [];
+
+  return result;
 }
 
 export function generateRandomString(length = 6) {

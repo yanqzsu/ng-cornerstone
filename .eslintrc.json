@@ -22,7 +22,14 @@
         "plugin:@angular-eslint/template/process-inline-templates",
         "plugin:prettier/recommended"
       ],
-      "rules": {}
+      "rules": {
+        "prettier/prettier": [
+          "error",
+          {
+            "endOfLine": "lf"
+          }
+        ]
+      }
     },
     {
       "files": [
@@ -37,7 +44,14 @@
         "plugin:@angular-eslint/template/process-inline-templates",
         "plugin:prettier/recommended"
       ],
-      "rules": {}
+      "rules": {
+        "prettier/prettier": [
+          "error",
+          {
+            "endOfLine": "lf"
+          }
+        ]
+      }
     },
     {
       "files": [

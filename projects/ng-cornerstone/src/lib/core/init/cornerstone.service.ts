@@ -1,5 +1,4 @@
 import initProviders from './initProviders';
-import initCornerstoneDICOMImageLoader from './initCornerstoneDICOMImageLoader';
 import initVolumeLoader from './initVolumeLoader';
 import {
   cache,
@@ -10,9 +9,11 @@ import {
   RenderingEngine,
   Types as csCoreTypes,
 } from '@cornerstonejs/core';
+import * as polySeg from '@cornerstonejs/polymorphic-segmentation';
 import { Injectable, OnDestroy } from '@angular/core';
 import { init as csToolInit, Types as csToolTypes, destroy } from '@cornerstonejs/tools';
 import { Subject } from 'rxjs';
+import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 
 @Injectable({
   providedIn: 'root',
@@ -24,9 +25,6 @@ export class CornerstoneService implements OnDestroy {
   private toolGroup!: csToolTypes.IToolGroup;
   private initialized = false;
 
-  private viewportManagerSubject = new Subject<string>();
-  viewportReady$ = this.viewportManagerSubject.asObservable();
-
   constructor() {}
 
   async init() {
@@ -36,9 +34,16 @@ export class CornerstoneService implements OnDestroy {
       }
 
       initProviders();
-      initCornerstoneDICOMImageLoader();
+      cornerstoneDICOMImageLoader.init();
       initVolumeLoader();
-      await Promise.all([csRenderInit(), csToolInit()]);
+      await Promise.all([
+        csRenderInit(),
+        csToolInit({
+          addons: {
+            polySeg: polySeg as any,
+          },
+        }),
+      ]);
 
       this.renderingEngine = new RenderingEngine(this.renderingEngineId);
 
@@ -71,19 +76,6 @@ export class CornerstoneService implements OnDestroy {
 
   getToolGroupId() {
     return this.toolGroupId;
-  }
-
-  registerViewport(viewportInput: csCoreTypes.PublicViewportInput) {
-    this.renderingEngine.enableElement(viewportInput);
-    this.toolGroup.addViewport(viewportInput.viewportId, this.renderingEngineId);
-    this.viewportManagerSubject.next(viewportInput.viewportId);
-    console.debug('Viewport register:', viewportInput.viewportId);
-  }
-
-  unregisterViewport(viewportId: string) {
-    this.renderingEngine.disableElement(viewportId);
-    this.toolGroup.removeViewports(this.renderingEngineId, viewportId);
-    console.debug('Viewport unregister:', viewportId);
   }
 
   ngOnDestroy(): void {

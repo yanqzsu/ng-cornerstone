@@ -1,13 +1,21 @@
 <button (click)="onClick()" style="color: black">show/hide</button>
 
 <select (change)="changeImage($event)">
-  <option *ngFor="let value of imageInfos; index as i" [value]="i" [label]="i" [selected]="imageIndex === i"></option>
+  <option value="-1" [selected]="imageIndex === -1">No Image</option>
+  <option
+    *ngFor="let value of imageInfos; index as i"
+    [value]="i"
+    [label]="getImageDisplayName(i)"
+    [selected]="imageIndex === i"
+  ></option>
 </select>
+
 <select (change)="changeSegment($event)">
+  <option value="-1" [selected]="segmentIndex === -1">No Segment</option>
   <option
     *ngFor="let value of segmentInfos; index as i"
     [value]="i"
-    [label]="i"
+    [label]="getSegmentDisplayName(i)"
     [selected]="segmentIndex === i"
   ></option>
 </select>
@@ -21,4 +29,5 @@
   [toolList]="toolList"
   [layout]="layout"
   [imageInfo]="imageInfo"
+  [segmentInfo]="segmentInfo"
 ></nc-viewer>

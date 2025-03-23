@@ -28,6 +28,16 @@ nc-viewer {
   }
 }
 
+.layout-12 {
+  flex-wrap: nowrap;
+  min-height: 400px;
+
+  .dicom-viewer-viewport {
+    width: 50%;
+    height: 100%;
+  }
+}
+
 .layout-13 {
   flex-wrap: nowrap;
   min-height: 400px;
