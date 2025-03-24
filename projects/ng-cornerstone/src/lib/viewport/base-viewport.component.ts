@@ -13,12 +13,13 @@ import {
   ViewChild,
   Directive,
   NgZone,
+  OnInit,
 } from '@angular/core';
 import { Types, Enums } from '@cornerstonejs/core';
 import { CornerstoneService, ImageInfo, imageInfoToUniqueId } from '../core';
 
 @Directive()
-export class BaseViewportComponent implements OnChanges, OnDestroy, AfterViewInit {
+export class BaseViewportComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
   viewportInput?: Partial<Types.PublicViewportInput>;
 
@@ -35,19 +36,29 @@ export class BaseViewportComponent implements OnChanges, OnDestroy, AfterViewIni
   @HostBinding('class.active')
   active: boolean = false;
 
-  @Output() viewportInit = new EventEmitter<string>();
+  @Output() viewportUpdated = new EventEmitter<string>();
   @Output() viewportDestroy = new EventEmitter<string>();
 
   viewport!: Types.IViewport;
 
   constructor(protected csService: CornerstoneService, protected zone: NgZone) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const { viewportInput, imageInfo, segmentInfo } = changes;
-
-    if (viewportInput && !viewportInput.isFirstChange() && this.viewportInput) {
-      this.updateViewport();
+  ngOnInit(): void {
+    this.updateViewport();
+    if (this.imageInfo) {
+      this.zone.runOutsideAngular(() => {
+        this.renderImage(this.imageInfo!);
+      });
     }
+    if (this.imageInfo && this.segmentInfo) {
+      this.zone.runOutsideAngular(() => {
+        this.renderSegment(this.imageInfo as ImageInfo, this.segmentInfo!);
+      });
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const { imageInfo, segmentInfo } = changes;
 
     if (imageInfo && !imageInfo.isFirstChange() && this.imageInfo) {
       this.zone.runOutsideAngular(() => {
@@ -62,14 +73,6 @@ export class BaseViewportComponent implements OnChanges, OnDestroy, AfterViewIni
     }
   }
 
-  ngAfterViewInit(): void {
-    this.updateViewport();
-    if (this.viewportInput?.viewportId) {
-      this.viewport = this.renderingEngine.getViewport(this.viewportInput.viewportId);
-      this.viewportInit.emit(this.viewportInput.viewportId);
-    }
-  }
-
   get renderingEngineId() {
     return this.csService.getRenderingEngineId();
   }
@@ -78,8 +81,14 @@ export class BaseViewportComponent implements OnChanges, OnDestroy, AfterViewIni
     return this.csService.getRenderingEngine();
   }
 
+  get toolGroup() {
+    return this.csService.getToolGroup();
+  }
+
   protected updateViewport() {
-    if (!this.viewportInput) {
+    console.log('update viewport: ', this.viewportInput?.viewportId);
+
+    if (!this.viewportInput || !this.viewportInput.viewportId) {
       console.warn('No viewport input provided');
       return;
     }
@@ -87,7 +96,8 @@ export class BaseViewportComponent implements OnChanges, OnDestroy, AfterViewIni
     try {
       this.viewportInput.element = this.viewportElementRef.nativeElement as HTMLDivElement;
       this.renderingEngine.enableElement(this.viewportInput as Types.PublicViewportInput);
-      this.viewportInit.emit(this.viewportInput?.viewportId);
+      this.viewport = this.renderingEngine.getViewport(this.viewportInput.viewportId);
+      this.viewportUpdated.emit(this.viewportInput?.viewportId);
     } catch (error) {
       console.error('Failed to update viewport:', error);
     }

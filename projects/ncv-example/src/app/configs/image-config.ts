@@ -136,4 +136,14 @@ export const imageConfigs: ImageConfig[] = [
     },
     alias: 'NIFTI_VOLUME_ABD_LYMPH_006',
   },
+  {
+    data: {
+      urlRoot: 'https://d3t6nz73ql33tx.cloudfront.net/dicomweb',
+      studyInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463',
+      seriesInstanceUID: '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561',
+      viewportType: csCoreEnum.ViewportType.ORTHOGRAPHIC,
+      schema: RequestSchema.wadoRs,
+    },
+    alias: 'DICOM_ORTHO_EXTERNAL',
+  },
 ];

@@ -21,7 +21,6 @@ import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 export class CornerstoneService implements OnDestroy {
   private renderingEngineId = 'RENDERING_ENGINE_ID';
   private renderingEngine!: RenderingEngine;
-  private toolGroupId = 'TOOL_GROUP_ID';
   private toolGroup!: csToolTypes.IToolGroup;
   private initialized = false;
 
@@ -61,6 +60,10 @@ export class CornerstoneService implements OnDestroy {
     }
   }
 
+  setToolGroup(toolGroup: csToolTypes.IToolGroup) {
+    this.toolGroup = toolGroup;
+  }
+
   getRenderingEngine() {
     this.checkInitialized();
     return this.renderingEngine;
@@ -72,10 +75,6 @@ export class CornerstoneService implements OnDestroy {
 
   getToolGroup() {
     return this.toolGroup;
-  }
-
-  getToolGroupId() {
-    return this.toolGroupId;
   }
 
   ngOnDestroy(): void {

@@ -75,15 +75,15 @@ export function generateViewportInputs(
       // 1x1 layout: set viewportType according to imageType
       if (viewportType === csCoreEnum.ViewportType.STACK) {
         const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
-        viewportInput.viewportId = `viewport-1${suffix}`;
+        viewportInput.viewportId = `viewport-stack-${suffix}`;
         result.push(viewportInput);
       } else if (viewportType === csCoreEnum.ViewportType.VOLUME_3D) {
         const viewportInput = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
-        viewportInput.viewportId = `viewport-1${suffix}`;
+        viewportInput.viewportId = `viewport-volume-${suffix}`;
         result.push(viewportInput);
       } else {
         const viewportInput = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
-        viewportInput.viewportId = `viewport-1${suffix}`;
+        viewportInput.viewportId = `viewport-sagittal-${suffix}`;
         result.push(viewportInput);
       }
       break;
@@ -93,16 +93,16 @@ export function generateViewportInputs(
       if (isStack) {
         for (let i = 0; i < 2; i++) {
           const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
-          viewportInput.viewportId = `viewport-${i + 1}${suffix}`;
+          viewportInput.viewportId = `viewport-stack-${i + 1}${suffix}`;
           result.push(viewportInput);
         }
       } else {
         const sagittalViewport = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
-        sagittalViewport.viewportId = `viewport-1${suffix}`;
+        sagittalViewport.viewportId = `viewport-sagittal-${suffix}`;
         result.push(sagittalViewport);
 
         const volumeViewport = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
-        volumeViewport.viewportId = `viewport-2${suffix}`;
+        volumeViewport.viewportId = `viewport-volume-${suffix}`;
         result.push(volumeViewport);
       }
       break;
@@ -112,20 +112,20 @@ export function generateViewportInputs(
       if (isStack) {
         for (let i = 0; i < 3; i++) {
           const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
-          viewportInput.viewportId = `viewport-${i + 1}${suffix}`;
+          viewportInput.viewportId = `viewport-stack-${i + 1}${suffix}`;
           result.push(viewportInput);
         }
       } else {
         const sagittalViewport = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
-        sagittalViewport.viewportId = `viewport-1${suffix}`;
+        sagittalViewport.viewportId = `viewport-sagittal-${suffix}`;
         result.push(sagittalViewport);
 
         const axialViewport = structuredClone(AXIAL_VIEWPORT_INPUTS[0]);
-        axialViewport.viewportId = `viewport-2${suffix}`;
+        axialViewport.viewportId = `viewport-axial-${suffix}`;
         result.push(axialViewport);
 
         const volumeViewport = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
-        volumeViewport.viewportId = `viewport-3${suffix}`;
+        volumeViewport.viewportId = `viewport-volume-${suffix}`;
         result.push(volumeViewport);
       }
       break;
@@ -135,24 +135,24 @@ export function generateViewportInputs(
       if (isStack) {
         for (let i = 0; i < 4; i++) {
           const viewportInput = structuredClone(STACK_VIEWPORT_INPUTS[0]);
-          viewportInput.viewportId = `viewport-${i + 1}${suffix}`;
+          viewportInput.viewportId = `viewport-stack-${i + 1}${suffix}`;
           result.push(viewportInput);
         }
       } else {
         const sagittalViewport = structuredClone(SAGITTAL_VIEWPORT_INPUTS[0]);
-        sagittalViewport.viewportId = `viewport-1${suffix}`;
+        sagittalViewport.viewportId = `viewport-sagittal-${suffix}`;
         result.push(sagittalViewport);
 
         const axialViewport = structuredClone(AXIAL_VIEWPORT_INPUTS[0]);
-        axialViewport.viewportId = `viewport-2${suffix}`;
+        axialViewport.viewportId = `viewport-axial-${suffix}`;
         result.push(axialViewport);
 
         const coronalViewport = structuredClone(CORONAL_VIEWPORT_INPUTS[0]);
-        coronalViewport.viewportId = `viewport-3${suffix}`;
+        coronalViewport.viewportId = `viewport-coronal-${suffix}`;
         result.push(coronalViewport);
 
         const volumeViewport = structuredClone(VOLUME_3D_VIEWPORT_INPUTS[0]);
-        volumeViewport.viewportId = `viewport-4${suffix}`;
+        volumeViewport.viewportId = `viewport-volume-${suffix}`;
         result.push(volumeViewport);
       }
       break;

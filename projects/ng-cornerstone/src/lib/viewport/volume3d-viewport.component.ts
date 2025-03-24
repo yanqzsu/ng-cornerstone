@@ -18,15 +18,15 @@ export class Volume3DViewportComponent extends BaseViewportComponent implements 
     super(csService, zone);
   }
 
-  ngOnInit(): void {
-    // 确保视口类型设置为VOLUME_3D
+  override ngOnInit(): void {
     if (this.viewportInput) {
       this.viewportInput.type = Enums.ViewportType.VOLUME_3D;
     }
+    super.ngOnInit();
   }
 
   override async renderImage(image: ImageInfo): Promise<void> {
-    if (!image) return;
+    if (!image || !this.viewport || !this.viewportInput?.viewportId) return;
 
     try {
       await setVolumesForViewports(this.renderingEngine, [{ volumeId: image.volumeId! }], [this.viewport.id]);
@@ -41,11 +41,9 @@ export class Volume3DViewportComponent extends BaseViewportComponent implements 
   }
 
   override async renderSegment(image: ImageInfo, segment: ImageInfo): Promise<void> {
-    if (!segment || !image || !this.viewportInput?.viewportId) {
+    if (!segment || !image || !this.viewport || !this.viewportInput?.viewportId) {
       return;
     }
-
-    // 获取分段ID和引用体积ID
     const segmentationId = imageInfoToUniqueId(segment);
 
     if (!segmentationId) {
@@ -54,7 +52,6 @@ export class Volume3DViewportComponent extends BaseViewportComponent implements 
     }
 
     try {
-      // 将分段添加到视口
       if (this.viewportInput.viewportId) {
         segmentation.addSegmentationRepresentations(this.viewportInput.viewportId, [
           {

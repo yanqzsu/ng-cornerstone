@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { CornerstoneService, ImageIdService, ImageInfo } from '../core';
 import { BaseViewportComponent } from './base-viewport.component';
 import { NgZone } from '@angular/core';
@@ -10,7 +10,7 @@ import { NgZone } from '@angular/core';
   styleUrls: ['./viewport.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ViewportComponent extends BaseViewportComponent implements OnDestroy, AfterViewInit {
+export class ViewportComponent extends BaseViewportComponent {
   constructor(protected override csService: CornerstoneService, zone: NgZone) {
     super(csService, zone);
   }

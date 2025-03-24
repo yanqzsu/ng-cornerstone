@@ -34,13 +34,13 @@ export class AppComponent implements OnInit {
   showImageViewer = true;
   imageInfo?: ImageInfo;
   segmentInfo?: ImageInfo;
-  layout = LayoutEnum.LAYOUT_2x2;
+  layout = LayoutEnum.LAYOUT_1x1;
   imageConfigList = imageConfigs;
   segmentConfigList = segmentConfigs;
   imageInfos: ImageInfo[] = this.imageConfigList.map((config) => config.data);
   segmentInfos: ImageInfo[] = this.segmentConfigList.map((config) => config.data);
 
-  imageIndex: number = -1;
+  imageIndex: number = 0;
   segmentIndex: number = -1;
 
   constructor(public dialog: Dialog) {}
@@ -60,10 +60,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.imageInfo = this.imageInfos[this.imageIndex];
-      this.segmentInfo = this.segmentInfos[this.segmentIndex];
-    }, 500);
+    this.imageInfo = this.imageInfos[this.imageIndex];
+    this.segmentInfo = this.segmentInfos[this.segmentIndex];
+    // setTimeout(() => {
+    //   this.imageInfo = this.imageInfos[this.imageIndex];
+    //   this.segmentInfo = this.segmentInfos[this.segmentIndex];
+    // }, 1000);
   }
 
   onClick(): void {

@@ -12,21 +12,16 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "paths": {
-      "ng-cornerstone": [
-        "dist/ng-cornerstone"
-      ]
+      "ng-cornerstone": ["dist/ng-cornerstone"]
     },
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "ES2022",
+    "target": "es2022",
     "module": "es2020",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "checkJs": false,

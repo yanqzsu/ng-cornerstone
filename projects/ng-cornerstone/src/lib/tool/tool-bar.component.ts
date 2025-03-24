@@ -50,22 +50,23 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy, On
 
   ngOnChanges(changes: SimpleChanges): void {
     const { toolList, activeViewportId } = changes;
-    if (toolList && !toolList.isFirstChange) {
+    if (toolList && !toolList.isFirstChange()) {
       this.updateToolList();
     }
-    if (activeViewportId && !activeViewportId.firstChange) {
+    if (activeViewportId && !activeViewportId.isFirstChange()) {
       this.updateActiveViewport(this.activeViewportId);
     }
   }
 
   ngOnInit(): void {
-    console.debug('Toolbar register: ', this.toolGroupId);
+    console.debug('Toolbar register:', this.toolGroupId);
     this.toolGroup = ToolGroupManager.createToolGroup(this.toolGroupId)!;
     this.updateToolList();
   }
 
   ngAfterViewInit(): void {
     this.toolbarInit.emit();
+    this.csService.setToolGroup(this.toolGroup);
   }
 
   get renderingEngineId() {
@@ -77,12 +78,12 @@ export class ToolBarComponent implements AfterViewInit, OnChanges, OnDestroy, On
   }
 
   registerViewport(viewportId: string) {
-    console.debug('Toolbar register:', viewportId);
+    console.debug('Toolbar register viewport:', viewportId);
     this.toolGroup.addViewport(viewportId, this.renderingEngineId);
   }
 
   unregisterViewport(viewportId: string) {
-    console.debug('Toolbar unregister:', viewportId);
+    console.debug('Toolbar unregister viewport:', viewportId);
     this.toolGroup.removeViewports(this.renderingEngineId, viewportId);
   }
 

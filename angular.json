@@ -35,15 +35,7 @@
             "polyfills": "projects/playground/src/polyfills.ts",
             "tsConfig": "projects/playground/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "projects/playground/src/favicon.ico",
-              "projects/playground/src/assets",
-              {
-                "glob": "**/*",
-                "input": "./node_modules/cornerstone-wado-image-loader/dist/dynamic-import",
-                "output": "/"
-              }
-            ],
+            "assets": ["projects/playground/src/favicon.ico", "projects/playground/src/assets"],
             "styles": ["projects/playground/src/styles.scss"],
             "scripts": []
           },

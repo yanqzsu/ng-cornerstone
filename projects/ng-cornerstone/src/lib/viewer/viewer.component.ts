@@ -14,11 +14,12 @@ import {
   ViewEncapsulation,
   Output,
   EventEmitter,
+  AfterViewInit,
 } from '@angular/core';
 import { Enums as csCoreEnum, imageLoader, Types, volumeLoader } from '@cornerstonejs/core';
 import { Enums as csToolEnum, segmentation } from '@cornerstonejs/tools';
 
-import { debounceTime, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, filter, map, Subject } from 'rxjs';
 
 import { ToolBarComponent, ToolEnum } from '../tool';
 import {
@@ -43,26 +44,37 @@ import { createNiftiImageIdsAndCacheMetadata } from '@cornerstonejs/nifti-volume
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
-  static readonly TOOL_GROUP_ID = 'TOOL_GROUP_ID';
-
+export class ViewerComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
   Layout = LayoutEnum;
-
-  private destroy$ = new Subject();
-
-  toolGroupId = '';
-
-  viewportType?: csCoreEnum.ViewportType;
+  toolGroupId = 'TOOL_GROUP_ID';
   viewportInputs: Partial<Types.PublicViewportInput>[] = [];
   activeViewportId: string = '';
 
-  volumeId?: string;
-  segmentId?: string;
-  resizeObserver!: ResizeObserver;
+  private resizeObserver!: ResizeObserver;
   private resizeSubject = new Subject<void>();
-  private suffix: string = '';
-  private toolInitialized = false;
-  private initializedViewportIds = new Set<string>();
+  private destroy$ = new Subject<void>();
+
+  // 跟踪需要渲染的状态
+  private pendingImageRender$ = new BehaviorSubject<boolean>(false);
+  private pendingSegmentRender$ = new BehaviorSubject<boolean>(false);
+
+  // 跟踪已初始化的viewport
+  private initializedViewports = new Set<string>();
+  private viewportsToInit = new Set<string>();
+  private viewportInitialized$ = new BehaviorSubject<string>('');
+  private viewportDestroyed$ = new Subject<string>();
+
+  // 跟踪viewport是否全部已初始化
+  private allViewportsInitialized$ = new BehaviorSubject<boolean>(false);
+
+  // 跟踪工具栏是否已初始化
+  private toolbarInitialized$ = new BehaviorSubject<boolean>(false);
+
+  // 跟踪所有组件（工具栏和视口）是否都已初始化
+  private allComponentsInitialized$ = new BehaviorSubject<boolean>(false);
+
+  // 跟踪上一次的viewportType
+  private previousViewportType?: csCoreEnum.ViewportType;
 
   @Input()
   layout?: LayoutEnum;
@@ -72,6 +84,10 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input()
   segmentInfo?: ImageInfo;
+
+  // 新增加的属性：用于存储已加载的图像和分段信息
+  loadedImageInfo?: ImageInfo;
+  loadedSegmentInfo?: ImageInfo;
 
   @ViewChild(ToolBarComponent)
   toolBarComponent!: ToolBarComponent;
@@ -101,15 +117,49 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.suffix = generateRandomString();
-    this.toolGroupId = ViewerComponent.TOOL_GROUP_ID + this.suffix;
-    this.generateViewports();
+    // 初始化时记录当前的viewportType
+    this.initResizeObserver();
+    this.previousViewportType = this.imageInfo?.viewportType;
+    this.initComponentsTracking();
+    // this.generateViewports();
+
+    // 设置初始化标志，等待viewport初始化后再渲染
+    if (this.imageInfo) {
+      this.pendingImageRender$.next(true);
+    }
+
+    if (this.segmentInfo) {
+      this.pendingSegmentRender$.next(true);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // ViewChild已经完成初始化
+    if (this.toolBarComponent) {
+      // 订阅工具栏的初始化事件
+      this.toolBarComponent.toolbarInit.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        console.debug('Toolbar initialized');
+        this.toolbarInitialized$.next(true);
+      });
+
+      // 订阅工具栏的销毁事件
+      this.toolBarComponent.toolbarDestroy.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        console.debug('Toolbar destroyed');
+        this.toolbarInitialized$.next(false);
+      });
+    } else {
+      console.warn('ToolBarComponent not found in view children');
+    }
+  }
+
+  private initResizeObserver(): void {
     this.resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
         this.resizeSubject.next();
       }
     });
     this.resizeObserver.observe(this.elementRef.nativeElement);
+
     // Add debounce time
     this.resizeSubject
       .pipe(
@@ -124,87 +174,189 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
       });
   }
 
-  onToolbarInit() {
-    this.toolInitialized = true;
-    // Register all initialized viewports
-    if (this.initializedViewportIds.size > 0) {
-      this.initializedViewportIds.forEach((viewportId) => {
-        this.toolBarComponent.registerViewport(viewportId);
+  private initComponentsTracking(): void {
+    // 初始化视口跟踪
+    this.initViewportTracking();
+
+    // 监听工具栏初始化状态变化
+    this.toolbarInitialized$.pipe(takeUntil(this.destroy$)).subscribe((initialized) => {
+      if (initialized && this.toolBarComponent) {
+        // 当toolbar初始化后，注册所有已初始化的viewport
+        console.debug(`Toolbar initialized, registering all viewports`);
+        this.initializedViewports.forEach((viewportId) => {
+          this.toolBarComponent.registerViewport(viewportId);
+        });
+      }
+    });
+
+    // 监听工具栏和视口的初始化状态
+    combineLatest([this.toolbarInitialized$, this.allViewportsInitialized$])
+      .pipe(
+        takeUntil(this.destroy$),
+        map(([toolbarInitialized, viewportsInitialized]) => toolbarInitialized && viewportsInitialized),
+      )
+      .subscribe((allInitialized) => {
+        console.debug(`All components initialized: ${allInitialized}`);
+        this.allComponentsInitialized$.next(allInitialized);
       });
-    }
+
+    // 当所有组件都初始化完成且有待处理的渲染任务时执行渲染
+    combineLatest([this.allComponentsInitialized$, this.pendingImageRender$, this.pendingSegmentRender$])
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(([allInitialized, pendingImage, pendingSegment]) => allInitialized && (pendingImage || pendingSegment)),
+      )
+      .subscribe(([_, pendingImage, pendingSegment]) => {
+        console.debug('All components ready, processing pending renders');
+        if (pendingImage && this.imageInfo) {
+          this.loadedImageInfo = undefined;
+          this.loadedSegmentInfo = undefined;
+          segmentation.state.removeAllSegmentations();
+          this.retrieveImage(false);
+          this.pendingImageRender$.next(false);
+        }
+
+        if (pendingSegment && this.segmentInfo) {
+          this.loadedSegmentInfo = undefined;
+          segmentation.state.removeAllSegmentations();
+          this.retrieveImage(true);
+          this.pendingSegmentRender$.next(false);
+        }
+      });
   }
 
-  onToolbarDestroy() {
-    this.toolInitialized = false;
-    // Unregister all viewports
-    this.initializedViewportIds.forEach((viewportId) => {
-      this.toolBarComponent.unregisterViewport(viewportId);
+  private initViewportTracking(): void {
+    // 处理viewport初始化事件
+    this.viewportInitialized$.pipe(takeUntil(this.destroy$)).subscribe((viewportId) => {
+      console.debug(`Viewport initialized: ${viewportId}`);
+      this.initializedViewports.add(viewportId);
+
+      // 如果toolbar已初始化，直接注册viewport
+      if (this.toolbarInitialized$.value && this.toolBarComponent) {
+        this.toolBarComponent.registerViewport(viewportId);
+      }
+
+      this.checkAllViewportsInitialized();
+    });
+
+    // 处理viewport销毁事件
+    this.viewportDestroyed$.pipe(takeUntil(this.destroy$)).subscribe((viewportId) => {
+      console.debug(`Viewport destroyed: ${viewportId}`);
+      this.initializedViewports.delete(viewportId);
+      this.viewportsToInit.delete(viewportId);
+
+      // 仅当toolbar已初始化时才注销viewport
+      if (this.toolbarInitialized$.value && this.toolBarComponent) {
+        this.toolBarComponent.unregisterViewport(viewportId);
+      }
+
+      this.checkAllViewportsInitialized();
     });
   }
 
-  onViewportInit(viewportId: string) {
-    // Record viewport as initialized
-    this.initializedViewportIds.add(viewportId);
+  private checkAllViewportsInitialized(): void {
+    const allInitialized =
+      this.viewportsToInit.size > 0 && this.initializedViewports.size === this.viewportsToInit.size;
+    console.debug(`Checking viewports initialized: ${this.initializedViewports.size}/${this.viewportsToInit.size}`);
+    this.allViewportsInitialized$.next(allInitialized);
 
-    // Check if all viewports are initialized
-    const allViewportsReady = this.viewportIds.every((id) => this.initializedViewportIds.has(id));
-
-    if (this.viewportIds.length > 0 && allViewportsReady) {
-      console.debug('All viewports are ready');
-
-      // Set default active viewport
-      if (!this.activeViewportId) {
-        this.activeViewportId = this.viewportIds[0];
-      }
-
-      // Register viewport if toolbar is initialized
-      if (this.toolInitialized) {
-        this.toolBarComponent.registerViewport(viewportId);
-      }
+    // 设置默认的active viewport，如果所有viewport都初始化完成且尚未设置
+    if (allInitialized && !this.activeViewportId && this.viewportIds.length > 0) {
+      this.activeViewportId = this.viewportIds[0];
+      this.cdr.detectChanges();
     }
+  }
+
+  onViewportInit(viewportId: string) {
+    console.debug('Viewport initialized event received:', viewportId);
+    this.viewportInitialized$.next(viewportId);
   }
 
   onViewportDestroy(viewportId: string) {
-    // Remove viewport from initialized set
-    this.initializedViewportIds.delete(viewportId);
+    console.debug('Viewport destroyed event received:', viewportId);
+    this.viewportDestroyed$.next(viewportId);
+  }
 
-    // Unregister viewport if toolbar is initialized
-    if (this.toolInitialized) {
-      this.toolBarComponent.unregisterViewport(viewportId);
-    }
+  onToolbarInit() {
+    console.debug('ToolBar initialized event received');
+    this.toolbarInitialized$.next(true);
+    // 注册逻辑已移到toolbarInitialized$订阅中处理
+  }
+
+  onToolbarDestroy() {
+    console.debug('ToolBar destroyed event received');
+    this.toolbarInitialized$.next(false);
+    // 销毁逻辑已移到toolbarInitialized$订阅中处理
   }
 
   generateViewports() {
-    if (this.layout !== undefined) {
-      // Reset initialized viewport set
-      this.initializedViewportIds.clear();
-      this.viewportInputs = generateViewportInputs(this.layout, this.suffix, this.imageInfo);
-      // Reset activeViewportId
-      this.activeViewportId = '';
-    } else {
-      this.initializedViewportIds.clear();
-      this.viewportInputs = [];
+    // 重置viewport跟踪
+    this.initializedViewports.clear();
+    this.viewportsToInit.clear();
+    this.allViewportsInitialized$.next(false);
+
+    if (this.layout !== undefined && this.imageInfo?.viewportType) {
+      const suffix = generateRandomString();
+      this.viewportInputs = generateViewportInputs(this.layout, suffix, this.imageInfo);
+      this.viewportInputs.forEach((viewport) => {
+        if (viewport.viewportId) {
+          this.viewportsToInit.add(viewport.viewportId);
+        }
+      });
       // Reset activeViewportId
       this.activeViewportId = '';
     }
+    console.debug(`Generated ${this.viewportsToInit.size} viewports to initialize`);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     const { imageInfo, segmentInfo, layout } = changes;
+    let viewportTypeChanged = false;
 
-    // When imageInfo changes, regenerate viewport layout to reflect new viewportType
-    if ((imageInfo && this.imageInfo) || (layout && !layout.isFirstChange())) {
-      this.generateViewports();
-    }
-
-    // If imageInfo or segmentInfo changes, retrieve image data again
+    // 检查imageInfo的viewportType是否变更
     if (imageInfo && this.imageInfo) {
-      segmentation.state.removeAllSegmentations();
-      this.retrieveImage(false);
+      const currentViewportType = this.imageInfo.viewportType;
+
+      // 使用SimpleChanges提供的previousValue和currentValue进行比较
+      if (imageInfo.previousValue?.viewportType !== imageInfo.currentValue?.viewportType) {
+        viewportTypeChanged = true;
+      }
+      // 如果SimpleChanges没有提供足够信息，使用我们自己跟踪的previousViewportType
+      else if (this.previousViewportType !== currentViewportType) {
+        viewportTypeChanged = true;
+      }
+
+      // 更新记录的viewportType
+      this.previousViewportType = currentViewportType;
     }
-    if (segmentInfo && this.segmentInfo) {
-      segmentation.state.removeAllSegmentations();
-      this.retrieveImage(true);
+
+    // 布局发生变化或viewportType变更时重新生成viewport
+    if ((layout && !layout.isFirstChange()) || viewportTypeChanged) {
+      console.debug(`Layout or ViewportType changed, regenerating viewports`);
+      this.generateViewports();
+
+      // 设置标志表示需要在viewport初始化后渲染
+      if (this.imageInfo) {
+        this.pendingImageRender$.next(true);
+      }
+      if (this.segmentInfo) {
+        this.pendingSegmentRender$.next(true);
+      }
+    } else {
+      // 其他变化情况处理
+      if (imageInfo && this.imageInfo) {
+        this.pendingImageRender$.next(true);
+      }
+
+      if (segmentInfo && this.segmentInfo) {
+        this.pendingSegmentRender$.next(true);
+      }
+
+      // 如果所有组件已初始化，触发状态检查以执行渲染
+      if (this.allComponentsInitialized$.value) {
+        // 重新检查所有组件的初始化状态
+        this.checkAllViewportsInitialized();
+      }
     }
 
     // Change detection - refresh view
@@ -289,9 +441,11 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
           const labelImages = volume.getCornerstoneImages();
           const uniqueId = imageInfoToUniqueId(imageInfo);
           const derivedSegmentationImageIds = await processSegmentation(labelImages, uniqueId);
-          this.segmentInfo = { ...imageInfo!, imageIds: derivedSegmentationImageIds };
+          // 更新 loadedSegmentInfo 而不是直接修改输入的 segmentInfo
+          this.loadedSegmentInfo = { ...imageInfo!, imageIds: derivedSegmentationImageIds };
         } else {
-          this.imageInfo = { ...imageInfo!, volumeId, imageIds };
+          // 更新 loadedImageInfo 而不是直接修改输入的 imageInfo
+          this.loadedImageInfo = { ...imageInfo!, volumeId, imageIds };
         }
         this.cdr.detectChanges();
         this.imageLoaded.emit();
@@ -303,9 +457,11 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
       if (isSegment) {
         const uniqueId = imageInfoToUniqueId(imageInfo);
         const derivedSegmentationImageIds = await processSegmentation(await Promise.all(images), uniqueId);
-        this.segmentInfo = { ...imageInfo!, imageIds: derivedSegmentationImageIds };
+        // 更新 loadedSegmentInfo 而不是直接修改输入的 segmentInfo
+        this.loadedSegmentInfo = { ...imageInfo!, imageIds: derivedSegmentationImageIds };
       } else {
-        this.imageInfo = { ...imageInfo!, imageIds };
+        // 更新 loadedImageInfo 而不是直接修改输入的 imageInfo
+        this.loadedImageInfo = { ...imageInfo!, imageIds };
       }
 
       this.cdr.detectChanges();
@@ -315,8 +471,7 @@ export class ViewerComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.resizeObserver.disconnect();
-    this.initializedViewportIds.clear();
-    this.destroy$.next(null);
+    this.destroy$.next();
     this.destroy$.complete();
     console.debug('viewer destroyed');
   }

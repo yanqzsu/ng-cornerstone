@@ -17,16 +17,17 @@ export class StackViewportComponent extends BaseViewportComponent implements OnI
     super(csService, zone);
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
     // 确保视口类型设置为STACK
     if (this.viewportInput) {
       this.viewportInput.type = Enums.ViewportType.STACK;
     }
+    super.ngOnInit();
   }
 
   override async renderImage(image: ImageInfo): Promise<void> {
     console.log('render stack Image');
-    if (!image || !this.viewportInput?.viewportId) {
+    if (!image || !this.viewport || !this.viewportInput?.viewportId) {
       return;
     }
 
@@ -47,7 +48,7 @@ export class StackViewportComponent extends BaseViewportComponent implements OnI
   }
 
   override async renderSegment(image: ImageInfo, segment: ImageInfo): Promise<void> {
-    if (!segment || !image || !this.viewportInput?.viewportId) {
+    if (!segment || !image || !this.viewport || !this.viewportInput?.viewportId) {
       return;
     }
 

@@ -11,20 +11,20 @@ import { NgZone } from '@angular/core';
   styleUrls: ['./viewport.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrthographicViewportComponent extends BaseViewportComponent implements OnInit, OnChanges {
+export class OrthographicViewportComponent extends BaseViewportComponent implements OnInit {
   constructor(protected override csService: CornerstoneService, zone: NgZone) {
     super(csService, zone);
   }
 
-  ngOnInit(): void {
-    // 确保视口类型设置为ORTHOGRAPHIC
+  override ngOnInit(): void {
     if (this.viewportInput) {
       this.viewportInput.type = Enums.ViewportType.ORTHOGRAPHIC;
     }
+    super.ngOnInit();
   }
 
   protected override async renderImage(image: ImageInfo): Promise<void> {
-    if (!image || !this.viewportInput?.viewportId) return;
+    if (!image || !this.viewport || !this.viewportInput?.viewportId) return;
 
     try {
       const volumeId = image.volumeId || imageInfoToUniqueId(image);
@@ -36,7 +36,7 @@ export class OrthographicViewportComponent extends BaseViewportComponent impleme
   }
 
   protected override async renderSegment(image: ImageInfo, segment: ImageInfo): Promise<void> {
-    if (!segment || !image || !this.viewportInput?.viewportId) {
+    if (!segment || !image || !this.viewport || !this.viewportInput?.viewportId) {
       return;
     }
 
