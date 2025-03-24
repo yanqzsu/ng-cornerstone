@@ -1,3 +1,15 @@
+# [3.4.2](https://github.com/yanqzsu/ng-corner/compare/3.4.0...3.4.2) (2025-03-24)
+
+### Features
+
+- **chore(version)**: update to 3.4.2 and clean up configuration files
+  - Updated package versions in package.json and package-lock.json.
+  - Removed unused assets from angular.json.
+  - Simplified extra-webpack.config.js by removing unnecessary code.
+  - Adjusted layout configurations in various components for better viewport handling.
+  - Refactored image loading logic in viewer component to improve performance and maintainability.
+  - Updated viewport component initialization to ensure proper rendering of images and segments.
+
 # [3.4.0](https://github.com/yanqzsu/ng-corner/compare/1.85.0...3.4.0) (2025-03-23)
 
 ### Bug Fixes
