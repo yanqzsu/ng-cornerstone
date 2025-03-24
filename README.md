@@ -209,41 +209,32 @@ extra-webpack.config.js should like:
 ```js
 module.exports = {
   resolve: {
-    // We use this alias and the CopyPlugin below to support using the dynamic-import version
-    // of WADO Image Loader, but only when building a PWA. When we build a package, we must use the
-    // bundled version of WADO Image Loader so we can produce a single file for the viewer.
-    // (Note: script-tag version of the viewer will no longer be supported in OHIF v3)
-    alias: {
-      '@cornerstonejs/dicom-image-loader':
-        '@cornerstonejs/dicom-image-loader/dist/dynamic-import/cornerstoneDICOMImageLoader.min.js',
+    fallback: {
+      fs: false,
+      path: require.resolve('path-browserify'),
     },
+  },
+  plugins: [],
+  module: {
+    rules: [
+      {
+        test: /\.wasm/,
+        type: 'asset/resource',
+      },
+    ],
   },
 };
 ```
 
-For more detail, refer to [here](https://github.com/cornerstonejs/cornerstoneWADOImageLoader#upgrade-to-cwil-v4x)
+### Enable Webworker
 
-### Enable SharedBufferArray
-
-Edit `angular.json` add two headers:
-
-```
-...
-"serve": {
-  ...
-  "options": {
-    "host": "0.0.0.0",
-    "headers": {
-      "Cross-Origin-Embedder-Policy": "require-corp",
-      "Cross-Origin-Opener-Policy": "same-origin"
-    },
-    ...
-  },
-...
+Create a tsconfig file for worker and Edit `angular.json` :
 
 ```
 
-You should also add the two header when deploy your app as a product.
+"webWorkerTsConfig": "./tsconfig.worker.json",
+
+```
 
 ## Contribution
 
