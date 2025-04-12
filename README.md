@@ -236,6 +236,42 @@ Create a tsconfig file for worker and Edit `angular.json` :
 
 ```
 
+## Test Data
+
+Test files are available in the `data` folder, supporting both DICOM and NIFTI formats.
+
+### DICOM Testing with Orthanc
+
+1. Install Orthanc DICOM server
+2. Import your DICOM data into Orthanc
+3. Configure DICOM-web access
+
+For CORS configuration, you have two options:
+
+#### Option 1: Recommend Using Angular Dev Server Proxy
+
+```bash
+ng serve --proxy-config proxy.conf.json
+```
+
+#### Option 2: Using Nginx Docker Container
+
+```bash
+"orthanc": "docker run --name orthanc-nginx-proxy -v ng-corner/orthanc:/etc/nginx/conf.d:ro -p 8080:80 -d nginx",
+```
+
+### NIFTI Testing with HTTP-SERVER
+
+```bash
+npm install -g http-server
+```
+
+navigate to the data folder and run:
+
+```bash
+http-server --cors
+```
+
 ## Contribution
 
 1. ng-cornerstone is the library.
