@@ -1,3 +1,5 @@
+
+
 # NgCornerstone
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
@@ -257,7 +259,7 @@ ng serve --proxy-config proxy.conf.json
 #### Option 2: Using Nginx Docker Container
 
 ```bash
-"orthanc": "docker run --name orthanc-nginx-proxy -v ng-corner/orthanc:/etc/nginx/conf.d:ro -p 8080:80 -d nginx",
+docker run --name orthanc-nginx-proxy -v ng-corner/orthanc:/etc/nginx/conf.d:ro -p 8080:80 -d nginx
 ```
 
 ### NIFTI Testing with HTTP-SERVER
